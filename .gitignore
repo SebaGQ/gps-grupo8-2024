@@ -33,6 +33,13 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+# Dependency
+backend/node_modules/
+backend/upload/
+
+# dotenv environment variable files
+backend/.env
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/
