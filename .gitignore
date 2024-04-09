@@ -22,8 +22,11 @@ yarn-error.log
 
 # Visual Studio Code
 .vscode/*
+.vs/*
 .frontend.vscode/*
 .frontend.vs/*
+.backend.vscode/*
+.backend.vs/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
