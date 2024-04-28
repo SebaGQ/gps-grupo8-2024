@@ -10,6 +10,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    departmentNumber: {
+      type: Number,
+      required: false
+    },
     rut: {
       type: String,
       required: true,

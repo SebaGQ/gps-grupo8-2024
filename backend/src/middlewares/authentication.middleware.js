@@ -31,6 +31,7 @@ const verifyJWT = (req, res, next) => {
       if (err) return respondError(req, res, 403, "No autorizado", err.message);
       req.email = decoded.email;
       req.roles = decoded.roles;
+      req.departmentNumber = decoded.departmentNumber;
       next();
     });
   } catch (error) {

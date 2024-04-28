@@ -2,6 +2,7 @@
 // Importa el modelo de datos 'Role'
 import Role from "../models/role.model.js";
 import User from "../models/user.model.js";
+import Department from "../models/department.model.js";
 
 /**
  * Crea los roles por defecto en la base de datos.
@@ -19,6 +20,7 @@ async function createRoles() {
     await Promise.all([
       new Role({ name: "user" }).save(),
       new Role({ name: "admin" }).save(),
+      new Role({ name: "janitor" }).save(),
     ]);
     console.log("* => Roles creados exitosamente");
   } catch (error) {
@@ -39,6 +41,7 @@ async function createUsers() {
 
     const admin = await Role.findOne({ name: "admin" });
     const user = await Role.findOne({ name: "user" });
+    const janitor = await Role.findOne({ name: "janitor" });
 
     await Promise.all([
       new User({
@@ -55,6 +58,14 @@ async function createUsers() {
         password: await User.encryptPassword("admin123"),
         roles: admin._id,
       }).save(),
+      
+      new User({
+        username: "janitor",
+        email: "janitor@email.com",
+        rut: "12345678-8",
+        password: await User.encryptPassword("janitor123"),
+        roles: janitor._id,
+      }).save()
     ]);
     console.log("* => Users creados exitosamente");
   } catch (error) {
@@ -62,4 +73,22 @@ async function createUsers() {
   }
 }
 
-export { createRoles, createUsers };
+/**
+ * Crea un departamento por defecto en la base de datos.
+ */
+async function createDepartments() {
+  try {
+    const count = await Department.countDocuments();
+    if (count > 0) return;
+
+    await new Department({
+      departmentNumber: 101,
+      residentId: []  // Sin residentes inicialmente
+    }).save();
+    console.log("* => Departamento creado exitosamente");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export { createRoles, createUsers, createDepartments };
