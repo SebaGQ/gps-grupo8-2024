@@ -6,7 +6,7 @@ import { orderBodySchema } from "../schema/order.schema.js";
 import { handleError } from "../utils/errorHandler.js";
 
 /**
- * Obtiene todas las órdenes
+ * Obtiene todas las entregas
  */
 async function getOrders(req, res) {
     try {
@@ -40,11 +40,11 @@ async function getOrderById(req, res) {
 }
 
 /**
- * Obtiene todas las órdenes asociadas al departmentNumber del usuario que realiza la solicitud.
+ * Obtiene todas las entregas asociadas al departmentNumber del usuario que realiza la solicitud.
  */
 async function getOwnedOrders(req, res) {
     try {
-        const departmentNumber = req.departmentNumber; // Suponiendo que el departmentNumber está en el request
+        const departmentNumber = req.departmentNumber;
         const [orders, errorOrders] = await OrderService.getOwnedOrders(departmentNumber);
         if (errorOrders) return respondError(req, res, 404, errorOrders);
 
@@ -58,7 +58,7 @@ async function getOwnedOrders(req, res) {
 }
 
 /**
- * Obtiene todas las órdenes asociadas a un departmentNumber específico.
+ * Obtiene todas las entregas asociadas a un departmentNumber específico.
  */
 async function getOrdersByDepartmentNumber(req, res) {
     try {
@@ -146,8 +146,33 @@ async function deleteOrder(req, res) {
     }
 }
 
+async function markOrderAsReadyToWithdraw(req, res) {
+    try {
+        const orderId = req.params.orderId;
+        const departmentNumber = req.departmentNumber;
+        let withdrawData = {};
+
+        if (req.body.withdrawnResidentId) {
+            withdrawData.residentId = req.body.withdrawnResidentId;
+        } else {
+            withdrawData.firstName = req.body.withdrawnPersonFirstName;
+            withdrawData.lastName = req.body.withdrawnPersonLastName;
+        }
+
+        const [success, error] = await OrderService.markOrderAsReadyToWithdraw(orderId, withdrawData, departmentNumber);
+
+        if (error) return respondError(req, res, 400, error);
+
+        respondSuccess(req, res, 200, "La orden está lista para ser retirada.");
+    } catch (error) {
+        handleError(error, "order.controller -> markOrderAsReadyToWithdraw");
+        respondError(req, res, 500, error.message);
+    }
+}
+
+
 /**
- * Retira múltiples órdenes, actualizando su estado y hora de retiro.
+ * Retira múltiples entregas, actualizando su estado y hora de retiro.
  * Está pensada para ser utilizada por el conserje.
  */
 async function withdrawOrders(req, res) {
@@ -161,18 +186,13 @@ async function withdrawOrders(req, res) {
 
         if (error) return respondError(req, res, 400, error);
 
-        respondSuccess(req, res, 200, "Retiro de órdenes registrado correctamente");
+        respondSuccess(req, res, 200, "Retiro de entregas registrado correctamente");
     } catch (error) {
         handleError(error, "order.controller -> withdrawOrders");
         respondError(req, res, 500, error.message);
     }
 }
 
-
-
-/**
- * Exporta los controladores
- */
 export default {
     getOrders,
     getOrderById,
@@ -181,5 +201,6 @@ export default {
     createOrder,
     updateOrder,
     deleteOrder,
+    markOrderAsReadyToWithdraw,
     withdrawOrders
 };

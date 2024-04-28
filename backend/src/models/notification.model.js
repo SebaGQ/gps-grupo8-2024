@@ -17,6 +17,11 @@ const notificationSchema = new mongoose.Schema({
     departmentNumber: {
         type: Number,
         required: true
+    },
+    //TODO: Path al que redireccionará la notificación al hacer clic en el front
+    link: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true,

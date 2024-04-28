@@ -1,6 +1,4 @@
 "use strict";
-
-
 import User from "../models/user.model.js";
 import Department from "../models/department.model.js";
 import Order from "../models/order.model.js";
@@ -12,12 +10,12 @@ import { handleError } from "../utils/errorHandler.js";
 import ORDER_STATUSES from "../constants/orderstatus.constants.js";
 
 /**
- * Obtiene todas las órdenes de la base de datos
+ * Obtiene todas las entregas de la base de datos
  */
 async function getOrders() {
     try {
         const orders = await Order.find().exec();
-        if (!orders) return [null, "No hay órdenes disponibles"];
+        if (!orders) return [null, "No hay entregas disponibles"];
 
         return [orders, null];
     } catch (error) {
@@ -39,13 +37,13 @@ async function getOrderById(id) {
 }
 
 /**
- * Obtiene todas las órdenes por departmentNumber.
- * @param {Number} departmentNumber El número de departamento para filtrar las órdenes.
+ * Obtiene todas las entregas por departmentNumber.
+ * @param {Number} departmentNumber El número de departamento para filtrar las entregas.
  */
 async function getOwnedOrders(departmentNumber) {
   try {
       const orders = await Order.find({ departmentNumber: departmentNumber }).exec();
-      if (!orders || orders.length === 0) return [null, "No hay órdenes disponibles para este departamento"];
+      if (!orders || orders.length === 0) return [null, "No hay entregas disponibles para este departamento"];
 
       return [orders, null];
   } catch (error) {
@@ -55,13 +53,13 @@ async function getOwnedOrders(departmentNumber) {
 }
 
 /**
- * Obtiene todas las órdenes para un departmentNumber específico.
- * @param {Number} departmentNumber El número de departamento para filtrar las órdenes.
+ * Obtiene todas las entregas para un departmentNumber específico.
+ * @param {Number} departmentNumber El número de departamento para filtrar las entregas.
  */
 async function getOrdersByDepartmentNumber(departmentNumber) {
   try {
       const orders = await Order.find({ departmentNumber }).exec();
-      if (!orders || orders.length === 0) return [null, "No hay órdenes disponibles para este departamento"];
+      if (!orders || orders.length === 0) return [null, "No hay entregas disponibles para este departamento"];
 
       return [orders, null];
   } catch (error) {
@@ -69,7 +67,6 @@ async function getOrdersByDepartmentNumber(departmentNumber) {
       return [null, error.message];
   }
 }
-
 
 /**
  * Crea una nueva orden en la base de datos
@@ -146,30 +143,65 @@ async function deleteOrder(id) {
     }
 }
 
+async function markOrderAsReadyToWithdraw(orderId, withdrawData, departmentNumber) {
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return [null, "Orden no encontrada"];
+        }
+
+        if (order.departmentNumber !== departmentNumber) {
+            return [null, "La orden no pertenece al departamento del solicitante"];
+        }
+
+        if (order.status !== ORDER_STATUSES[0]) {
+            return [null, "La orden no está en estado pendiente"];
+        }
+
+        const updateData = {
+            status: ORDER_STATUSES[2], // Se marca como listo para retirar
+        };
+
+        if (withdrawData.residentId) {
+            updateData.withdrawnResidentId = withdrawData.residentId;
+        } else {
+            updateData.withdrawnPersonFirstName = withdrawData.firstName;
+            updateData.withdrawnPersonLastName = withdrawData.lastName;
+        }
+
+        await order.updateOne(updateData);
+
+        return [true, null];
+    } catch (error) {
+        handleError(error, "order.service -> markOrderAsReadyToWithdraw");
+        return [null, error.message];
+    }
+}
+
 /**
- * Retira una lista de órdenes
- * @param {Array} orderIds Lista de IDs de las órdenes a retirar.
+ * Retira una lista de entregas
+ * @param {Array} orderIds Lista de IDs de las entregas a retirar.
  */
 async function withdrawOrders(orderIds, withdrawData) {
     try {
         const orders = await Order.find({ _id: { $in: orderIds } });
         if (!orders || orders.length !== orderIds.length) {
-            return [null, "No se encontraron todas las órdenes especificadas"];
+            return [null, "No se encontraron todas las entregas especificadas."];
         }
 
         const departmentNumber = orders[0].departmentNumber;
         if (!orders.every(order => order.departmentNumber === departmentNumber)) {
-            return [null, "No todas las órdenes pertenecen al mismo departamento"];
+            return [null, "Las entregas especificadas no pertenecen a su departamento."];
         }
 
-        if (!orders.every(order => order.status === ORDER_STATUSES[0])) {
-            return [null, "Una o más órdenes ya han sido retiradas o no están en estado pendiente"];
+        if (!orders.every(order => order.status === ORDER_STATUSES[1])) {
+            return [null, "El paquete no se encuentra listo para ser retirado. Por favor, marque las entregas como listas para retirar."];
         }
 
         await Order.updateMany(
             { _id: { $in: orderIds } },
             { $set: { 
-                status: ORDER_STATUSES[1], 
+                status: ORDER_STATUSES[2], 
                 withdrawnTime: new Date(),
                 withdrawnPersonFirstName: withdrawData.firstName,
                 withdrawnPersonLastName: withdrawData.lastName
@@ -189,11 +221,6 @@ async function withdrawOrders(orderIds, withdrawData) {
     }
 }
 
-
-
-/**
- * Exporta los servicios
- */
 export default {
     getOrders,
     getOrderById,
@@ -202,5 +229,6 @@ export default {
     createOrder,
     updateOrder,
     deleteOrder,
+    markOrderAsReadyToWithdraw,
     withdrawOrders
 };
