@@ -145,31 +145,42 @@ async function deleteOrder(id) {
 
 async function markOrderAsReadyToWithdraw(orderId, withdrawData, departmentNumber) {
     try {
+        console.log("orderId: ", orderId);
+        console.log("departmentNumber: ", departmentNumber);
+
         const order = await Order.findById(orderId);
         if (!order) {
             return [null, "Orden no encontrada"];
         }
 
         if (order.departmentNumber !== departmentNumber) {
-            return [null, "La orden no pertenece al departamento del solicitante"];
+            return [null, "La orden no pertenece al departamento del solicitante."];
         }
 
         if (order.status !== ORDER_STATUSES[0]) {
-            return [null, "La orden no está en estado pendiente"];
+            return [null, "La orden no está en estado pendiente. Solo los pedidos pendientes pueden ser marcados como listos para retirar"];
         }
 
         const updateData = {
-            status: ORDER_STATUSES[2], // Se marca como listo para retirar
+            status: ORDER_STATUSES[1], // 'Listo para retirar'
         };
 
+        //Retira un residente
         if (withdrawData.residentId) {
             updateData.withdrawnResidentId = withdrawData.residentId;
-        } else {
-            updateData.withdrawnPersonFirstName = withdrawData.firstName;
-            updateData.withdrawnPersonLastName = withdrawData.lastName;
+        //Retira un tercero
+        } else if (withdrawData.expectedWithdrawnPersonFirstName && withdrawData.expectedWithdrawnPersonLastName){
+            console.log("Entró al if");
+            updateData.expectedWithdrawnPersonFirstName = withdrawData.expectedWithdrawnPersonFirstName;
+            updateData.expectedWithdrawnPersonLastName = withdrawData.expectedWithdrawnPersonLastName;
         }
 
-        await order.updateOne(updateData);
+        let newOrder = await order.updateOne(updateData);
+        
+        console.log("newOrder expectedWithdrawnPersonFirstName: ", newOrder.expectedWithdrawnPersonFirstName);
+        console.log("newOrder expectedWithdrawnPersonLastName: ", newOrder.expectedWithdrawnPersonLastName);
+        console.log("newOrder id: ", newOrder._id);
+
 
         return [true, null];
     } catch (error) {
@@ -184,6 +195,10 @@ async function markOrderAsReadyToWithdraw(orderId, withdrawData, departmentNumbe
  */
 async function withdrawOrders(orderIds, withdrawData) {
     try {
+        console.log("serviec firstname: "+withdrawData.withdrawnPersonFirstName);
+        console.log("service lastname: "+withdrawData.withdrawnPersonLastName);
+       
+
         const orders = await Order.find({ _id: { $in: orderIds } });
         if (!orders || orders.length !== orderIds.length) {
             return [null, "No se encontraron todas las entregas especificadas."];
@@ -198,17 +213,50 @@ async function withdrawOrders(orderIds, withdrawData) {
             return [null, "El paquete no se encuentra listo para ser retirado. Por favor, marque las entregas como listas para retirar."];
         }
 
+        // Verificar si todos los pedidos tienen los mismos valores esperados para el retirante
+        const expectedFirstName = orders[0].expectedWithdrawnPersonFirstName;
+        const expectedLastName = orders[0].expectedWithdrawnPersonLastName;
+        if (!orders.every(order => order.expectedWithdrawnPersonFirstName === expectedFirstName && order.expectedWithdrawnPersonLastName === expectedLastName)) {
+            return [null, "No todos los pedidos tienen el mismo retirante esperado."];
+        }
+
+        const updateData = {
+            status: ORDER_STATUSES[2], // 'Retirado'
+            withdrawnTime: new Date(),
+        };
+        
+        let personName = "Residente";
+
+        // Verificar si se proporciona residentId o los nombres de un tercero para retirar la orden
+        if (withdrawData.residentId) {
+            const user = await User.findById(withdrawData.residentId);
+            if (user) {
+                personName = `${user.firstName} ${user.lastName}`;
+                updateData.withdrawnPersonFirstName = user.firstName;
+                updateData.withdrawnPersonLastName = user.lastName;
+            } else {
+                return [null, "No se encontró el residente especificado."];
+            }
+        } else if (withdrawData.withdrawnPersonFirstName && withdrawData.withdrawnPersonLastName) {
+            
+            // Valida que el tercero que está haciendo el retiro sea el esperado
+            if (withdrawData.withdrawnPersonFirstName !== expectedFirstName || withdrawData.withdrawnPersonLastName !== expectedLastName) {
+                return [null, "El usuario proporcionado no coincide con el retirante esperado."];
+            }
+            personName = `${withdrawData.withdrawnPersonFirstName} ${withdrawData.withdrawnPersonLastName}`;
+            updateData.withdrawnPersonFirstName = withdrawData.withdrawnPersonFirstName;
+            updateData.withdrawnPersonLastName = withdrawData.withdrawnPersonLastName;
+            
+        }  else {
+            return [null, "Datos de retirada faltantes o inválidos."];
+        }
+
         await Order.updateMany(
             { _id: { $in: orderIds } },
-            { $set: { 
-                status: ORDER_STATUSES[2], 
-                withdrawnTime: new Date(),
-                withdrawnPersonFirstName: withdrawData.firstName,
-                withdrawnPersonLastName: withdrawData.lastName
-            } }
+            { $set: updateData }
         );
 
-        const notificationDescription = `Su pedido ha sido retirado por ${withdrawData.firstName} ${withdrawData.lastName}.`;
+        const notificationDescription = `Su pedido ha sido retirado por ${personName}.`;
         const [notification, notificationError] = await NotificationService.createNotificationForDepartment(notificationDescription, departmentNumber);
         if (notificationError) {
             return [null, notificationError];

@@ -150,13 +150,14 @@ async function markOrderAsReadyToWithdraw(req, res) {
     try {
         const orderId = req.params.orderId;
         const departmentNumber = req.departmentNumber;
+        console.log("controller department"+departmentNumber);
         let withdrawData = {};
 
         if (req.body.withdrawnResidentId) {
             withdrawData.residentId = req.body.withdrawnResidentId;
         } else {
-            withdrawData.firstName = req.body.withdrawnPersonFirstName;
-            withdrawData.lastName = req.body.withdrawnPersonLastName;
+            withdrawData.expectedWithdrawnPersonFirstName = req.body.expectedWithdrawnPersonFirstName;
+            withdrawData.expectedWithdrawnPersonLastName = req.body.expectedWithdrawnPersonLastName;
         }
 
         const [success, error] = await OrderService.markOrderAsReadyToWithdraw(orderId, withdrawData, departmentNumber);
@@ -179,9 +180,12 @@ async function withdrawOrders(req, res) {
     try {
         const orderIds = req.body.orderIds;
         const withdrawData = {
-            firstName: req.body.withdrawnPersonFirstName,
-            lastName: req.body.withdrawnPersonLastName
+            withdrawnPersonFirstName: req.body.withdrawnPersonFirstName,
+            withdrawnPersonLastName: req.body.withdrawnPersonLastName
         };
+
+        console.log("controller firstname: "+withdrawData.withdrawnPersonFirstName);
+        console.log("controller lastname: "+withdrawData.withdrawnPersonLastName);
         const [success, error] = await OrderService.withdrawOrders(orderIds, withdrawData);
 
         if (error) return respondError(req, res, 400, error);

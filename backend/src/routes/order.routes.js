@@ -33,7 +33,7 @@ router.get("/:id", isJanitorOrAdmin, orderController.getOrderById);
 
 router.post("/", isJanitorOrAdmin, orderController.createOrder);
 router.post("/withdraw", isJanitorOrAdmin, orderController.withdrawOrders);
-router.post("/:orderId/ready-to-withdraw", isJanitorOrAdmin,
+router.post("/:orderId/ready-to-withdraw",
              orderController.markOrderAsReadyToWithdraw);
 
 router.put("/:id", isJanitorOrAdmin, orderController.updateOrder);
