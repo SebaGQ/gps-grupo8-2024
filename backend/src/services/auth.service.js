@@ -2,6 +2,8 @@
 
 /** Modelo de datos 'User' */
 import User from "../models/user.model.js";
+/** Modelo de datos 'Department' */
+import Department from "../models/department.model.js";
 /** Modulo 'jsonwebtoken' para crear tokens */
 import jwt from "jsonwebtoken";
 
@@ -35,8 +37,13 @@ async function login(user) {
       return [null, null, "El usuario y/o contraseña son incorrectos"];
     }
 
+    // Buscar departamento por el ID del usuario que se está logeando
+    const department = await Department.findOne({ residentId: userFound._id });
+    const departmentNumber = department ? department.departmentNumber : null;
+
+
     const accessToken = jwt.sign(
-      { email: userFound.email, roles: userFound.roles },
+      { email: userFound.email, roles: userFound.roles, departmentNumber: departmentNumber },
       ACCESS_JWT_SECRET,
       {
         expiresIn: "1d",
@@ -82,8 +89,10 @@ async function refresh(cookies) {
 
         if (!userFound) return [null, "No usuario no autorizado"];
 
+
+
         const accessToken = jwt.sign(
-          { email: userFound.email, roles: userFound.roles },
+          { email: userFound.email, roles: userFound.roles, departmentNumber: userFound.departmentNumber },
           ACCESS_JWT_SECRET,
           {
             expiresIn: "1d",
