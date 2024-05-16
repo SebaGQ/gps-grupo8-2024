@@ -6,9 +6,19 @@ import bcrypt from "bcryptjs";
 // Create the 'users' collection schema
 const userSchema = new mongoose.Schema(
   {
-    username: {
+
+    firstName: {
       type: String,
       required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    
+    departmentNumber: {
+      type: Number,
+      required: false
     },
     rut: {
       type: String,
