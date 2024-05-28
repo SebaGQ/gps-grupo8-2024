@@ -61,7 +61,6 @@ async function login(user) {
     return [accessToken, refreshToken, null];
   } catch (error) {
     handleError(error, "auth.service -> signIn");
-    return [null, null, "Error al iniciar sesión"];
   }
 }
 
@@ -76,35 +75,33 @@ async function refresh(cookies) {
     if (!cookies.jwt) return [null, "No hay autorización"];
     const refreshToken = cookies.jwt;
 
-    const [accessToken, error] = await new Promise((resolve) =>
+    const accessToken = await jwt.verify(
+      refreshToken,
+      REFRESH_JWT_SECRET,
+      async (err, user) => {
+        if (err) return [null, "La sesion a caducado, vuelva a iniciar sesion"];
 
-      jwt.verify(
-        refreshToken,
-        REFRESH_JWT_SECRET,
-        async (err, user) => {
-          if (err) return [null, "La sesion a caducado, vuelva a iniciar sesion"];
+        const userFound = await User.findOne({
+          email: user.email,
+        })
+          .populate("roles")
+          .exec();
 
-          const userFound = await User.findOne({
-            email: user.email,
-          })
-            .populate("roles")
-            .exec();
-
-          if (!userFound) return [null, "No usuario no autorizado"];
+        if (!userFound) return [null, "No usuario no autorizado"];
 
 
 
-          const accessToken = jwt.sign(
-            { email: userFound.email, roles: userFound.roles, departmentNumber: userFound.departmentNumber },
-            ACCESS_JWT_SECRET,
-            {
-              expiresIn: "1d",
-            },
-          );
+        const accessToken = jwt.sign(
+          { email: userFound.email, roles: userFound.roles, departmentNumber: userFound.departmentNumber },
+          ACCESS_JWT_SECRET,
+          {
+            expiresIn: "1d",
+          },
+        );
 
-          return [accessToken, null];
-        },
-      ));
+        return [accessToken, null];
+      },
+    );
 
     return accessToken;
   } catch (error) {
