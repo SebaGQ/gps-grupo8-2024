@@ -3,7 +3,9 @@
     "es6": true,
     "node": true
   },
-  "extends": ["google"],
+  "extends": [
+    "google"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
@@ -23,7 +25,10 @@
     ],
     "indent": "off",
     "new-cap": "off",
-    "object-curly-spacing": ["error", "always"],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
     "array-bracket-spacing": "off",
     "max-len": [
       "error",
@@ -35,7 +40,10 @@
     ],
     "valid-jsdoc": "off",
     "no-console": "warn",
-    "quotes": ["error", "double"],
+    "quotes": [
+      "error",
+      "double"
+    ],
     "operator-linebreak": [
       "warn",
       "before",
