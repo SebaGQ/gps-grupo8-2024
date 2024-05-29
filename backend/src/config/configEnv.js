@@ -7,9 +7,7 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 /** Get the absolute path of the .env file. */
 const envFilePath = path.resolve(__dirname, ".env");
 
-
 // Load environment variables from the .env file
-import dotenv from "dotenv";
 dotenv.config({ path: envFilePath });
 
 /** Server port */

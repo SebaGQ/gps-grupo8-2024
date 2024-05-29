@@ -7,7 +7,12 @@ import ROLES from "../constants/roles.constants.js";
  * @constant {Object}
  */
 const userBodySchema = Joi.object({
-  username: Joi.string().required().messages({
+  firstName: Joi.string().required().messages({
+    "string.empty": "El nombre de usuario no puede estar vacío.",
+    "any.required": "El nombre de usuario es obligatorio.",
+    "string.base": "El nombre de usuario debe ser de tipo string.",
+  }),
+  lastName: Joi.string().required().messages({
     "string.empty": "El nombre de usuario no puede estar vacío.",
     "any.required": "El nombre de usuario es obligatorio.",
     "string.base": "El nombre de usuario debe ser de tipo string.",
