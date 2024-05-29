@@ -1,6 +1,6 @@
 "use strict";
 // Importa el modulo 'mongoose' para crear la conexion a la base de datos
-import { Schema, model } from "mongoose";
+import { Schema, model, mongoose } from "mongoose";
 
 // Crea el esquema de la coleccion 'roles'
 const VisitorSchema = new Schema(
@@ -24,6 +24,19 @@ const VisitorSchema = new Schema(
                 default: "visitor"
             },
         ],
+        departmentNumber: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Department",
+            required: true
+        },
+        entryDate: {
+            type: Date,
+            default: Date.now
+        },
+        exitDate: {
+            type: Date,
+            default: new Date("9999-12-31")
+        }
     },
     {
         versionKey: false,
