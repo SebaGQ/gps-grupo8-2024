@@ -10,6 +10,12 @@ import orderRoutes from "./order.routes.js";
 /** Enrutador de usuarios  */
 import notificationsRoutes from "./notification.routes.js";
 
+/** Enrutador de Reservas */
+import bookingRoutes from "./booking.routes.js";
+
+/** Enrutador de Espacio comun */
+import commonSpaceRoutes from "./commonSpace.routes.js";
+
 /** Enrutador de autenticación */
 import authRoutes from "./auth.routes.js";
 
@@ -29,6 +35,12 @@ router.use("/notifications", authenticationMiddleware, notificationsRoutes);
 
 // Define las rutas para los pedidos /api/orders
 router.use("/orders", authenticationMiddleware, orderRoutes);
+
+// Define las rutas para las reservaciones /api/bookings
+router.use("/bookings", authenticationMiddleware, bookingRoutes);
+
+// Define las rutas para los espacios comunes /api/commonSpaces
+router.use("/commonSpaces", authenticationMiddleware, commonSpaceRoutes);
 
 // Exporta el enrutador
 export default router;

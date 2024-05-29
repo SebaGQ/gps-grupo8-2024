@@ -11,7 +11,6 @@ async function getAllBookings(req, res) {
     try {
         const bookings = await Booking.find().exec();
         if (!bookings) return [null, "No se encontraron reservaciones"];
-
     } catch (error) {
         handleError(error, "booking.service -> getAllBookings");
         return [null, error.message];
@@ -38,11 +37,11 @@ async function getBookingById(id) {
  */
 async function createBooking(req) {
     try {
-        let email = req.body.email;
+        const email = req.body.email;
         const { spaceId, date, startTime, endTime } = req.body;
 
         // Verificar si el email ya está registrado
-        let userId = await User
+        const userId = await User
             .findOne({ email: email })
             .select("_id")
             .exec();
@@ -52,15 +51,15 @@ async function createBooking(req) {
         const spaceExists = await CommonSpace.findById(spaceId);
         if (!spaceExists) return [null, "El espacio no existe"];
         // Verificar si la fecha de reserva ya está ocupada
-
         const bookings = await Booking.find({
             spaceId: spaceId,
-            date: date,
+            // Asegura que la fecha sea en formato YYYY-MM-DD
+            date: new Date(date).toISOString().split("T")[0],
             $or: [
                 { startTime: { $lt: endTime, $gte: startTime } },
-                { endTime: { $gt: startTime, $lte: endTime } }
-            ]
-        });
+                { endTime: { $gt: startTime, $lte: endTime } },
+            ],
+        }).exec();
 
         if (bookings.length > 0) return [null, "El espacio ya está reservado"];
 
@@ -80,26 +79,18 @@ async function createBooking(req) {
  */
 async function updateBooking(id, req) {
     try {
-        let email = req.body.email;
+        const email = req.body.email;
         // Verificar si el email ya está registrado
-        let userId = await User
+        const userId = await User
             .findOne({ email: email })
             .select("_id")
             .exec();
-        if (!userId) return [null, "El email no está registrado"];
-
-        //validacion el userId con el id de usuario de la reservacion
-        const bookingUser = await Booking.findById(id).select("userId").exec();
-        if (userId != bookingUser.userId || userId.roles != "admin") return [null, "El email no coincide con el usuario de la reservación"];
-
-        const { spaceId, date, startTime, endTime } = req.body;
-        const bookingData = { spaceId, date, startTime, endTime };
-        const booking = await Booking.findByIdAndUpdate(id, bookingData, { new: true }).exec();
-        if (!booking) return [null, "No se encontró la reservación"];
+        if (userId != bookingUser.userId || userId.roles != "admin") {
+            return [null, "El email no coincide con el usuario de la reservación"];
+        }
 
         return [booking, null];
-    }
-    catch (error) {
+    } catch (error) {
         handleError(error, "booking.service -> updateBooking");
         return [null, error.message];
     }
@@ -110,20 +101,20 @@ async function updateBooking(id, req) {
  */
 async function deleteBooking(id, req) {
     try {
-        let email = req.body.email;
+        const email = req.body.email;
         // Verificar si el email ya está registrado
-        let userId = await User
+        const userId = await User
             .findOne({ email: email })
             .select("_id")
             .exec();
-        if (!userId) return [null, "El email no está registrado"];
-
-        //validacion el userId con el id de usuario de la reservacion 
-        const bookingUser = await Booking.findById(id).select("userId").exec();
-        if (userId != bookingUser.userId || userId.roles != "admin") return [null, "El email no coincide con el usuario de la reservación"];
+        if (userId != bookingUser.userId || userId.roles != "admin") {
+            return [null, "El email no coincide con el usuario de la reservación"];
+        }
 
         const booking = await Booking.findByIdAndDelete(id).exec();
-        if (!booking) return [null, "No se encontró la reservación"];
+        if (!booking) {
+            return [null, "No se encontró la reservación"];
+        }
 
         return [booking, null];
     } catch (error) {
@@ -137,5 +128,5 @@ export default {
     getBookingById,
     createBooking,
     updateBooking,
-    deleteBooking
+    deleteBooking,
 };

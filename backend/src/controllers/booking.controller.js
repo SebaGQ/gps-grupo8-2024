@@ -101,5 +101,5 @@ export default {
     getBookingById,
     createBooking,
     updateBooking,
-    deleteBooking
+    deleteBooking,
 };
