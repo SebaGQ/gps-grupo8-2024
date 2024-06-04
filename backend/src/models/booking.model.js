@@ -11,29 +11,13 @@ const bookingSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    date: {
+    startTime: {
         type: Date,
         required: true,
     },
-    startTime: {
-        type: String,
-        required: true,
-        validate: {
-            validator: function(v) {
-                return /^([01]\d|2[0-3]):?([0-5]\d)$/.test(v);
-            },
-            message: (props) => `${props.value} is not a valid time format!`,
-        },
-    },
     endTime: {
-        type: String,
+        type: Date,
         required: true,
-        validate: {
-            validator: function(v) {
-                return /^([01]\d|2[0-3]):?([0-5]\d)$/.test(v);
-            },
-            message: (props) => `${props.value} is not a valid time format!`,
-        },
     },
 }, {
     timestamps: true,

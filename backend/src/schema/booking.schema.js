@@ -17,15 +17,13 @@ const bookingSchemaJoi = Joi.object({
         "date.base": "La fecha debe ser una fecha válida.",
         "any.required": "La fecha es obligatoria.",
     }),
-    startTime: Joi.string().pattern(/^([01]\d|2[0-3]):?([0-5]\d)$/).required().messages({
-        "string.base": "La hora de inicio debe ser de tipo string.",
-        "string.pattern.base": "La hora de inicio debe tener el formato HH:mm.",
+    startTime: Joi.date().required().messages({
+        "date.base": "La hora de inicio debe ser una fecha válida.",
         "any.required": "La hora de inicio es obligatoria.",
     }),
-    endTime: Joi.string().pattern(/^([01]\d|2[0-3]):?([0-5]\d)$/).required().messages({
-        "string.base": "La hora de fin debe ser de tipo string.",
-        "string.pattern.base": "La hora de fin debe tener el formato HH:mm.",
-        "any.required": "La hora de fin es obligatoria.",
+    endTime: Joi.date().required().messages({
+        "date.base": "La hora de finalización debe ser una fecha válida.",
+        "any.required": "La hora de finalización es obligatoria.",
     }),
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales.",

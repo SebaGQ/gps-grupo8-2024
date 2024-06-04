@@ -1,6 +1,7 @@
 "use strict";
 import Booking from "../models/booking.model.js";
 import User from "../models/user.model.js";
+import CommonSpace from "../models/commonSpace.model.js";
 import { handleError } from "../utils/errorHandler.js";
 
 
@@ -11,6 +12,7 @@ async function getAllBookings(req, res) {
     try {
         const bookings = await Booking.find().exec();
         if (!bookings) return [null, "No se encontraron reservaciones"];
+        return [bookings, null];
     } catch (error) {
         handleError(error, "booking.service -> getAllBookings");
         return [null, error.message];
@@ -37,7 +39,7 @@ async function getBookingById(id) {
  */
 async function createBooking(req) {
     try {
-        const email = req.body.email;
+        const email = req.email;
         const { spaceId, date, startTime, endTime } = req.body;
 
         // Verificar si el email ya está registrado
@@ -53,18 +55,18 @@ async function createBooking(req) {
         // Verificar si la fecha de reserva ya está ocupada
         const bookings = await Booking.find({
             spaceId: spaceId,
-            // Asegura que la fecha sea en formato YYYY-MM-DD
-            date: new Date(date).toISOString().split("T")[0],
+            date: date,
             $or: [
-                { startTime: { $lt: endTime, $gte: startTime } },
-                { endTime: { $gt: startTime, $lte: endTime } },
+                { startTime: { $lt: startTime }, endTime: { $gt: startTime } },
+                { startTime: { $lt: endTime }, endTime: { $gt: endTime } },
+                { startTime: { $gte: startTime }, endTime: { $lte: endTime } },
             ],
         }).exec();
 
         if (bookings.length > 0) return [null, "El espacio ya está reservado"];
 
         // Crear la reserva
-        const newBooking = new Booking({ userId, spaceId, date, startTime, endTime });
+        const newBooking = new Booking({ userId, spaceId, startTime, endTime });
         await newBooking.save();
 
         return [newBooking, null];
@@ -89,7 +91,12 @@ async function updateBooking(id, req) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
 
-        return [booking, null];
+        const updatedBooking = await Booking.findByIdAndUpdate(id, req.body, { new: true }).exec();
+        if (!updatedBooking) {
+            return [null, "No se encontró la reservación"];
+        }
+
+        return [updatedBooking, null];
     } catch (error) {
         handleError(error, "booking.service -> updateBooking");
         return [null, error.message];
