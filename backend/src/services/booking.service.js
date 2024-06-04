@@ -40,7 +40,7 @@ async function getBookingById(id) {
 async function createBooking(req) {
     try {
         const email = req.email;
-        const { spaceId, date, startTime, endTime } = req.body;
+        const { spaceId, startTime, endTime } = req.body;
 
         // Verificar si el email ya está registrado
         const userId = await User
@@ -52,10 +52,15 @@ async function createBooking(req) {
         // Verificar si el espacio existe
         const spaceExists = await CommonSpace.findById(spaceId);
         if (!spaceExists) return [null, "El espacio no existe"];
+        // Verificar si la fecha de reserva está dentro de los días permitidos
+        const dayOfWeek = new Date(startTime).toLocaleString("en-US", { weekday: "long" }).toLowerCase();
+        console.log(dayOfWeek);
+        if (spaceExists.type === "barbecue" && !spaceExists.allowedDays.includes(dayOfWeek)) {
+            return [null, "El espacio no está disponible para reservas en este día"];
+        }
         // Verificar si la fecha de reserva ya está ocupada
         const bookings = await Booking.find({
             spaceId: spaceId,
-            date: date,
             $or: [
                 { startTime: { $lt: startTime }, endTime: { $gt: startTime } },
                 { startTime: { $lt: endTime }, endTime: { $gt: endTime } },
