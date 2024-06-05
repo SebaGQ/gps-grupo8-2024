@@ -2,7 +2,7 @@
 
 import express from "express";
 import commonSpaceController from "../controllers/commonSpace.controller.js";
-
+import { isJanitorOrAdmin } from "../middlewares/authorization.middleware.js";
 const router = express.Router();
 
 // Listar todos los espacios comunes
@@ -12,12 +12,12 @@ router.get("/", commonSpaceController.getAllCommonSpaces);
 router.get("/:id", commonSpaceController.getCommonSpaceById);
 
 // Crear un nuevo espacio común
-router.post("/", commonSpaceController.createCommonSpace);
+router.post("/", isJanitorOrAdmin, commonSpaceController.createCommonSpace);
 
 // Actualizar un espacio común existente
-router.put("/:id", commonSpaceController.updateCommonSpace);
+router.put("/:id", isJanitorOrAdmin, commonSpaceController.updateCommonSpace);
 
 // Eliminar un espacio común
-router.delete("/:id", commonSpaceController.deleteCommonSpace);
+router.delete("/:id", isJanitorOrAdmin, commonSpaceController.deleteCommonSpace);
 
 export default router;
