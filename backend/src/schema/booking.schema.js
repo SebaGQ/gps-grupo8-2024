@@ -20,10 +20,12 @@ const bookingSchemaJoi = Joi.object({
     startTime: Joi.date().required().messages({
         "date.base": "La hora de inicio debe ser una fecha válida.",
         "any.required": "La hora de inicio es obligatoria.",
+        "date.min": "La hora de inicio debe ser mayor a la hora actual.",
     }),
     endTime: Joi.date().required().messages({
         "date.base": "La hora de finalización debe ser una fecha válida.",
         "any.required": "La hora de finalización es obligatoria.",
+        "date.min": "La hora de finalización debe ser mayor a la hora de inicio.",
     }),
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales.",

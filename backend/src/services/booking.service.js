@@ -93,7 +93,10 @@ async function updateBooking(id, req) {
             .findOne({ email: email })
             .select("_id")
             .exec();
-        if (userId != bookingUser.userId || userId.roles != "admin") {
+        if (
+            userId != bookingUser.userId 
+            || (userId.roles != "admin" && userId.roles != "janitor")
+        ) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
         Booking = req.body;
