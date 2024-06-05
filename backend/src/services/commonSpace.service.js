@@ -44,6 +44,32 @@ async function createCommonSpace(req) {
             allowedDays,
             capacity,
         } = req.body;
+
+        // validar los dias permitidos
+        if (allowedDays.length === 0) {
+            return [null, "Debe seleccionar al menos un día permitido"];
+        }
+
+        // validar el nombre de los dias
+        const validDays = [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
+        ];
+        // lowercase a los dias permitidos
+        for (let i = 0; i < allowedDays.length; i++) {
+            allowedDays[i] = allowedDays[i].toLowerCase();
+        }
+        // comparar los dias permitidos con los dias validos
+        for (let i = 0; i < allowedDays.length; i++) {
+            if (!validDays.includes(allowedDays[i])) {
+                return [null, "Día no válido"];
+            }
+        }
         const newCommonSpace = new CommonSpace({
             type,
             avaibility,
