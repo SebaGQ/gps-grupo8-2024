@@ -13,30 +13,14 @@ const binnacleBodySchema = Joi.object({
         "any.required": "El tipo de actividad es requerido.",
         "any.only": `El tipo de actividad debe ser uno de: ${ACTIVITY_TYPES.join(", ")}.`
     }),
-    visitorName: Joi.string().allow("").messages({
-        "string.empty": "El nombre del visitante no puede estar vacío."
+    description: Joi.string().required().messages({
+        "string.empty": "La descripción no puede estar vacía.",
+        "any.required": "La descripción es requerida."
     }),
-    visitorLastName: Joi.string().allow("").messages({
-        "string.empty": "El apellido del visitante no puede estar vacío."
+    timestamp: Joi.date().required().messages({
+        "date.base": "El timestamp debe ser una fecha.",
+        "any.required": "El timestamp es requerido."
     }),
-    apartmentVisited: Joi.number().allow("").messages({
-        "number.empty": "El número del departamento no puede estar vacío."
-    }),
-    timeEntered: Joi.date().allow("").messages({
-        "date.empty": "La hora de entrada no puede estar vacía."
-    }),
-    timeExited: Joi.date().allow("").messages({
-        "date.empty": "La hora de salida no puede estar vacía."
-    }),
-    spaceName: Joi.string().allow("").messages({
-        "string.empty": "El nombre del espacio comunitario no puede estar vacío."
-    }),
-    usageStartTime: Joi.date().allow("").messages({
-        "date.empty": "La hora de inicio de uso no puede estar vacía."
-    }),
-    usageEndTime: Joi.date().allow("").messages({
-        "date.empty": "La hora de fin de uso no puede estar vacía."
-    })
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales en la bitácora."
 });

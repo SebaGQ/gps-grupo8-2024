@@ -1,67 +1,30 @@
 "use strict";
-// Importaciones necesarias
 import mongoose from "mongoose";
-import CATEGORIES from "../constants/binnaclecategories.constats.js";
+import CATEGORIES from "../constants/binnaclecategories.constants.js";
 
-// Esquema de la colección 'binnacles'
 const binnacleSchema = new mongoose.Schema({
-    // Id del conserje que realiza la acción
-    janitorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+    janitorID: {
+        type: String,
+        required: true,
+        ref: "Janitor"
     },
-    // Tipo de actividad
     activityType: {
         type: String,
         enum: CATEGORIES,
         required: true
     },
-    //Nombre y apellido del visitante
-    visitorName: {
+    description: {
         type: String,
-        required: false
+        required: true
     },
-    visitorLastName: {
-        type: String,
-        required: false
-    },
-    //Número del departamento visitado
-    apartmentVisited: {
-        type: Number,
-        required: false
-    },
-    //Hora de entrada
-    timeEntered: {
+    timestamp: {
         type: Date,
-        required: false
-    },
-    //Hora de salida
-    timeExited: {
-        type: Date,
-        required: false
-    },
-    //Nombre del espacio comunitario
-    spaceName: {
-        type: String,
-        required: false
-    },
-    //Hora de inicio de uso
-    usageStartTime: {
-        type: Date,
-        required: false
-    },
-    //Hora de fin de uso
-    usageEndTime: {
-        type: Date,
-        required: false
-    },
-    
+        default: Date.now
+    }
 }, {
-    versionKey: false // Para deshabilitar la propiedad __v en los documentos.
+    versionKey: false
 });
 
-// Modelo 'Binnacle'
 const Binnacle = mongoose.model("Binnacle", binnacleSchema);
 
-// Exportación del modelo 'Binnacle'
 export default Binnacle;
