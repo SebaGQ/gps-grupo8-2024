@@ -1,0 +1,41 @@
+<!-- Spaces Component Template -->
+<div class="spaces-container">
+    <h2>Espacios Disponibles</h2>
+    <!-- Verificación de datos cargados y manejo de la asincronía con el pipe async -->
+    <div *ngIf="spaces$ | async as spaces; else loading">
+      <!-- Revisar si hay espacios disponibles -->
+      <div *ngIf="spaces.length > 0; else noSpaces">
+        <div class="space-card" *ngFor="let space of spaces">
+          <!-- Tarjeta para cada espacio -->
+          <mat-card>
+            <mat-card-header>
+              <!-- <div mat-card-avatar class="space-image" [style.background-image]=" 'url(' + space.imageUrl + ')' "></div> -->
+              <mat-card-title>{{ space.name }}</mat-card-title>
+              <mat-card-subtitle>{{ space.location }}</mat-card-subtitle>
+            </mat-card-header>
+            <!-- <img mat-card-image [src]="space.imageUrl" alt="Foto del espacio"> -->
+            <mat-card-content>
+              <p>Capacidad: {{ space.capacity }} personas</p>
+              <p>Equipamiento: {{ space.allowedDays.join(', ') }}</p>
+                <p>Horario Apertura: {{ space.openingHour }}</p>
+                <p>Horario Cierre: {{ space.closingHour }}</p>
+                <p>Tipo: {{ space.type }}</p>
+
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button color="primary">Reservar</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+      <!-- Mensaje si no hay espacios disponibles -->
+      <ng-template #noSpaces>
+        <p>No hay espacios disponibles en este momento.</p>
+      </ng-template>
+    </div>
+    <!-- Spinner de carga mientras se cargan los datos -->
+    <ng-template #loading>
+      <mat-spinner></mat-spinner>
+    </ng-template>
+  </div>
+  

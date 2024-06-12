@@ -40,7 +40,7 @@ router.use("/orders", authenticationMiddleware, orderRoutes);
 router.use("/bookings", authenticationMiddleware, bookingRoutes);
 
 // Define las rutas para los espacios comunes /api/commonSpaces
-router.use("/commonSpaces", authenticationMiddleware, commonSpaceRoutes);
+router.use("/commonSpaces", commonSpaceRoutes);
 
 // Exporta el enrutador
 export default router;

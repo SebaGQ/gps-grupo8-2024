@@ -159,10 +159,64 @@ async function deleteBooking(id, req) {
     }
 }
 
+/**
+ * get all bookings by user
+ * @param {string} email
+ * @returns {Array} bookings
+ */
+async function getBookingsByUser(email) {
+    try {
+        const userId = await User.findOne({ email }).select("_id").exec();
+        if (!userId) return [null, "El email no está registrado"];
+        const bookings = await Booking.find({ userId: userId }).exec();
+        if (!bookings) return [null, "No se encontraron reservaciones"];
+        return [bookings, null];
+    } catch (error) {
+        handleError(error, "booking.service -> getBookingsByUser");
+        return [null, error.message];
+    }
+}
+
+/**
+ * get all bookings by space
+ * @param {string} spaceId
+ * @returns {Array} bookings
+ */
+async function getBookingsBySpace(spaceId) {
+    try {
+        const bookings = await Booking.find({ spaceId: spaceId }).exec();
+        if (!bookings) return [null, "No se encontraron reservaciones"];
+        return [bookings, null];
+    } catch (error) {
+        handleError(error, "booking.service -> getBookingsBySpace");
+        return [null, error.message];
+    }
+}
+
+/**
+ * get all bookings by date
+ * @param {string} date
+ * @returns {Array} bookings
+ */
+async function getBookingsByDate(date) {
+    try {
+        const bookings = await Booking.find({
+            startTime: { $gte: date, $lt: date + 1 } }).exec();
+        if (!bookings) return [null, "No se encontraron reservaciones"];
+        return [bookings, null];
+    } catch (error) {
+        handleError(error, "booking.service -> getBookingsByDate");
+        return [null, error.message];
+    }
+}
+
 export default {
     getAllBookings,
     getBookingById,
     createBooking,
     updateBooking,
     deleteBooking,
+    getBookingsByUser,
+    getBookingsBySpace,
+    getBookingsByDate,
 };

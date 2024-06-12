@@ -12,7 +12,7 @@ router.get("/", commonSpaceController.getAllCommonSpaces);
 router.get("/:id", commonSpaceController.getCommonSpaceById);
 
 // Crear un nuevo espacio común
-router.post("/", isJanitorOrAdmin, commonSpaceController.createCommonSpace);
+router.post("/", /* isJanitorOrAdmin, */ commonSpaceController.createCommonSpace);
 
 // Actualizar un espacio común existente
 router.put("/:id", isJanitorOrAdmin, commonSpaceController.updateCommonSpace);
