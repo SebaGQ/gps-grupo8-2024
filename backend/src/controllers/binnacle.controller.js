@@ -26,6 +26,22 @@ async function exportToExcel(req, res) {
     }
 }
 /**
+ * Generar una entrada en la bitácora
+ */
+async function createEntry(req, res) {
+    try {
+        const { janitorID, activityType, description } = req.body;
+        const [binnacleEntry, error] = await BinnacleService.createEntry(janitorID, activityType, description);
+        if (error) return respondError(req, res, 500, error);
+
+        respondSuccess(req, res, 201, binnacleEntry);
+    } catch (error) {
+        handleError(error, "binnacle.controller -> createEntry");
+        respondError(req, res, 500, "No se pudo crear la entrada en la bitácora");
+    }
+}
+
+/**
  * Genera la bitácora diaria
  */
 async function generateDailyBinnacle(req, res) {
@@ -79,6 +95,7 @@ async function getBinnacleById(req, res) {
 
 export default {
     exportToExcel,
+    createEntry,
     generateDailyBinnacle,
     getBinnacles,
     getBinnacleById

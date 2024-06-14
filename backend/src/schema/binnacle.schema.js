@@ -11,7 +11,7 @@ const binnacleBodySchema = Joi.object({
     activityType: Joi.string().required().valid(...ACTIVITY_TYPES).messages({
         "string.empty": "El tipo de actividad no puede estar vacío.",
         "any.required": "El tipo de actividad es requerido.",
-        "any.only": `El tipo de actividad debe ser uno de: ${ACTIVITY_TYPES.join(", ")}.`
+        "any.only": `El tipo de actividad debe ser uno de: ${ACTIVITY_TYPES.join(', ')}.`
     }),
     description: Joi.string().required().messages({
         "string.empty": "La descripción no puede estar vacía.",
