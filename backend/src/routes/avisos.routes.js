@@ -1,22 +1,19 @@
-
-import { Router } from 'express';
-import { createAviso, deleteAviso, getAvisos, getAvisoById, updateAviso } from '../controllers/avisos.controller.js';
+"use strict";
+import { Router } from "express";
+import { createAviso, getAvisos, getAvisoById, updateAviso, deleteAviso } from "../controllers/avisos.controller.js";
+import { createComment, getCommentsByAvisoId } from "../controllers/comments.controller.js";
+import authenticationMiddleware from "../middlewares/authentication.middleware.js";
 
 const router = Router();
 
-// Crear un nuevo aviso
-router.post('/', createAviso);
+router.post("/", authenticationMiddleware, createAviso);
+router.get("/", getAvisos);
+router.get("/:id", getAvisoById);
+router.put("/:id", authenticationMiddleware, updateAviso);
+router.delete("/:id", authenticationMiddleware, deleteAviso);
 
-// Obtener todos los avisos
-router.get('/', getAvisos);
-
-// Obtener un aviso por su ID
-router.get('/:id', getAvisoById);
-
-// Actualizar un aviso por su ID
-router.put('/:id', updateAviso);
-
-// Eliminar un aviso por su ID
-router.delete('/:id', deleteAviso);
+// Rutas de comentarios
+router.post("/:avisoId/comments", authenticationMiddleware, createComment);
+router.get("/:avisoId/comments", getCommentsByAvisoId);
 
 export default router;

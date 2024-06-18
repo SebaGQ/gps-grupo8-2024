@@ -18,7 +18,7 @@ const avisosSchema = new mongoose.Schema({
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
-        required: false //El aviso puede no tener comentarios
+        required: false // El aviso puede no tener comentarios
     }],
     reactions: {
         likes: {
