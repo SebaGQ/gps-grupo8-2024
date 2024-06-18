@@ -29,9 +29,7 @@ const verifyJWT = (req, res, next) => {
 
     jwt.verify(token, ACCESS_JWT_SECRET, (err, decoded) => {
       if (err) return respondError(req, res, 403, "No autorizado", err.message);
-      req.user = decoded; // Configura el req.user con la información del token decodificado
-      console.log("Decoded token:", decoded); // Agregar un log para verificar el token decodificado
-      console.log("Req.user:", req.user); // Agregar un log para verificar el req.user
+      req.user = decoded;
       next();
     });
   } catch (error) {

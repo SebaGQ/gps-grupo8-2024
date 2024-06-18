@@ -7,7 +7,6 @@ import { handleError } from "../utils/errorHandler.js";
 // Crear un nuevo comentario
 export const createComment = async (req, res) => {
     try {
-        console.log("Req.user:", req.user);  // Agregar un log para verificar el req.user
         const comment = new Comment({
             aviso: req.params.avisoId,  // Usar req.params.avisoId en lugar de req.body.aviso
             author: req.user._id,  // Asegurarse de que req.user._id está presente
