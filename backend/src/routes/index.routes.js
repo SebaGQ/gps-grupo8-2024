@@ -13,7 +13,11 @@ import notificationsRoutes from "./notification.routes.js";
 /** Enrutador de autenticación */
 import authRoutes from "./auth.routes.js";
 
+/** Enrutador de avisos */
 import avisosRoutes from "./avisos.routes.js";
+
+/** Enrutador de comentarios */
+import commentRoutes from "./comment.routes.js";
 
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
@@ -34,6 +38,9 @@ router.use("/orders", authenticationMiddleware, orderRoutes);
 
 // Define las rutas para los avisos /api/avisos
 router.use("/avisos", avisosRoutes); // Ruta de avisos
+
+// Define las rutas para los comentarios /api/comments
+router.use("/comments", commentRoutes);
 
 // Exporta el enrutador
 export default router;

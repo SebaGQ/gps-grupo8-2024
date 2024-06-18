@@ -6,13 +6,14 @@ import authenticationMiddleware from "../middlewares/authentication.middleware.j
 
 const router = Router();
 
+// Rutas de avisos
 router.post("/", authenticationMiddleware, createAviso);
 router.get("/", getAvisos);
 router.get("/:id", getAvisoById);
 router.put("/:id", authenticationMiddleware, updateAviso);
 router.delete("/:id", authenticationMiddleware, deleteAviso);
 
-// Rutas de comentarios
+// Rutas de comentarios dentro de avisos
 router.post("/:avisoId/comments", authenticationMiddleware, createComment);
 router.get("/:avisoId/comments", getCommentsByAvisoId);
 

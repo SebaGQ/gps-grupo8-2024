@@ -1,6 +1,5 @@
 "use strict";
-import Aviso from "../models/aviso.model.js";
-import Comment from "../models/comment.model.js";
+import Aviso from "../models/avisos.model.js";
 import { respondSuccess, respondError } from "../utils/resHandler.js";
 import { handleError } from "../utils/errorHandler.js";
 

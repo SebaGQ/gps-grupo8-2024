@@ -1,23 +1,22 @@
 "use strict";
 import Comment from "../models/comment.model.js";
-import Aviso from "../models/aviso.model.js";
+import Aviso from "../models/avisos.model.js";
 import { respondSuccess, respondError } from "../utils/resHandler.js";
 import { handleError } from "../utils/errorHandler.js";
-
 
 // Crear un nuevo comentario
 export const createComment = async (req, res) => {
     try {
+        console.log("Req.user:", req.user);  // Agregar un log para verificar el req.user
         const comment = new Comment({
-            aviso: req.body.aviso,
-            author: req.user._id,
+            aviso: req.params.avisoId,  // Usar req.params.avisoId en lugar de req.body.aviso
+            author: req.user._id,  // Asegurarse de que req.user._id está presente
             content: req.body.content
         });
         await comment.save();
 
-
         // Agregar comentario al aviso
-        await Aviso.findByIdAndUpdate(req.body.aviso, { $push: { comments: comment._id } });
+        await Aviso.findByIdAndUpdate(req.params.avisoId, { $push: { comments: comment._id } });
         respondSuccess(req, res, 201, comment);
     } catch (error) {
         handleError(error, "createComment");
@@ -25,20 +24,18 @@ export const createComment = async (req, res) => {
     }
 };
 
-// Obtener todos los comentarios
-export const getComments = async (req, res) => {
+// Obtener todos los comentarios de un aviso
+export const getCommentsByAvisoId = async (req, res) => {
     try {
         const comments = await Comment.find({ aviso: req.params.avisoId }).populate('author', 'name');
         respondSuccess(req, res, 200, comments);
-    }
-    catch (error) {
-        handleError(error, "getComments");
+    } catch (error) {
+        handleError(error, "getCommentsByAvisoId");
         respondError(req, res, 500, error.message);
     }
 };
 
-
-// Obtener comentarios por la ID del aviso
+// Obtener comentario por la ID del comentario
 export const getAvisoCommentsById = async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.id).populate('author', 'name');
@@ -85,6 +82,3 @@ export const deleteComment = async (req, res) => {
         respondError(req, res, 500, error.message);
     }
 };
-
-
-

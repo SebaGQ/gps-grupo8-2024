@@ -41,9 +41,8 @@ async function login(user) {
     const department = await Department.findOne({ residentId: userFound._id });
     const departmentNumber = department ? department.departmentNumber : null;
 
-
     const accessToken = jwt.sign(
-      { email: userFound.email, roles: userFound.roles, departmentNumber: departmentNumber },
+      { _id: userFound._id, email: userFound.email, roles: userFound.roles, departmentNumber: departmentNumber },
       ACCESS_JWT_SECRET,
       {
         expiresIn: "1d",
@@ -82,7 +81,7 @@ async function refresh(cookies) {
         refreshToken,
         REFRESH_JWT_SECRET,
         async (err, user) => {
-          if (err) return [null, "La sesion a caducado, vuelva a iniciar sesion"];
+          if (err) return [null, "La sesión ha caducado, vuelva a iniciar sesión"];
 
           const userFound = await User.findOne({
             email: user.email,
@@ -90,12 +89,10 @@ async function refresh(cookies) {
             .populate("roles")
             .exec();
 
-          if (!userFound) return [null, "No usuario no autorizado"];
-
-
+          if (!userFound) return [null, "Usuario no autorizado"];
 
           const accessToken = jwt.sign(
-            { email: userFound.email, roles: userFound.roles, departmentNumber: userFound.departmentNumber },
+            { _id: userFound._id, email: userFound.email, roles: userFound.roles, departmentNumber: userFound.departmentNumber },
             ACCESS_JWT_SECRET,
             {
               expiresIn: "1d",
