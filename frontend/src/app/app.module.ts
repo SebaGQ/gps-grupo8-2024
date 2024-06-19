@@ -7,14 +7,20 @@ import { HomeComponent } from './home/home.component';
 import { SpacesComponent } from './spaces/spaces.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';  // Importar MatProgressSpinnerModule
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SpaceFormComponent } from './space-form/space-form.component';  // Importar MatProgressSpinnerModule
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    SpacesComponent
+    SpacesComponent,
+    SpaceFormComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +28,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
     HttpClientModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    BrowserAnimationsModule  // Importar MatProgressSpinnerModule
+    BrowserAnimationsModule,  // Importar MatProgressSpinnerModule
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatCardModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

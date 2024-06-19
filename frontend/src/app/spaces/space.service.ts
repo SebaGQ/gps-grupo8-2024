@@ -16,5 +16,16 @@ export class SpaceService {
       map(response => response.data)  // Asegúrate de extraer 'data' del objeto de respuesta
     );
   }
-  
+  createCommonSpace(space: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, space);
+  }
+
+  updateCommonSpace(id: string, space: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, space);
+  }
+
+  deleteCommonSpace(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+
   }
