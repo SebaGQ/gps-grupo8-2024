@@ -18,6 +18,9 @@ import avisosRoutes from "./avisos.routes.js";
 
 /** Enrutador de comentarios */
 import commentRoutes from "./comment.routes.js";
+import visitorRoutes from "./visitor.routes.js";
+
+import departmentRoutes from "./department.routes.js";
 
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
@@ -41,6 +44,11 @@ router.use("/avisos", avisosRoutes); // Ruta de avisos
 
 // Define las rutas para los comentarios /api/comments
 router.use("/comments", commentRoutes);
+//Define las rutas para los visitantes /api/visitors
+router.use("/visitor", authenticationMiddleware, visitorRoutes);
+
+//Define las rutas para los departamentos /api/department
+router.use("/department", authenticationMiddleware, departmentRoutes);
 
 // Exporta el enrutador
 export default router;

@@ -21,6 +21,7 @@ async function createRoles() {
       new Role({ name: "user" }).save(),
       new Role({ name: "admin" }).save(),
       new Role({ name: "janitor" }).save(),
+      new Role({ name: "visitor"}).save(),
     ]);
     console.log("* => Roles creados exitosamente");
   } catch (error) {
