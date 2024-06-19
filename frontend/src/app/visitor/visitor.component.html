@@ -1,0 +1,18 @@
+<!-- src/app/visitor/visitor.component.html -->
+
+<div *ngIf="visitantes$ | async as visitantes; else cargando">
+    <div *ngFor="let visitante of visitantes" class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ visitante.name }} {{ visitante.lastName }}</h5>
+        <p class="card-text">RUT: {{ visitante.rut }}</p>
+        <p class="card-text">Departamento: {{ visitante.departmentNumber.departmentNumber }}</p>
+        <p class="card-text">Fecha de Entrada: {{ visitante.entryDate | date }}</p>
+        <p class="card-text">Fecha de Salida: {{ visitante.exitDate | date }}</p>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #cargando>
+    <p>Cargando visitantes...</p>
+  </ng-template>
+  
