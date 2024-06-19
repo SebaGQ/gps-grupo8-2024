@@ -8,6 +8,7 @@ import NotificationService from "../services/notification.service.js";
 
 import { handleError } from "../utils/errorHandler.js";
 import ORDER_STATUSES from "../constants/orderstatus.constants.js";
+import BinnacleService from "./binnacle.service.js";
 
 /**
  * Obtiene todas las entregas de la base de datos
@@ -92,12 +93,14 @@ async function createOrder(req) {
         let newOrder = new Order({ ...orderData});
         newOrder.janitorId = user._id; //Se asigna el id del usuario que está haciendo la solicitud (Conserje)
         newOrder.status = ORDER_STATUSES[0]; //Se establece como 'Pendiente'
-        
+        await BinnacleService.createEntry(newOrder.janitorId, "Delivery", orderData);
         await newOrder.save(); 
         //Aquí ya se guardó correctamente el pedido, se procede a generar la notificación.
         
         const notificationDescription = `Ha llegado a conserjería un pedido a nombre de ${orderData.recipientFirstName}.`;
         const [notification, notificationError] = await NotificationService.createNotificationForDepartment(notificationDescription, orderData.departmentNumber);
+
+        
         if (notificationError) {
             return [null, notificationError];
         }

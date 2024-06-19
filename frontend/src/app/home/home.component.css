@@ -1,0 +1,19 @@
+.home-container {
+    text-align: center;
+  }
+
+    .home-container h1 {
+        font-size: 2em;
+        margin-top: 0;
+    }
+
+    .home-container p {
+        font-size: 1.2em;
+    }
+
+    .home-card {
+        margin-top: 20px;
+    }
+
+
+  

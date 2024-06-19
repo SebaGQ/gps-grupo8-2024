@@ -40,6 +40,12 @@ const userSchema = new mongoose.Schema(
         ref: "Role",
       },
     ],
+    bookings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking",
+      },
+    ],
   },
   {
     versionKey: false,
