@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service'; // Usa el servicio HTTP personalizado
-import { Observable } from 'rxjs';
+import { HttpService } from './http.service';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { UserDTO } from '../dto/user.dto';
 
@@ -8,7 +8,8 @@ import { UserDTO } from '../dto/user.dto';
   providedIn: 'root'
 })
 export class AuthService {
-  private authUrl = 'auth'; // Cambia esto a la URL de tu API
+  private authUrl = 'auth';
+  private authState = new BehaviorSubject<boolean>(this.isAuthenticated());
 
   constructor(private httpService: HttpService) {}
 
@@ -18,6 +19,7 @@ export class AuthService {
         tap(response => {
           localStorage.setItem('token', response.data.accessToken);
           localStorage.setItem('refreshToken', response.data.refreshToken);
+          this.authState.next(true); // Emitir nuevo estado de autenticación
         })
       );
   }
@@ -29,6 +31,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
+    this.authState.next(false); // Emitir nuevo estado de autenticación
   }
 
   getToken(): string | null {
@@ -38,5 +41,9 @@ export class AuthService {
   isAuthenticated(): boolean {
     const token = this.getToken();
     return !!token; // Devuelve true si el token existe
+  }
+
+  getAuthState(): Observable<boolean> {
+    return this.authState.asObservable();
   }
 }
