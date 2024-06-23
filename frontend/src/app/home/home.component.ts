@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 import { HttpService } from '../services/http.service';
 
 @Component({
@@ -10,7 +11,7 @@ export class HomeComponent implements OnInit {
   displayText = false;
   data: any;
 
-  constructor(private httpService: HttpService) {}
+  constructor(private authService: AuthService, private httpService: HttpService) {}
 
   ngOnInit() {
     this.fetchData();
@@ -21,9 +22,13 @@ export class HomeComponent implements OnInit {
   }
 
   fetchData() {
-    this.httpService.get('avisos').subscribe(response => {
+    this.httpService.get('some-endpoint').subscribe(response => {
       this.data = response;
-      console.log(this.data);
+      console.log(this.data); // Puedes manejar la respuesta según tus necesidades
     });
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
