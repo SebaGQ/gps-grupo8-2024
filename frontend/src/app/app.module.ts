@@ -11,6 +11,10 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthService } from './services/auth.service'; // Importar el servicio Auth
 import { HttpService } from './services/http.service'; // Importar el servicio HTTP
+import { OrderService } from './services/order.service'; // Importar el servicio Order
+import { OrderListComponent } from './components/order-list/order-list.component'; // Asegúrate de importar tu componente de órdenes
+
+
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -21,7 +25,8 @@ export function tokenGetter() {
     AppComponent,
     HomeComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    OrderListComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +41,7 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [AuthService, HttpService],
+  providers: [AuthService, OrderService, HttpService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

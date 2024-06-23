@@ -10,6 +10,7 @@ import { UserDTO } from '../../dto/user.dto';
 })
 export class RegisterComponent {
   user: UserDTO = {
+    _id: '',
     firstName: '',
     lastName: '',
     rut: '',

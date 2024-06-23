@@ -1,0 +1,42 @@
+.order-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .order-list-container h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .order-list-container ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .order-list-container li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .order-list-container li p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  .order-list-container li p:first-child {
+    font-weight: bold;
+    color: #000;
+  }
+  
