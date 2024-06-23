@@ -1,9 +1,11 @@
 <div class="home-container">
-    <div class="home-card">
-        <h1>¡Bienvenido a la Página de Inicio!</h1>
-        <button (click)="toggleText()">Mostrar/Ocultar Texto</button>
-        <p *ngIf="displayText">Aquí hay un texto que puedes mostrar u ocultar</p>
+  <div class="home-card">
+    <h1>¡Bienvenido a la Página de Inicio!</h1>
+    <button (click)="toggleText()">Mostrar/Ocultar Texto</button>
+    <p *ngIf="displayText">Aquí hay un texto que puedes mostrar u ocultar</p>
+    <div *ngIf="data">
+      <h2>Datos obtenidos del backend:</h2>
+      <pre>{{ data | json }}</pre>
     </div>
-
   </div>
-  
+</div>
