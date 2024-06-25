@@ -43,8 +43,9 @@ async function getOrderById(id) {
  */
 async function getOwnedOrders(departmentNumber) {
   try {
+    
       const orders = await Order.find({ departmentNumber: departmentNumber }).exec();
-      if (!orders || orders.length === 0) return [null, "No hay entregas disponibles para este departamento"];
+      if (!orders ) return [null, "Ha ocurrido un problema cargando las ordenes"];
 
       return [orders, null];
   } catch (error) {
@@ -60,7 +61,7 @@ async function getOwnedOrders(departmentNumber) {
 async function getOrdersByDepartmentNumber(departmentNumber) {
   try {
       const orders = await Order.find({ departmentNumber }).exec();
-      if (!orders || orders.length === 0) return [null, "No hay entregas disponibles para este departamento"];
+      if (!orders ) return [null, "Ha ocurrido un problema cargando las ordenes"];
 
       return [orders, null];
   } catch (error) {

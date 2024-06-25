@@ -1,0 +1,12 @@
+<div class="order-list-container">
+    <h1>Lista de Órdenes</h1>
+    <ul>
+      <li *ngFor="let order of orders">
+        <p>ID: {{ order._id }}</p>
+        <p>Destinatario: {{ order.recipientFirstName }} {{ order.recipientLastName }}</p>
+        <p>Departamento: {{ order.departmentNumber }}</p>
+        <p>Estado: {{ order.status }}</p>
+      </li>
+    </ul>
+  </div>
+  
