@@ -1,0 +1,27 @@
+<div class="bitacoras-container">
+  <div class="actions-card">
+    <div class="actions">
+      <input type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
+      <button (click)="buscar()">Buscar</button>
+    </div>
+  </div>
+  <div class="details-container" *ngIf="binnacles.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Conserje</th>
+          <th>Actividad</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let binnacle of binnacles">
+          <td>{{ binnacle.janitorID }}</td>
+          <td>{{ binnacle.activityType }}</td>
+          <td>{{ binnacle.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="binnacles.length === 0">{{ binnacles | json }}</div> <!-- Mostrar los datos como JSON para debug -->
+</div>

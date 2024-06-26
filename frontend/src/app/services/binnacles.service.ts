@@ -1,21 +1,24 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpService } from './http.service';
+import { BinnacleDTO } from '../dto/binnacle.dto';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BinnaclesService {
 
-  private baseUrl = 'http://localhost:3000/api/binnacles'; // Asegúrate de que la URL sea correcta
+  private binnacleUrl = 'binnacles'; // Asegúrate de que la URL sea correcta
 
-  constructor(private http: HttpClient) { }
+  constructor(private HttpService: HttpService) { }
 
-  getBinnaclesByDate(date: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/date/${date}`);
+  getBinnaclesByDate(date: string): Observable<BinnacleDTO[]> {
+    return this.HttpService.get<{data: BinnacleDTO[]}>(`${this.binnacleUrl}/date/${date}`).pipe(map(response=>response.data));
   }
 
-  getBinnacles(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/getAll`);
-  }
+  // getBinnacles(): Observable<any> {
+  //   return this.http.get(`${this.baseUrl}/getAll`);
+  // }
 }

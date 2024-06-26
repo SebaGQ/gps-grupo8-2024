@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { BinnaclesService } from '../services/binnacles.service';
+import { BinnaclesService } from '../../services/binnacles.service';
+import { BinnacleDTO } from 'src/app/dto/binnacle.dto';
 
 @Component({
   selector: 'app-binnacles',
@@ -8,16 +9,16 @@ import { BinnaclesService } from '../services/binnacles.service';
 })
 export class BinnaclesComponent {
   selectedDate: string = '';
-  binnacles: any[] = [];
+  binnacles: BinnacleDTO[] = [];
 
   constructor(private binnaclesService: BinnaclesService) {}
 
   buscar() {
     if (this.selectedDate) {
       this.binnaclesService.getBinnaclesByDate(this.selectedDate).subscribe(
-        (data) => {
+        (data: BinnacleDTO[]) => {
           this.binnacles = data;
-          console.log(this.binnacles);
+          console.log('Binnacles',this.binnacles);
         },
         (error) => {
           console.error('Error fetching binnacles', error);
@@ -26,15 +27,15 @@ export class BinnaclesComponent {
     }
   }
 
-  buscarAll() {
-    this.binnaclesService.getBinnacles().subscribe(
-      (response: any) => {
-        this.binnacles = response.data || [];
-        console.log(this.binnacles);
-      },
-      (error) => {
-        console.error('Error fetching binnacles', error);
-      }
-    );
-  }
+  // buscarAll() {
+  //   this.binnaclesService.getBinnacles().subscribe(
+  //     (response: any) => {
+  //       this.binnacles = response.data || [];
+  //       console.log(this.binnacles);
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching binnacles', error);
+  //     }
+  //   );
+  // }
 }

@@ -7,8 +7,8 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { BinnaclesComponent } from './binnacles/binnacles.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { BinnaclesComponent } from './components/binnacles/binnacles.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthService } from './services/auth.service'; // Importar el servicio Auth
@@ -37,12 +37,11 @@ export function tokenGetter() {
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    FormsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['localhost:4200'], // Cambia esto a tu dominio permitido
-        disallowedRoutes: ['http://localhost:4200/auth/login'] // Cambia esto si es necesario
+        allowedDomains: ['localhost:3000'], // Cambia esto a tu dominio permitido
+        disallowedRoutes: ['http://localhost:3000/auth/login'] // Cambia esto si es necesario
       }
     })
   ],

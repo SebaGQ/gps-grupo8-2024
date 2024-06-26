@@ -30,6 +30,7 @@ const verifyJWT = (req, res, next) => {
     jwt.verify(token, ACCESS_JWT_SECRET, (err, decoded) => {
       if (err) return respondError(req, res, 403, "No autorizado", err.message);
       req.user = decoded;
+      req.email = decoded.email;
       next();
     });
   } catch (error) {
