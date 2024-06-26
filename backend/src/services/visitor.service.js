@@ -5,6 +5,7 @@ import Department from "../models/department.model.js";
 import Role from "../models/role.model.js";
 import { handleError } from "../utils/errorHandler.js";
 
+import BinnacleService from "./binnacle.service.js";
 /**
  * Obtiene todos los visitantes de la base de datos
  * @returns {Promise} Promesa con el objeto de los visitantes
@@ -52,6 +53,7 @@ async function createVisitor(visitor) {
       entryDate: new Date(), // Fecha de ingreso actual
       exitDate: new Date("9999-12-31"), // Fecha de salida indefinida
     });
+    await BinnacleService.createEntry(req.email, "visita", newVisitor)
     await newVisitor.save();
 
     return [newVisitor, null];

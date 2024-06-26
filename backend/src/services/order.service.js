@@ -8,6 +8,7 @@ import NotificationService from "../services/notification.service.js";
 
 import { handleError } from "../utils/errorHandler.js";
 import ORDER_STATUSES from "../constants/orderstatus.constants.js";
+import BinnacleService from "./binnacle.service.js";
 
 /**
  * Obtiene todas las entregas de la base de datos
@@ -42,8 +43,9 @@ async function getOrderById(id) {
  */
 async function getOwnedOrders(departmentNumber) {
   try {
+    
       const orders = await Order.find({ departmentNumber: departmentNumber }).exec();
-      if (!orders || orders.length === 0) return [null, "No hay entregas disponibles para este departamento"];
+      if (!orders ) return [null, "Ha ocurrido un problema cargando las ordenes"];
 
       return [orders, null];
   } catch (error) {
@@ -59,7 +61,7 @@ async function getOwnedOrders(departmentNumber) {
 async function getOrdersByDepartmentNumber(departmentNumber) {
   try {
       const orders = await Order.find({ departmentNumber }).exec();
-      if (!orders || orders.length === 0) return [null, "No hay entregas disponibles para este departamento"];
+      if (!orders ) return [null, "Ha ocurrido un problema cargando las ordenes"];
 
       return [orders, null];
   } catch (error) {
@@ -92,12 +94,14 @@ async function createOrder(req) {
         let newOrder = new Order({ ...orderData});
         newOrder.janitorId = user._id; //Se asigna el id del usuario que está haciendo la solicitud (Conserje)
         newOrder.status = ORDER_STATUSES[0]; //Se establece como 'Pendiente'
-        
+        await BinnacleService.createEntry(newOrder.janitorId, "Delivery", orderData);
         await newOrder.save(); 
         //Aquí ya se guardó correctamente el pedido, se procede a generar la notificación.
         
         const notificationDescription = `Ha llegado a conserjería un pedido a nombre de ${orderData.recipientFirstName}.`;
         const [notification, notificationError] = await NotificationService.createNotificationForDepartment(notificationDescription, orderData.departmentNumber);
+
+        
         if (notificationError) {
             return [null, notificationError];
         }
