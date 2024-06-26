@@ -19,6 +19,11 @@ import commonSpaceRoutes from "./commonSpace.routes.js";
 /** Enrutador de autenticación */
 import authRoutes from "./auth.routes.js";
 
+/** Enrutador de avisos */
+import avisosRoutes from "./avisos.routes.js";
+
+/** Enrutador de comentarios */
+import commentRoutes from "./comment.routes.js";
 
 /** Enrutador de bitácoras */
 import binnacleRoutes from "./binnacle.routes.js";
@@ -45,6 +50,11 @@ router.use("/notifications", authenticationMiddleware, notificationsRoutes);
 // Define las rutas para los pedidos /api/orders
 router.use("/orders", authenticationMiddleware, orderRoutes);
 
+// Define las rutas para los avisos /api/avisos
+router.use("/avisos", avisosRoutes); // Ruta de avisos
+
+// Define las rutas para los comentarios /api/comments
+router.use("/comments", commentRoutes);
 
 //Define las rutas para las bitacoras /api/binnacles
 router.use("/binnacles", authenticationMiddleware,binnacleRoutes);

@@ -30,6 +30,10 @@ async function createVisitor(visitor) {
   try {
     const { name, lastName, rut, roles, departmentNumber } = visitor;
 
+    // Verifica si el visitante ya existe con el mismo RUT
+    const existingVisitor = await Visitor.findOne({ rut });
+    if (existingVisitor) return [null, "El visitante con este RUT ya está registrado."];
+
     // Verifica si el departamento existe
     const department = await Department.findById(departmentNumber);
     if (!department) return [null, "El número de departamento no es válido."];
