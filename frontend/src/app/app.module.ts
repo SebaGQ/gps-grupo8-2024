@@ -45,8 +45,8 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['localhost:4200'], // Cambia esto a tu dominio permitido
-        disallowedRoutes: ['http://localhost:4200/auth/login'] // Cambia esto si es necesario
+        allowedDomains: ['localhost:80'], // Cambia esto a tu dominio permitido
+        disallowedRoutes: ['http://localhost:80/auth/login'] // Cambia esto si es necesario
       }
     })
   ],

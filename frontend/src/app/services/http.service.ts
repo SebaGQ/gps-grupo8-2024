@@ -1,6 +1,5 @@
-// http.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpContext } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,19 +10,19 @@ export class HttpService {
 
   constructor(private http: HttpClient) {}
 
-  get<T>(url: string, options?: { headers?: HttpHeaders, params?: HttpParams, context?: HttpContext }): Observable<T> {
-    return this.http.get<T>(`${this.apiUrl}/${url}`, options);
+  get<T>(endpoint: string): Observable<T> {
+    return this.http.get<T>(`${this.apiUrl}/${endpoint}`);
   }
 
-  post<T>(url: string, body: any, options?: { headers?: HttpHeaders, params?: HttpParams, context?: HttpContext }): Observable<T> {
-    return this.http.post<T>(`${this.apiUrl}/${url}`, body, options);
+  post<T>(endpoint: string, data: any): Observable<T> {
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data);
   }
 
-  put<T>(url: string, body: any, options?: { headers?: HttpHeaders, params?: HttpParams, context?: HttpContext }): Observable<T> {
-    return this.http.put<T>(`${this.apiUrl}/${url}`, body, options);
+  put<T>(endpoint: string, data: any): Observable<T> {
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data);
   }
 
-  delete<T>(url: string, options?: { headers?: HttpHeaders, params?: HttpParams, context?: HttpContext }): Observable<T> {
-    return this.http.delete<T>(`${this.apiUrl}/${url}`, options);
+  delete<T>(endpoint: string): Observable<T> {
+    return this.http.delete<T>(`${this.apiUrl}/${endpoint}`);
   }
 }
