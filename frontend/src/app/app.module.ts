@@ -3,10 +3,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { VisitorComponent } from './visitor/visitor.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -14,10 +13,11 @@ import { BinnaclesComponent } from './binnacles/binnacles.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { AuthService } from './services/auth.service'; // Importar el servicio Auth
-import { HttpService } from './services/http.service'; // Importar el servicio HTTP
-import { OrderService } from './services/order.service'; // Importar el servicio Order
-import { OrderListComponent } from './components/order-list/order-list.component'; // Asegúrate de importar tu componente de órdenes
+import { AuthService } from './services/auth.service';
+import { HttpService } from './services/http.service';
+import { OrderService } from './services/order.service';
+import { OrderListComponent } from './components/order-list/order-list.component';
+import { VisitorService } from './services/visitor.service';
 
 
 
@@ -28,6 +28,7 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent,
+    VisitorComponent,
     HomeComponent,
     BinnaclesComponent,
     NavbarComponent,
@@ -49,7 +50,7 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [AuthService, OrderService, HttpService],
+  providers: [AuthService, OrderService,VisitorService, HttpService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,8 +1,7 @@
-// src/app/visitor/visitor.component.ts
-
+// visitor-list.component.ts
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { VisitorService } from '../services/visitor.service';
+import { VisitorDTO } from '../dto/visitor.dto';
 
 @Component({
   selector: 'app-visitor',
@@ -10,21 +9,23 @@ import { Observable, map } from 'rxjs';
   styleUrls: ['./visitor.component.css']
 })
 export class VisitorComponent implements OnInit {
-  visitantes$: Observable<any[]> | undefined;
+  visitors: VisitorDTO[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private visitorService: VisitorService) {}
 
-  ngOnInit(): void {
-    this.cargarVisitantes();
+  ngOnInit() {
+    this.fetchVisitors();
   }
 
-  cargarVisitantes() {
-    this.visitantes$ = this.http.get<any>('http://localhost:80/api/visitor', { withCredentials: true }).pipe(
-      map(response => response.data) // Extrae el array de visitantes de la propiedad 'data'
+  fetchVisitors() {
+    this.visitorService.getVisitors().subscribe(
+      (data: VisitorDTO[]) => {
+        console.log('Datos recibidos:', data);
+        this.visitors = data;
+      },
+      error => {
+        console.error('Error fetching visitors', error);
+      }
     );
   }
 }
-
-
-
-
