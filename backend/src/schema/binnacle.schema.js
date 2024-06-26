@@ -17,10 +17,6 @@ const binnacleBodySchema = Joi.object({
         "string.empty": "La descripción no puede estar vacía.",
         "any.required": "La descripción es requerida."
     }),
-    timestamp: Joi.date().required().messages({
-        "date.base": "El timestamp debe ser una fecha.",
-        "any.required": "El timestamp es requerido."
-    }),
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales en la bitácora."
 });

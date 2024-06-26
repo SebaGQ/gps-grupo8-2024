@@ -1,0 +1,54 @@
+/* Asegúrate de que el contenedor ocupe todo el espacio disponible */
+:host {
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  background-color: #ECF0F1; /* Cambia este color por el que desees */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.bitacoras-container {
+  display: flex;
+  height: 100%;
+}
+
+.actions-card {
+  width: 200px;
+  margin-right: 20px;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.details-container {
+  flex-grow: 1;
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.columns {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  flex-grow: 1;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.column h3 {
+  margin-top: 0;
+}

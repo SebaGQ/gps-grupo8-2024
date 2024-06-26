@@ -47,7 +47,7 @@ router.use("/orders", authenticationMiddleware, orderRoutes);
 
 
 //Define las rutas para las bitacoras /api/binnacles
-router.use("/binnacles", authenticationMiddleware, binnacleRoutes);
+router.use("/binnacles", authenticationMiddleware,binnacleRoutes);
 
 //Define las rutas para los visitantes /api/visitors
 router.use("/visitor", authenticationMiddleware, visitorRoutes);
