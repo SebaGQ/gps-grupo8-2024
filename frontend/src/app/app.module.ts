@@ -3,7 +3,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { VisitorComponent } from './visitor/visitor.component';
-import { HttpClientModule} from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
@@ -18,6 +18,7 @@ import { HttpService } from './services/http.service';
 import { OrderService } from './services/order.service';
 import { OrderListComponent } from './components/order-list/order-list.component';
 import { VisitorService } from './services/visitor.service';
+import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 
 
 
@@ -34,7 +35,7 @@ export function tokenGetter() {
     NavbarComponent,
     LoginComponent,
     RegisterComponent,
-    OrderListComponent
+    OrderListComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +51,7 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [AuthService, OrderService,VisitorService, HttpService],
+  providers: [AuthService, OrderService,VisitorService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
