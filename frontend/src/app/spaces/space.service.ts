@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CommonSpaceDto } from '../dto/space.dto'; // Importa el DTO
 
 @Injectable({
   providedIn: 'root'
@@ -11,21 +13,21 @@ export class SpaceService {
 
   constructor(private http: HttpClient) { }
 
-  getCommonSpaces(): Observable<any[]> {
-    return this.http.get<{state: string, data: any[]}>(this.apiUrl).pipe(
-      map(response => response.data)  // Asegúrate de extraer 'data' del objeto de respuesta
+  getCommonSpaces(): Observable<CommonSpaceDto[]> {
+    return this.http.get<{ state: string, data: CommonSpaceDto[] }>(this.apiUrl).pipe(
+      map(response => response.data)
     );
   }
-  createCommonSpace(space: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, space);
+
+  createCommonSpace(space: CommonSpaceDto): Observable<CommonSpaceDto> {
+    return this.http.post<CommonSpaceDto>(this.apiUrl, space);
   }
 
-  updateCommonSpace(id: string, space: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, space);
+  updateCommonSpace(id: string, space: CommonSpaceDto): Observable<CommonSpaceDto> {
+    return this.http.put<CommonSpaceDto>(`${this.apiUrl}/${id}`, space);
   }
 
-  deleteCommonSpace(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  deleteCommonSpace(id: string): Observable<CommonSpaceDto> {
+    return this.http.delete<CommonSpaceDto>(`${this.apiUrl}/${id}`);
   }
-
-  }
+}

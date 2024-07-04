@@ -14,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SpaceFormComponent } from './space-form/space-form.component';  // Importar MatProgressSpinnerModule
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -29,11 +30,13 @@ import { SpaceFormComponent } from './space-form/space-form.component';  // Impo
     MatCardModule,
     MatProgressSpinnerModule,
     BrowserAnimationsModule,  // Importar MatProgressSpinnerModule
+    ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

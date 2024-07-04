@@ -7,7 +7,7 @@ import { handleError } from "../utils/errorHandler.js";
  */
 async function getAllCommonSpaces() {
     try {
-        const commonSpaces = await CommonSpace.find().exec();
+        const commonSpaces = await CommonSpace.find().populate("image").exec();
         if (!commonSpaces) return [null, "No se encontraron espacios comunes"];
         return [commonSpaces, null];
     } catch (error) {
@@ -21,7 +21,7 @@ async function getAllCommonSpaces() {
  */
 async function getCommonSpaceById(id) {
     try {
-        const commonSpace = await CommonSpace.findById(id).exec();
+        const commonSpace = await CommonSpace.findById(id).populate("image").exec();
         if (!commonSpace) return [null, "No se encontró el espacio común"];
         return [commonSpace, null];
     } catch (error) {
@@ -43,8 +43,9 @@ async function createCommonSpace(req) {
             closingHour,
             allowedDays,
             capacity,
+            image,
         } = req.body;
-
+        console.log(req.body);
         // validar los dias permitidos
         if (allowedDays.length === 0) {
             return [null, "Debe seleccionar al menos un día permitido"];
@@ -78,6 +79,7 @@ async function createCommonSpace(req) {
             closingHour,
             allowedDays,
             capacity,
+            image,
         });
         await newCommonSpace.save();
         return [newCommonSpace, null];

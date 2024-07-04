@@ -19,6 +19,9 @@ import commonSpaceRoutes from "./commonSpace.routes.js";
 /** Enrutador de autenticación */
 import authRoutes from "./auth.routes.js";
 
+/** Enrutador de Imagenes */
+import imageFileRoutes from "./imageFile.routes.js";
+
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
 
@@ -41,6 +44,9 @@ router.use("/bookings", authenticationMiddleware, bookingRoutes);
 
 // Define las rutas para los espacios comunes /api/commonSpaces
 router.use("/commonSpaces", commonSpaceRoutes);
+
+// Define las rutas para las imagenes /api/images
+router.use("/images", imageFileRoutes);
 
 // Exporta el enrutador
 export default router;

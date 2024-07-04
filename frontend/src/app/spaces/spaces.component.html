@@ -8,6 +8,7 @@
             <mat-card-title>{{ space.name }}</mat-card-title>
             <mat-card-subtitle>{{ space.location }}</mat-card-subtitle>
           </mat-card-header>
+          <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData" alt="{{ space.name }} Image">
           <mat-card-content>
             <p>Capacidad: {{ space.capacity }} personas</p>
             <p>Equipamiento: {{ space.allowedDays.join(', ') }}</p>

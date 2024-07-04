@@ -29,7 +29,7 @@ export class SpacesComponent implements OnInit {
     this.spaceService.updateCommonSpace(id, space).subscribe(() => this.loadSpaces());
   }
 
-  deleteSpace(id: string): void {
-    this.spaceService.deleteCommonSpace(id).subscribe(() => this.loadSpaces());
+  deleteSpace(_id: string): void {
+    this.spaceService.deleteCommonSpace(_id).subscribe(() => this.loadSpaces());
   }
 }
