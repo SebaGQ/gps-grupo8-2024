@@ -21,6 +21,16 @@ import { OrderListComponent } from './components/order-list/order-list.component
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
+import { SpacesComponent } from './spaces/spaces.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SpaceFormComponent } from './space-form/space-form.component';  // Importar MatProgressSpinnerModule
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -31,6 +41,8 @@ export function tokenGetter() {
     LoginComponent,
     RegisterComponent,
     OrderListComponent
+    SpacesComponent,
+    SpaceFormComponent
   ],
   imports: [
     BrowserModule,
@@ -44,6 +56,16 @@ export function tokenGetter() {
         disallowedRoutes: ['http://localhost:3000/auth/login'] // Cambia esto si es necesario
       }
     })
+    MatCardModule,
+    MatProgressSpinnerModule,
+    BrowserAnimationsModule,  // Importar MatProgressSpinnerModule
+    ReactiveFormsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatCardModule,
+    ReactiveFormsModule,
+    MatCheckboxModule
   ],
   providers: [AuthService, OrderService, HttpService],
   bootstrap: [AppComponent]

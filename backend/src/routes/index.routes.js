@@ -32,6 +32,8 @@ import visitorRoutes from "./visitor.routes.js";
 
 import departmentRoutes from "./department.routes.js";
 
+/** Enrutador de Imagenes */
+import imageFileRoutes from "./imageFile.routes.js";
 
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
@@ -69,7 +71,10 @@ router.use("/department", authenticationMiddleware, departmentRoutes);
 router.use("/bookings", authenticationMiddleware, bookingRoutes);
 
 // Define las rutas para los espacios comunes /api/commonSpaces
-router.use("/commonSpaces", authenticationMiddleware, commonSpaceRoutes);
+router.use("/commonSpaces", commonSpaceRoutes);
+
+// Define las rutas para las imagenes /api/images
+router.use("/images", imageFileRoutes);
 
 // Exporta el enrutador
 export default router;

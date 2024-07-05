@@ -18,4 +18,14 @@ router.put("/:id", BookingController.updateBooking);
 // Cancelar una reservación
 router.delete("/:id", BookingController.deleteBooking);
 
+// Obtener una reservación por usuario
+router.get("/user/:id", BookingController.getBookingByUser);
+
+// Obtener una reservación por espacio común
+router.get("/space/:id", BookingController.getBookingBySpace);
+
+// Obtener reservación por fecha
+router.get("/date/:date", BookingController.getBookingByDate);
+
+
 export default router;
