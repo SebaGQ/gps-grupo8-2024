@@ -36,3 +36,23 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+header {
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.log {
+  background-color: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.log h3 {
+  margin: 0 0 10px 0;
+}
+.log p {
+  margin: 5px 0;
+}

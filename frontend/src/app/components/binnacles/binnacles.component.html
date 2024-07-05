@@ -1,27 +1,27 @@
+<header>
+    <h1>Bitácoras de Conserjes</h1>
+</header>
 <div class="bitacoras-container">
   <div class="actions-card">
-    <div class="actions">
-      <input type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
-      <button (click)="buscar()">Buscar</button>
+      <div class="actions">
+          <select [(ngModel)]="searchType">
+            <option value="date">Buscar por fecha</option>
+            <option value="janitor">Buscar por conserje</option>
+            <option value="activity">Buscar por actividad</option>
+            <option value="all">Buscar todo</option>
+          </select>
+          <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
+          <button *ngIf="searchType === 'date'" type="date" (click)="buscar()">Buscar</button>
+          <input *ngIf="searchType === 'janitor'" type="text" placeholder="Conserje" >
+      </div>
+  </div>
+<div class="details-container" *ngIf="binnacles.length >= 0">
+    <div *ngFor="let binnacle of binnacles" class="log">
+      <h3>Conserje: {{ binnacle.janitorID }}</h3>
+      <p>Actividad: {{ binnacle.activityType }}</p>
+      <p>Descripción: {{ binnacle.description }}</p>
+      <p>Fecha: {{ formatDate(binnacle.createdAt) }}</p>
     </div>
   </div>
-  <div class="details-container" *ngIf="binnacles.length > 0">
-    <table>
-      <thead>
-        <tr>
-          <th>Conserje</th>
-          <th>Actividad</th>
-          <th>Descripción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let binnacle of binnacles">
-          <td>{{ binnacle.janitorID }}</td>
-          <td>{{ binnacle.activityType }}</td>
-          <td>{{ binnacle.description }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div *ngIf="binnacles.length === 0">{{ binnacles | json }}</div> <!-- Mostrar los datos como JSON para debug -->
 </div>
+

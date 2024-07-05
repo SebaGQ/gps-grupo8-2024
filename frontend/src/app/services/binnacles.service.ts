@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from './http.service';
 import { BinnacleDTO } from '../dto/binnacle.dto';
-import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 @Injectable({
