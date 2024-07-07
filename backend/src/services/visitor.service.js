@@ -26,16 +26,21 @@ async function getVisitors() {
  * @param {Object} visitor Objeto de visitante
  * @returns {Promise} Promesa con el objeto de visitante creado
  */
-async function createVisitor(visitor) {
+async function createVisitor(req) {
   try {
-    const { name, lastName, rut, roles, departmentNumber } = visitor;
-
-    // Verifica si el visitante ya existe con el mismo RUT
-    const existingVisitor = await Visitor.findOne({ rut });
+    let email = req.email;
+    let visitor = req.body;
+    
+    // const { name, lastName, rut, roles, departmentNumber } = visitor;
+    // console.log("EMAIL: ", email);
+    // console.log("VISITOR: ", visitor);
+    // console.log("Departameno: ", visitor.departmentNumber);
+    // // Verifica si el visitante ya existe con el mismo RUT
+    const existingVisitor = await Visitor.findOne({ rut: visitor.rut });
     if (existingVisitor) return [null, "El visitante con este RUT ya está registrado."];
 
-    // Verifica si el departamento existe
-    const department = await Department.findById(departmentNumber);
+    // // Verifica si el departamento existe
+    const department = await Department.findById(visitor.departmentNumber);
     if (!department) return [null, "El número de departamento no es válido."];
 
     let rolesFound = [];
@@ -43,17 +48,18 @@ async function createVisitor(visitor) {
     if (!defaultRole) return [null, "El rol predeterminado no existe"];
     rolesFound = [defaultRole];
     const myRole = rolesFound.map((role) => role._id);
-
+    console.log("ROLES: ", myRole);
     const newVisitor = new Visitor({
-      name,
-      lastName,
-      rut,
-      roles: myRole,
-      departmentNumber,
+      name: visitor.name,
+      lastName: visitor.lastName,
+      rut: visitor.rut,
+      roles: visitor.roles,
+      departmentNumber: visitor.departmentNumber,
       entryDate: new Date(), // Fecha de ingreso actual
       exitDate: new Date("9999-12-31"), // Fecha de salida indefinida
     });
-    await BinnacleService.createEntry(req.email, "visita", newVisitor)
+
+    await BinnacleService.createEntryVisitor(req);
     await newVisitor.save();
 
     return [newVisitor, null];

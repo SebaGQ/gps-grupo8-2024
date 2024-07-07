@@ -12,11 +12,18 @@
           </select>
           <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
           <button *ngIf="searchType === 'date'" type="date" (click)="buscar()">Buscar</button>
-          <input *ngIf="searchType === 'janitor'" type="text" placeholder="Conserje" >
+          <label *ngIf="searchType === 'activity'">Eliga una actividad:</label>
+          <select *ngIf="searchType === 'activity'" [(ngModel)]="selectedActivity">
+            <option value="Visita">Visita</option>
+            <option value="Espacio">Reserva de espacios</option>
+            <option value="3">Delivery</option>
+          </select>
+          <button *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" type="submit" (click)="buscarVisita()">Buscar visitas</button>
+          <button *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" type="submit" (click)="buscarEspacio()">Buscar Reservas</button>
       </div>
   </div>
 <div class="details-container" *ngIf="binnacles.length >= 0">
-    <div *ngFor="let binnacle of binnacles" class="log">
+    <div *ngFor="let binnacle of formattedBinnacles" class="log">
       <h3>Conserje: {{ binnacle.janitorID }}</h3>
       <p>Actividad: {{ binnacle.activityType }}</p>
       <p>Descripción: {{ binnacle.description }}</p>

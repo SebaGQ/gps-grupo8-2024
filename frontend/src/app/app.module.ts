@@ -40,7 +40,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     NavbarComponent,
     LoginComponent,
     RegisterComponent,
-    OrderListComponent
+    OrderListComponent,
     SpacesComponent,
     SpaceFormComponent
   ],
@@ -55,7 +55,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         allowedDomains: ['localhost:3000'], // Cambia esto a tu dominio permitido
         disallowedRoutes: ['http://localhost:3000/auth/login'] // Cambia esto si es necesario
       }
-    })
+    }),
     MatCardModule,
     MatProgressSpinnerModule,
     BrowserAnimationsModule,  // Importar MatProgressSpinnerModule

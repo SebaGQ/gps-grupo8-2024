@@ -75,8 +75,7 @@ async function createBooking(req) {
         await newBooking.save();
 
         // Crear entrada en bitácora
-        const description = `Reservación creada para el espacio ${spaceId} de ${startTime} a ${endTime} por el usuario ${userId}`;
-        await BinnacleService.createEntry(userId, "Espacio Comunitario",description);
+        await BinnacleService.createEntryBooking(req);
         return [newBooking, null];
     } catch (error) {
         handleError(error, "booking.service -> createBooking");

@@ -7,6 +7,8 @@ import Binnacle from "../models/binnacle.model.js";
 import xlsx from "xlsx";
 import path from "path";
 import Users from "../models/user.model.js";
+import CommonSpace from "../models/commonSpace.model.js";
+import Department from "../models/department.model.js";
 import { handleError } from "../utils/errorHandler.js";
 
 async function exportDataToExcel() {
@@ -39,80 +41,201 @@ async function exportDataToExcel() {
     }
 }
 
-// Función para crear una entrada en la bitácora
-async function createEntry(janitorID, activityType, description) {
+// Función para crear una entrada de visita en la bitácora
+/**
+ * Crea nueva bitacora de tipo visita en la base de datos
+ * @param {Object} binnacleData Objeto de visitante
+ * @returns {Promise} Promesa con el objeto de visitante creado
+ */
+async function createEntryVisitor(req) {
     try {
-        const janitor = await Users.findById(janitorID);
-        if (!janitor) {
-            return [null, "Conserje no encontrado"];
+        let email = req.email;
+        let binnacleData = req.body;
+        let user = await Users.findOne({ email: email });
+        if (!user){ 
+            return [null, "No se reconoce al conserje que está haciendo la solicitud"];
         }
-        const janitorName = `${janitor.firstName}`;
-        // Validar si la entrada ya existe
-        const existingEntry = await Binnacle.findOne({ janitorID, activityType, description });
-        if (existingEntry) {
-            // Si ya existe, no crear una nueva
-            return [existingEntry, null];
-        }
-        const binnacleEntry = new Binnacle({
-            janitorID: janitorName,
-            activityType,
-            description
+        const newBinnacleEntry = new Binnacle({
+            janitorID: user._id,
+            activityType: "Visita",
+            name: binnacleData.name,
+            lastName: binnacleData.lastName,
+            rut: binnacleData.rut,
+            roles: binnacleData.roles,
+            departmentNumber: binnacleData.departmentNumber,
         });
-        await binnacleEntry.save();
-        return [binnacleEntry, null];
+        console.log("Binnacle: \n", newBinnacleEntry);
+        await newBinnacleEntry.save();
+        return [newBinnacleEntry, null];
     } catch (error) {
         handleError(error, "binnacle.service -> createEntry");
         return [null, error.message];
     }
 }
 
-// async function generateDailyBinnacle() {
-//     try {
-//         const orders = await Order.find().populate("janitorId");
-//         const visitors = await Visitor.find().populate("departmentNumber");
-//         const bookings = await Booking.find().populate("userId").populate("spaceId");
-
-//         for (const order of orders) {
-//             const description = `Order for ${order.recipientFirstName} ${order.recipientLastName}, delivered by ${order.deliveryPersonName}. Status: ${order.status}.`;
-//             const [result, error] = await createEntry(order.janitorId, "Delivery", description);
-//             if (error) {
-//                 throw new Error(`Error creating binnacle entry for order: ${error}`);
-//             }
-//         }
-
-//         for (const visitor of visitors) {
-//             const description = `Visitor ${visitor.name} ${visitor.lastName} visited department ${visitor.departmentNumber}. Entry: ${visitor.entryDate}, Exit: ${visitor.exitDate}.`;
-//             const [result, error] = await createEntry(visitor.departmentNumber, "Visita", description);
-//             if (error) {
-//                 throw new Error(`Error creating binnacle entry for visitor: ${error}`);
-//             }
-//         }
-
-//         for (const booking of bookings) {
-//             const description = `Booking for space ${booking.spaceId} by user ${booking.userId}. Start: ${booking.startTime}, End: ${booking.endTime}.`;
-//             const [result, error] = await createEntry(booking.userId, "Espacio Comunitario", description);
-//             if (error) {
-//                 throw new Error(`Error creating binnacle entry for booking: ${error}`);
-//             }
-//         }
-
-//         return [null, null];
-//     } catch (error) {
-//         return [null, error.message];
-//     }
-// }
-
+// Función para crear una entrada de Delivery en la bitácora
 /**
- * Obtener todas las entradas de la bitácora
+ * Crea nueva bitacora de tipo visita en la base de datos
+ * @param {Object} binnacleData Objeto de visitante
+ * @returns {Promise} Promesa con el objeto de visitante creado
  */
-async function getBinnacles() {
+async function createEntryDelivery(req) {
+
+}
+
+// Función para crear una entrada de Espacios Comunitarios en la bitácora
+/**
+ * Crea nueva bitacora de tipo visita en la base de datos
+ * @param {Object} binnacleData Objeto de visitante
+ * @returns {Promise} Promesa con el objeto de visitante creado
+ */
+async function createEntryBooking(req) {
+    try{
+        const email = req.email;
+        const { spaceId, startTime, endTime } = req.body;
+
+        // Verificar si el email ya está registrado
+        const userId = await Users.findOne({ email: email }).select("_id").exec();
+        if (!userId) return [null, "El email no está registrado"];
+
+        const newBinnacleEntry = new Binnacle({ 
+            janitorID: userId, 
+            activityType: "Espacio Comunitario", 
+            spaceId: spaceId, 
+            startTime: startTime, 
+            endTime: endTime });
+        await newBinnacleEntry.save();
+        return [newBinnacleEntry, null];
+    }catch(error){
+        handleError(error, "binnacle.service -> createEntryBooking");
+        return [null, error.message];
+    }
+        
+}
+/**
+ * Obtener todas las entradas de la bitácora por activityType
+ */
+async function getBinnaclesVisitor() {
     try {
-        const binnacle = await Binnacle.find();
-        return [binnacle, null];
+        // Paso 1: Obtener los registros de Binnacle con activityType "Visita"
+        const binnacles = await Binnacle.find({ activityType: "Visita" })
+            .select('janitorID activityType name lastName rut departmentNumber createdAt')
+            .lean();
+        
+        // Paso 2: Extraer los janitorID
+        const janitorIds = binnacles.map(binnacle => binnacle.janitorID);
+        
+        // Paso 3: Obtener los nombres de los conserjes
+        const janitors = await Users.find({ _id: { $in: janitorIds } })
+            .select('firstName lastName')
+            .lean();
+        
+        // Crear un diccionario de conserjes para acceso rápido
+        const janitorDict = {};
+        janitors.forEach(janitor => {
+            janitorDict[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
+        });
+
+        // Paso 4: Extraer los departmentNumbers únicos
+        const departmentIds = [...new Set(binnacles.map(binnacle => binnacle.departmentNumber))];
+        console.log("DEPARTMENTS IDS", departmentIds);
+
+        // Paso 5: Obtener los detalles de los departamentos usando _id
+        const departments = await Department.find({ _id: { $in: departmentIds } })
+            .select('_id departmentNumber')
+            .lean();
+        console.log("DEPARTMENTS", departments);
+
+        // Crear un diccionario de departamentos para acceso rápido
+        const departmentDict = {};
+        departments.forEach(department => {
+            departmentDict[department._id] = department.departmentNumber;
+        });
+        console.log("DEPARTMENT DICT", departmentDict);
+
+        // Paso 6: Combinar los resultados
+        const formattedBinnacles = binnacles.map(entry => {
+            return {
+                janitorID: janitorDict[entry.janitorID],
+                activityType: entry.activityType,
+                name: entry.name,
+                lastName: entry.lastName,
+                rut: entry.rut,
+                departmentNumber: departmentDict[entry.departmentNumber],
+                createdAt: entry.createdAt
+            };
+        });
+
+        return [formattedBinnacles, null];
     } catch (error) {
         return [null, error.message];
     }
 }
+
+/**
+ * Obtener todas las entradas de la bitácora por Espacios Comunitarios
+ */
+async function getBinnaclesBooking() {
+    try {
+        // Paso 1: Obtener los registros de Binnacle con activityType "Espacio Comunitario"
+        const binnacles = await Binnacle.find({ activityType: "Espacio Comunitario" })
+            .select('janitorID activityType spaceId startTime endTime createdAt')
+            .lean();
+        
+        // Paso 2: Extraer los janitorID
+        const janitorIds = binnacles.map(binnacle => binnacle.janitorID);
+        
+        // Paso 3: Obtener los nombres de los conserjes
+        const janitors = await Users.find({ _id: { $in: janitorIds } })
+            .select('firstName lastName')
+            .lean();
+        
+        // Crear un diccionario de conserjes para acceso rápido
+        const janitorDict = {};
+        janitors.forEach(janitor => {
+            janitorDict[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
+        });
+
+        // Paso 4: Extraer los spaceIds únicos
+        const spaceIds = [...new Set(binnacles.map(binnacle => binnacle.spaceId))];
+        console.log("SPACE IDS", spaceIds);
+
+        // Paso 5: Obtener los detalles de los espacios comunitarios usando _id
+        const spaces = await CommonSpace.find({ _id: { $in: spaceIds } })
+            .select('type location')
+            .lean();
+        console.log("SPACES", spaces);
+
+        // Crear un diccionario de espacios para acceso rápido
+        const spaceDict = {};
+        spaces.forEach(space => {
+            spaceDict[space._id] = space.type + " - " + space.location;
+        });
+        console.log("SPACE DICT", spaceDict);
+
+        // Paso 6: Combinar los resultados
+        const formattedBinnacles = binnacles.map(entry => {
+            return {
+                janitorID: janitorDict[entry.janitorID],
+                activityType: entry.activityType,
+                spaceId: spaceDict[entry.spaceId],
+                startTime: entry.startTime,
+                endTime: entry.endTime,
+                createdAt: entry.createdAt
+            };
+        });
+
+        return [formattedBinnacles, null];
+    } catch (error) {
+        return [null, error.message];
+    }
+}
+
+
+
+
+
+
 
 /**
  * Obtener todas las entradas de la bitácora por janitorID
@@ -126,17 +249,7 @@ async function getBinnacleByJanitorID(janitorID) {
     }
 }
 
-/**
- * Obtener todas las entradas de la bitácora por activityType
- */
-async function getBinnacleByActivityType(activityType) {
-    try {
-        const binnacle = await Binnacle.find({ activityType });
-        return [binnacle, null];
-    } catch (error) {
-        return [null, error.message];
-    }
-}
+
 
 /**
  * Obtener todas las entradas de la bitácora por fecha
@@ -157,10 +270,30 @@ async function getBinnacleByDate(date) {
                 $lte: end
             }
         });
-        // desglosamos binnacle en JanatiroID, activityType y description
-        const respuesta = binnacle.map(({ janitorID, activityType, description }) => ({ janitorID, activityType, description }));
+        // Para cada bitácora, obtener el nombre del conserje
+        const janitorIds = binnacle.map(binnacle => binnacle.janitorID);
+        console.log("IDS",janitorIds);
+        const janitors = await Users.find({_id: {$in: janitorIds}})
+            .select('firstName lastName')
+            .lean();
+        console.log("JANITORS",janitors);
+        // Crear un mapa de conserje por ID para una búsqueda rápida
+        const janitorMap = {};
+        janitors.forEach(janitor => {
+            janitorMap[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
+        });
 
-        return [respuesta, null];
+        console.log("MAP",janitorMap);
+
+        // Añadir el nombre del conserje a cada bitácora
+        const result = binnacle.map(binnacle => ({
+            ...binnacle._doc,  // Para obtener los datos del documento
+            janitorID: janitorMap[binnacle.janitorID] || 'Nombre no encontrado'
+        }));
+
+        // Enviamos la respuesta
+        return [result, null];
+        
     } catch (error) {
         return [null, error.message];
     }
@@ -168,10 +301,10 @@ async function getBinnacleByDate(date) {
 
 export default {
     exportDataToExcel,
-    createEntry,
-    // generateDailyBinnacle,
-    getBinnacles,
+    createEntryVisitor,
+    createEntryBooking,
+    getBinnaclesBooking,
+    getBinnaclesVisitor,
     getBinnacleByJanitorID,
-    getBinnacleByActivityType,
     getBinnacleByDate,
 };

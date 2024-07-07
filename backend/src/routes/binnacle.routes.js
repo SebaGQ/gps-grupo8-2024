@@ -13,10 +13,11 @@ const router = Router();
 router.use(authenticationMiddleware);
 
 
-router.post("/Entry", isJanitorOrAdmin,BinnacleController.createEntry);
+router.post("/EntryVisitor", isJanitorOrAdmin,BinnacleController.createEntryVisitor);
 router.get("/getAll", isJanitorOrAdmin, BinnacleController.getBinnacles);
 router.get("/id/:id", isJanitorOrAdmin,BinnacleController.getBinnacleByJanitorID);
-router.get("/activity/:activityType", isJanitorOrAdmin,BinnacleController.getBinnacleByActivityType);
+router.get("/visitor", isJanitorOrAdmin,BinnacleController.getBinnaclesVisitor);
+router.get("/booking", isJanitorOrAdmin,BinnacleController.getBinnaclesBooking);
 router.get("/date/:date", isJanitorOrAdmin,BinnacleController.getBinnacleByDate);
 router.get("/excel", isJanitorOrAdmin,BinnacleController.exportToExcel);
 

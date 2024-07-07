@@ -1,9 +1,9 @@
-"use strict"
+"use strict";
 import Joi from "joi";
 import ACTIVITY_TYPES from "../constants/activitytypes.constants.js";
-/* Esquema de validacion Bitacora */
+import ORDER_STATUSES from "../constants/orderstatus.constants.js";
 
-const binnacleBodySchema = Joi.object({
+const commonFields = {
     janitorId: Joi.string().required().messages({
         "string.empty": "El id del conserje no puede estar vacío.",
         "any.required": "El id del conserje es requerido."
@@ -12,14 +12,142 @@ const binnacleBodySchema = Joi.object({
         "string.empty": "El tipo de actividad no puede estar vacío.",
         "any.required": "El tipo de actividad es requerido.",
         "any.only": `El tipo de actividad debe ser uno de: ${ACTIVITY_TYPES.join(', ')}.`
+    })
+};
+
+// Esquema para Visita
+const visitaSchema = Joi.object({
+    ...commonFields,
+    name: Joi.string().required().messages({
+        "string.empty": "El nombre no puede estar vacío.",
+        "any.required": "El nombre es requerido para la visita."
     }),
-    description: Joi.string().required().messages({
-        "string.empty": "La descripción no puede estar vacía.",
-        "any.required": "La descripción es requerida."
+    lastName: Joi.string().required().messages({
+        "string.empty": "El apellido no puede estar vacío.",
+        "any.required": "El apellido es requerido para la visita."
+    }),
+    rut: Joi.string()
+    .required()
+    .min(9)
+    .max(10)
+    .pattern(/^[0-9]+[-|‐]{1}[0-9kK]{1}$/)
+    .messages({
+      "string.empty": "El RUT no puede estar vacío.",
+      "any.required": "El RUT es obligatorio.",
+      "string.base": "El RUT debe ser de tipo string.",
+      "string.min": "El RUT debe tener al menos 9 caracteres.",
+      "string.max": "El RUT debe tener al menos 10 caracteres.",
+      "string.pattern.base":
+        "El RUT tiene el formato XXXXXXXX-X, ejemplo: 12345678-9.",
+    }),
+    departmentNumber: Joi.string().required().messages({
+        "string.empty": "El número de departamento no puede estar vacío.",
+        "any.required": "El número de departamento es requerido para la visita."
     }),
 }).messages({
-    "object.unknown": "No se permiten propiedades adicionales en la bitácora."
+    "object.unknown": "No se permiten propiedades adicionales en la bitácora de visita."
 });
 
-// Exportación de los esquemas
-export { binnacleBodySchema };
+// Esquema para Delivery
+const deliverySchema = Joi.object({
+    ...commonFields,
+    departNumber: Joi.number().required().messages({
+        "number.base": "El número de departamento debe ser un número.",
+        "any.required": "El número de departamento es requerido para la entrega."
+    }),
+    recipientFirstName: Joi.string().required().messages({
+        "string.empty": "El nombre del destinatario no puede estar vacío.",
+        "any.required": "El nombre del destinatario es requerido."
+    }),
+    recipientLastName: Joi.string().required().messages({
+        "string.empty": "El apellido del destinatario no puede estar vacío.",
+        "any.required": "El apellido del destinatario es requerido."
+    }),
+    deliveryTime: Joi.date().required().messages({
+        "date.base": "El tiempo de entrega debe ser una fecha válida.",
+        "any.required": "El tiempo de entrega es requerido."
+    }),
+    withdrawnTime: Joi.date().required().messages({
+        "date.base": "El tiempo de retiro debe ser una fecha válida.",
+        "any.required": "El tiempo de retiro es requerido."
+    }),
+    withdrawnResidentId: Joi.string().required().messages({
+        "string.empty": "El id del residente que retira no puede estar vacío.",
+        "any.required": "El id del residente que retira es requerido."
+    }),
+    withdrawnPersonFirstName: Joi.string().required().messages({
+        "string.empty": "El nombre de la persona que retira no puede estar vacío.",
+        "any.required": "El nombre de la persona que retira es requerido."
+    }),
+    withdrawnPersonLastName: Joi.string().required().messages({
+        "string.empty": "El apellido de la persona que retira no puede estar vacío.",
+        "any.required": "El apellido de la persona que retira es requerido."
+    }),
+    expectedWithdrawnPersonFirstName: Joi.string().required().messages({
+        "string.empty": "El nombre esperado de la persona que retira no puede estar vacío.",
+        "any.required": "El nombre esperado de la persona que retira es requerido."
+    }),
+    expectedWithdrawnPersonLastName: Joi.string().required().messages({
+        "string.empty": "El apellido esperado de la persona que retira no puede estar vacío.",
+        "any.required": "El apellido esperado de la persona que retira es requerido."
+    }),
+    deliveryPersonName: Joi.string().required().messages({
+        "string.empty": "El nombre de la persona que entrega no puede estar vacío.",
+        "any.required": "El nombre de la persona que entrega es requerido."
+    }),
+    status: Joi.string().required().valid(...ORDER_STATUSES).messages({
+        "string.empty": "El estado no puede estar vacío.",
+        "any.required": "El estado es requerido.",
+        "any.only": `El estado debe ser uno de: ${ORDER_STATUSES.join(', ')}.`
+    })
+}).messages({
+    "object.unknown": "No se permiten propiedades adicionales en la bitácora de entrega."
+});
+
+// Esquema para Espacio Comunitario
+const espacioComunitarioSchema = Joi.object({
+    ...commonFields,
+    spaceId: Joi.string().required().messages({
+        "string.empty": "El id del espacio comunitario no puede estar vacío.",
+        "any.required": "El id del espacio comunitario es requerido."
+    }),
+    userId: Joi.string().required().messages({
+        "string.empty": "El id del usuario no puede estar vacío.",
+        "any.required": "El id del usuario es requerido."
+    }),
+    startTime: Joi.date().required().messages({
+        "date.base": "El tiempo de inicio debe ser una fecha válida.",
+        "any.required": "El tiempo de inicio es requerido."
+    }),
+    endTime: Joi.date().required().messages({
+        "date.base": "El tiempo de fin debe ser una fecha válida.",
+        "any.required": "El tiempo de fin es requerido."
+    })
+}).messages({
+    "object.unknown": "No se permiten propiedades adicionales en la bitácora de espacio comunitario."
+});
+
+// Mapeo de tipos de actividad a sus respectivos esquemas
+const schemas = {
+    'Visita': visitaSchema,
+    'Delivery': deliverySchema,
+    'Espacio Comunitario': espacioComunitarioSchema
+};
+
+// Función para seleccionar el esquema adecuado
+const selectSchema = (activityType) => {
+    const schema = schemas[activityType];
+    if (!schema) {
+        throw new Error('Tipo de actividad desconocido.');
+    }
+    return schema;
+};
+
+// Función para validar el cuerpo de la solicitud
+const validateBinnacleBody = (data) => {
+    const { activityType } = data;
+    const schema = selectSchema(activityType);
+    return schema.validate(data, { abortEarly: false });
+};
+
+export { validateBinnacleBody };

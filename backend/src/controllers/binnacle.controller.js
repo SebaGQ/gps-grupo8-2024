@@ -28,33 +28,43 @@ async function exportToExcel(req, res) {
 /**
  * Generar una entrada en la bitácora
  */
-async function createEntry(req, res) {
+async function createEntryVisitor(req, res) {
     try {
-        const { janitorID, activityType, description } = req.body;
-        const [binnacleEntry, error] = await BinnacleService.createEntry(janitorID, activityType, description);
-        if (error) return respondError(req, res, 500, error);
-
+        const { body } = req.body;
+        const { error: bodyError } = binnacleBodySchema.validate(body);
+        if (bodyError) return respondError(req, res, 400, bodyError.message);
+        const [binnacleEntry, binnacleError] = await BinnacleService.createEntryVisitor(req);
         respondSuccess(req, res, 201, binnacleEntry);
-    } catch (error) {
+        if (visitorError) return respondError(req, res, 400, binnacleError);
+        if (!binnacleEntry) {
+          return respondError(req, res, 400, "No se creó la bitacora");
+        }
+    
+        respondSuccess(req, res, 201, newVisitor);
+      } catch (error) {
         handleError(error, "binnacle.controller -> createEntry");
-        respondError(req, res, 500, "No se pudo crear la entrada en la bitácora");
-    }
+        respondError(req, res, 500, "No se creó la bitacora");
+      }
 }
 
-/**
- * Genera la bitácora diaria
- */
-// async function generateDailyBinnacle(req, res) {
-//     try {
-//         const [result, error] = await BinnacleService.generateDailyBinnacle();
-//         if (error) return respondError(req, res, 500, error);
-
-//         respondSuccess(req, res, 200, "Daily binnacle generated successfully");
-//     } catch (error) {
-//         handleError(error, "binnacle.controller -> generateDailyBinnacle");
-//         respondError(req, res, 500, "No se pudo generar la bitácora");
-//     }
-// }
+async function createEntryBooking(req, res) {
+    try {
+        const { body } = req.body;
+        const { error: bodyError } = binnacleBodySchema.validate(body);
+        if (bodyError) return respondError(req, res, 400, bodyError.message);
+        const [binnacleEntry, binnacleError] = await BinnacleService.createEntryBooking(req);
+        respondSuccess(req, res, 201, binnacleEntry);
+        if (visitorError) return respondError(req, res, 400, binnacleError);
+        if (!binnacleEntry) {
+          return respondError(req, res, 400, "No se creó la bitacora");
+        }
+    
+        respondSuccess(req, res, 201, newVisitor);
+      } catch (error) {
+        handleError(error, "binnacle.controller -> createEntry");
+        respondError(req, res, 500, "No se creó la bitacora");
+      }
+}
 
 /**
  * Obtiene todas las entradas de la bitácora
@@ -94,22 +104,36 @@ async function getBinnacleByJanitorID(req, res) {
 }
 
 /**
- * Obtiene una entrada de la bitácora por su tipo de actividad
+ * Obtiene una entrada de la bitácora por Visita
  */
-async function getBinnacleByActivityType(req, res) {
+async function getBinnaclesVisitor(req, res) {
     try {
-        const { params } = req;
-        const [binnacle, error] = await BinnacleService.getBinnacleByActivityType(params.activityType);
-
+        const [binnacle, error] = await BinnacleService.getBinnaclesVisitor();
         if (error) return respondError(req, res, 404, error);
-        if (!binnacle) {
-            return respondError(req, res, 404, "No se encontró la entrada de la bitácora");
-        }
 
-        respondSuccess(req, res, 200, binnacle);
+        binnacle.length === 0
+            ? respondSuccess(req, res, 204)
+            : respondSuccess(req, res, 200, binnacle);
     } catch (error) {
-        handleError(error, "binnacle.controller -> getBinnacleByActivityType");
-        respondError(req, res, 500, "No se pudo obtener la entrada de la bitácora");
+        handleError(error, "binnacle.controller -> getBinnaclesVisitor");
+        respondError(req, res, 400, error.message);
+    }
+}
+
+/**
+ * Obtiene una entrada de la bitácora por Espacio comunitarios
+ */
+async function getBinnaclesBooking(req, res) {
+    try {
+        const [binnacle, error] = await BinnacleService.getBinnaclesBooking();
+        if (error) return respondError(req, res, 404, error);
+
+        binnacle.length === 0
+            ? respondSuccess(req, res, 204)
+            : respondSuccess(req, res, 200, binnacle);
+    } catch (error) {
+        handleError(error, "binnacle.controller -> getBinnaclesBooking");
+        respondError(req, res, 400, error.message);
     }
 }
 
@@ -134,11 +158,12 @@ async function getBinnacleByDate(req, res) {
 }
 export default {
     exportToExcel,
-    createEntry,
-    // generateDailyBinnacle,
+    createEntryVisitor,
+    createEntryBooking,
+    getBinnaclesBooking,
     getBinnacles,
     getBinnacleByJanitorID,
-    getBinnacleByActivityType,
+    getBinnaclesVisitor,
     getBinnacleByDate
 };
 
