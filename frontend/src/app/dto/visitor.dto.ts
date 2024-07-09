@@ -2,7 +2,7 @@ import { UserDTO } from "./user.dto";
 
 // visitor.dto.ts
 export interface VisitorDTO {
-    _id: string;
+    _id?: string;
     name: string;
     lastName: string;
     rut: string;

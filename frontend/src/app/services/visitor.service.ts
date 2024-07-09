@@ -31,13 +31,13 @@ export class VisitorService {
     );
   }
 
-  createVisitor(visitor: VisitorDTO): Observable<VisitorDTO> {
+  createVisitor(visitor: Partial<Omit<VisitorDTO, 'departmentNumber'>> & { departmentNumber: string }): Observable<VisitorDTO> {
     return this.httpService.post<{ data: VisitorDTO }>(`${this.visitorUrl}/`, visitor).pipe(
       map(response => response.data)
     );
   }
 
-  updateVisitor(id: string, visitor: VisitorDTO): Observable<VisitorDTO> {
+  updateVisitor(id: string, visitor: Partial<Omit<VisitorDTO, 'departmentNumber'>> & { departmentNumber: string }): Observable<VisitorDTO> {
     return this.httpService.put<{ data: VisitorDTO }>(`${this.visitorUrl}/${id}`, visitor).pipe(
       map(response => response.data)
     );
@@ -45,5 +45,11 @@ export class VisitorService {
 
   deleteVisitor(id: string): Observable<void> {
     return this.httpService.delete<void>(`${this.visitorUrl}/${id}`);
+  }
+
+  registerExit(visitorId: string): Observable<VisitorDTO> {
+    return this.httpService.put<{ data: VisitorDTO }>(`${this.visitorUrl}/${visitorId}/exit-date`, { exitDate: new Date() }).pipe(
+      map(response => response.data)
+    );
   }
 }

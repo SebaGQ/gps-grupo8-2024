@@ -19,6 +19,9 @@ import { OrderService } from './services/order.service';
 import { OrderListComponent } from './components/order-list/order-list.component';
 import { VisitorService } from './services/visitor.service';
 import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { VisitorFormDialogComponent } from './visitor/visitor-form-dialog/visitor-form-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -36,12 +39,14 @@ export function tokenGetter() {
     LoginComponent,
     RegisterComponent,
     OrderListComponent,
+    VisitorFormDialogComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    MatDialogModule,
     FormsModule,
     JwtModule.forRoot({
       config: {
@@ -49,7 +54,8 @@ export function tokenGetter() {
         allowedDomains: ['localhost:80'], // Cambia esto a tu dominio permitido
         disallowedRoutes: ['http://localhost:80/auth/login'] // Cambia esto si es necesario
       }
-    })
+    }),
+    BrowserAnimationsModule
   ],
   providers: [AuthService, OrderService,VisitorService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

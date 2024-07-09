@@ -39,7 +39,7 @@ async function createVisitor(req, res) {
     const { error: bodyError } = visitorBodySchema.validate(body);
     if (bodyError) return respondError(req, res, 400, bodyError.message);
 
-    const [newVisitor, visitorError] = await VisitorService.createVisitor(body);
+    const [newVisitor, visitorError] = await VisitorService.createVisitor(req);
 
     if (visitorError) return respondError(req, res, 400, visitorError);
     if (!newVisitor) {
@@ -52,6 +52,7 @@ async function createVisitor(req, res) {
     respondError(req, res, 500, "No se creó el visitante");
   }
 }
+
 
 /**
  * Obtiene un visitante por su id

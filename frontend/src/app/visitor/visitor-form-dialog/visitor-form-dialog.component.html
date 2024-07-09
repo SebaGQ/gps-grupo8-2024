@@ -1,0 +1,26 @@
+<!-- visitor-form-dialog.component.html -->
+<div class="dialog-container">
+    <h2>Registrar Visita</h2>
+    <form (ngSubmit)="onSubmit()" #visitorForm="ngForm">
+      <div>
+        <label for="name">Nombre</label>
+        <input type="text" id="name" required [(ngModel)]="visitor.name" name="name">
+      </div>
+      <div>
+        <label for="lastName">Apellido</label>
+        <input type="text" id="lastName" required [(ngModel)]="visitor.lastName" name="lastName">
+      </div>
+      <div>
+        <label for="rut">RUT</label>
+        <input type="text" id="rut" required [(ngModel)]="visitor.rut" name="rut">
+      </div>
+      <div>
+        <label for="department">Departamento</label>
+        <select id="department" required [(ngModel)]="visitor.departmentNumber" name="departmentNumber">
+          <option *ngFor="let department of departments" [ngValue]="department">{{ department.departmentNumber }}</option>
+        </select>
+      </div>
+      <button type="submit">Registrar</button>
+    </form>
+  </div>
+  

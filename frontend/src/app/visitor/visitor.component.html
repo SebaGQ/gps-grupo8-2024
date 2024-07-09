@@ -1,16 +1,25 @@
-<!-- visitor-list.component.html -->
-<div class="visitor-list-container">
-  <h1>Lista de Visitantes</h1>
-  <ul>
-    <li *ngFor="let visitor of visitors">
-      <p>Nombre: {{ visitor.name }} {{ visitor.lastName }}</p>
-      <p>RUT: {{ visitor.rut }}</p>
-      <p>Departamento: {{ visitor.departmentNumber.departmentNumber }}</p>
-      <p>Fecha de Entrada: {{ visitor.entryDate | date }}</p>
-      <p>Fecha de Salida: {{ visitor.exitDate | date }}</p>
-    </li>
-  </ul>
+<!-- visitor.component.html -->
+<div class="container mt-4">
+  <div class="d-flex justify-content-between mb-3">
+    <h1>Lista de Visitantes</h1>
+    <button class="btn btn-primary" (click)="openDialog()">Registrar Nueva Visita</button>
+  </div>
+  <div class="row">
+    <div *ngFor="let visitor of visitors" class="col-md-4 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ visitor.name }} {{ visitor.lastName }}</h5>
+          <p class="card-text"><strong>RUT:</strong> {{ visitor.rut }}</p>
+          <p class="card-text"><strong>Departamento:</strong> {{ visitor.departmentNumber.departmentNumber }}</p>
+          <p class="card-text"><strong>Fecha de Entrada:</strong> {{ visitor.entryDate | date }}</p>
+          <p class="card-text"><strong>Fecha de Salida:</strong> {{ visitor.exitDate | date }}</p>
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-success btn-sm" (click)="registerExit(visitor._id!)">Registrar Salida</button>
+            <button class="btn btn-warning btn-sm" (click)="openDialog(visitor)">Modificar</button>
+            <button class="btn btn-danger btn-sm" (click)="deleteVisitor(visitor._id!)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-
-  

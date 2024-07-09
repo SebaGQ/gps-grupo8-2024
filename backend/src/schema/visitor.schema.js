@@ -41,19 +41,15 @@ const visitorBodySchema = Joi.object({
       "array.base": "El rol debe ser de tipo array.",
       "any.required": "El rol es obligatorio.",
     }),
-  departmentNumber: Joi.string()
-    .required()
-    .pattern(/^(?:[0-9a-fA-F]{24}|[0-9a-fA-F]{12})$/)
-    .messages({
-      "string.empty": "El número de departamento no puede estar vacío.",
-      "any.required": "El número de departamento es obligatorio.",
-      "string.base": "El número de departamento debe ser de tipo string.",
-      "string.pattern.base":
-        "El número de departamento proporcionado no es un ObjectId válido.",
+    departmentNumber: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).required().messages({
+      "string.pattern.base": "El número de departamento proporcionado no es un ObjectId válido."
     }),
-  exitDate: Joi.date().optional().messages({
-    "date.base": "La fecha de salida debe ser de tipo fecha.",
-  }),
+    entryDate: Joi.date().optional().messages({
+      "date.base": "La fecha de entrada debe ser de tipo fecha.",
+    }),
+    exitDate: Joi.date().optional().messages({
+      "date.base": "La fecha de salida debe ser de tipo fecha.",
+    }),
 }).messages({
   "object.unknown": "No se permiten propiedades adicionales.",
 });
