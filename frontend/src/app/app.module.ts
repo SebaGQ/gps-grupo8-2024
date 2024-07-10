@@ -15,6 +15,7 @@ import { AuthService } from './services/auth.service'; // Importar el servicio A
 import { HttpService } from './services/http.service'; // Importar el servicio HTTP
 import { OrderService } from './services/order.service'; // Importar el servicio Order
 import { OrderListComponent } from './components/order-list/order-list.component'; // Asegúrate de importar tu componente de órdenes
+import { MatSelectModule } from '@angular/material/select'; // Importa MatSelectModule
 
 
 
@@ -65,7 +66,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSelectModule
   ],
   providers: [AuthService, OrderService, HttpService],
   bootstrap: [AppComponent]

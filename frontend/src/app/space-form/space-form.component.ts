@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { CommonSpaceDto } from '../dto/space.dto'; // Importa el DTO
 import { MatCheckboxChange } from '@angular/material/checkbox'; // Importa MatCheckboxChange
 import { HttpClient } from '@angular/common/http';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-space-form',
@@ -33,7 +34,7 @@ export class SpaceFormComponent {
     private http: HttpClient
   ) {
     this.spaceForm = this.fb.group({
-      name: ['', Validators.required],
+      avaibility : [true, Validators.required],
       location: ['', Validators.required],
       capacity: [0, Validators.required],
       allowedDays: this.fb.array([], Validators.required),

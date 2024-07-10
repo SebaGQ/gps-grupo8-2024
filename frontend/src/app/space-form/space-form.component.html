@@ -2,10 +2,6 @@
   <h2>Agregar Nuevo Espacio</h2>
   <form [formGroup]="spaceForm" (ngSubmit)="createSpace()">
     <mat-form-field>
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" required>
-    </mat-form-field>
-    <mat-form-field>
       <mat-label>Ubicación</mat-label>
       <input matInput formControlName="location" required>
     </mat-form-field>
@@ -32,6 +28,13 @@
     <mat-form-field>
       <mat-label>Tipo</mat-label>
       <input matInput formControlName="type" required>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Disponibilidad</mat-label>
+      <mat-select formControlName="availability" required>
+        <mat-option value="Disponible">Disponible</mat-option>
+        <mat-option value="No Disponible">No Disponible</mat-option>
+      </mat-select>
     </mat-form-field>
     <div>
       <label for="file">Imagen</label>
