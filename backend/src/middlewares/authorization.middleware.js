@@ -5,8 +5,6 @@ import Role from "../models/role.model.js";
 import { respondError } from "../utils/resHandler.js";
 import { handleError } from "../utils/errorHandler.js";
 
-
-
 /**
  * Comprueba si el usuario es administrador
  * @param {Object} req - Objeto de petición
@@ -16,6 +14,14 @@ import { handleError } from "../utils/errorHandler.js";
 async function isAdmin(req, res, next) {
   try {
     const user = await User.findOne({ email: req.email });
+    if (!user || !user.roles || user.roles.length === 0) {
+      return respondError(
+        req,
+        res,
+        401,
+        "Se requiere un rol de administrador para realizar esta acción"
+      );
+    }
     const roles = await Role.find({ _id: { $in: user.roles } });
     for (let i = 0; i < roles.length; i++) {
       if (roles[i].name === "admin") {
@@ -27,7 +33,7 @@ async function isAdmin(req, res, next) {
       req,
       res,
       401,
-      "Se requiere un rol de administrador para realizar esta acción",
+      "Se requiere un rol de administrador para realizar esta acción"
     );
   } catch (error) {
     handleError(error, "authorization.middleware -> isAdmin");
@@ -43,6 +49,14 @@ async function isAdmin(req, res, next) {
 async function isJanitor(req, res, next) {
   try {
     const user = await User.findOne({ email: req.email });
+    if (!user || !user.roles || user.roles.length === 0) {
+      return respondError(
+        req,
+        res,
+        401,
+        "Se requiere un rol de conserje para realizar esta acción"
+      );
+    }
     const roles = await Role.find({ _id: { $in: user.roles } });
     for (let role of roles) {
       if (role.name === "janitor") {
@@ -70,6 +84,14 @@ async function isJanitor(req, res, next) {
 async function isUser(req, res, next) {
   try {
     const user = await User.findOne({ email: req.email });
+    if (!user || !user.roles || user.roles.length === 0) {
+      return respondError(
+        req,
+        res,
+        401,
+        "Se requiere un rol de usuario para realizar esta acción"
+      );
+    }
     const roles = await Role.find({ _id: { $in: user.roles } });
     for (let role of roles) {
       if (role.name === "user") {
@@ -97,8 +119,16 @@ async function isUser(req, res, next) {
 async function isJanitorOrAdmin(req, res, next) {
   try {
     const user = await User.findOne({ email: req.email });
+    if (!user || !user.roles || user.roles.length === 0) {
+      return respondError(
+        req,
+        res,
+        401,
+        "Se requiere un rol de administrador o conserje para realizar esta acción"
+      );
+    }
     const roles = await Role.find({ _id: { $in: user.roles } });
-    
+
     // Verificar si el usuario tiene alguno de los roles requeridos
     const requiredRoles = ["admin", "janitor"];
     const userHasRequiredRole = roles.some(role => requiredRoles.includes(role.name));

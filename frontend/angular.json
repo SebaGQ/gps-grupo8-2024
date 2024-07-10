@@ -88,16 +88,19 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": "9b902bfa-a9c3-45aa-a9f7-43083d7dd32d"
+    "analytics": "92bd4862-7cd4-4580-bb61-657c5417825d"
   }
 }

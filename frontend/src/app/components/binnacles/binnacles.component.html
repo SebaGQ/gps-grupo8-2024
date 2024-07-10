@@ -1,0 +1,34 @@
+<header>
+    <h1>Bitácoras de Conserjes</h1>
+</header>
+<div class="bitacoras-container">
+  <div class="actions-card">
+      <div class="actions">
+          <select [(ngModel)]="searchType">
+            <option value="date">Buscar por fecha</option>
+            <option value="janitor">Buscar por conserje</option>
+            <option value="activity">Buscar por actividad</option>
+            <option value="all">Buscar todo</option>
+          </select>
+          <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
+          <button *ngIf="searchType === 'date'" type="date" (click)="buscar()">Buscar</button>
+          <label *ngIf="searchType === 'activity'">Eliga una actividad:</label>
+          <select *ngIf="searchType === 'activity'" [(ngModel)]="selectedActivity">
+            <option value="Visita">Visita</option>
+            <option value="Espacio">Reserva de espacios</option>
+            <option value="3">Delivery</option>
+          </select>
+          <button *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" type="submit" (click)="buscarVisita()">Buscar visitas</button>
+          <button *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" type="submit" (click)="buscarEspacio()">Buscar Reservas</button>
+      </div>
+  </div>
+<div class="details-container" *ngIf="binnacles.length >= 0">
+    <div *ngFor="let binnacle of formattedBinnacles" class="log">
+      <h3>Conserje: {{ binnacle.janitorID }}</h3>
+      <p>Actividad: {{ binnacle.activityType }}</p>
+      <p>Descripción: {{ binnacle.description }}</p>
+      <p>Fecha: {{ formatDate(binnacle.createdAt) }}</p>
+    </div>
+  </div>
+</div>
+

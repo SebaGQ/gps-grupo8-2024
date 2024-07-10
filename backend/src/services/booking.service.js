@@ -4,7 +4,7 @@ import User from "../models/user.model.js";
 import CommonSpace from "../models/commonSpace.model.js";
 import { handleError } from "../utils/errorHandler.js";
 
-
+import BinnacleService from "./binnacle.service.js";
 /**
  * Obtiene todas las reservaciones.
  */
@@ -74,6 +74,8 @@ async function createBooking(req) {
         const newBooking = new Booking({ userId, spaceId, startTime, endTime });
         await newBooking.save();
 
+        // Crear entrada en bitácora
+        await BinnacleService.createEntryBooking(req);
         return [newBooking, null];
     } catch (error) {
         handleError(error, "booking.service -> createBooking");
