@@ -87,6 +87,7 @@ async function updateCommonSpace(req, res) {
 async function deleteCommonSpace(req, res) {
     try {
         const { params } = req;
+        console.log(req.headers.authorization);
         const [deletedCommonSpace, errorCommonSpace] = await CommonSpaceService.deleteCommonSpace(
             params.id,
             req,

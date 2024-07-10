@@ -13,10 +13,10 @@ const routes: Routes = [
   { path: 'order-list', component: OrderListComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'spaces', component: SpacesComponent },
+  { path: 'create-space', component: SpaceFormComponent },
   { path: '**', redirectTo: '/login', pathMatch: 'full'},
   { path: '', component: HomeComponent },
-  { path: 'spaces', component: SpacesComponent },
-  { path: 'create-space', component: SpaceFormComponent }
 ];
 
 @NgModule({

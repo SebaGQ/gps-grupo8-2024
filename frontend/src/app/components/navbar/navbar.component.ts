@@ -30,7 +30,15 @@ export class NavbarComponent {
       }else{
         this.router.navigate(['/login']);
       }
-    } 
+    }
+    if (destination === "spaces") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/spaces']);
+      }else{
+        this.router.navigate(['/create-space']);
+      }
+    
+    }
   }
   logout() {
     this.authService.logout();

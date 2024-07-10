@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 import Role from "../models/role.model.js";
 import { respondError } from "../utils/resHandler.js";
 import { handleError } from "../utils/errorHandler.js";
+import e from "express";
 
 /**
  * Comprueba si el usuario es administrador
@@ -119,6 +120,7 @@ async function isUser(req, res, next) {
 async function isJanitorOrAdmin(req, res, next) {
   try {
     const user = await User.findOne({ email: req.email });
+    console.log("User:", user);
     if (!user || !user.roles || user.roles.length === 0) {
       return respondError(
         req,
@@ -128,6 +130,7 @@ async function isJanitorOrAdmin(req, res, next) {
       );
     }
     const roles = await Role.find({ _id: { $in: user.roles } });
+    console.log("Roles:", roles);
 
     // Verificar si el usuario tiene alguno de los roles requeridos
     const requiredRoles = ["admin", "janitor"];
@@ -143,7 +146,7 @@ async function isJanitorOrAdmin(req, res, next) {
       req,
       res,
       401,
-      "Se requiere un rol de administrador o conserje para realizar esta acción"
+      "Se requiere un rol de administrador o conserje para realizar esta acción, sale"
     );
   } catch (error) {
     handleError(error, "authorization.middleware -> isJanitorOrAdmin");

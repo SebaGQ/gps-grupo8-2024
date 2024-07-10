@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SpaceService } from '../spaces/space.service';
+import { SpaceService } from '../services/space.service';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { CommonSpaceDto } from '../dto/space.dto'; // Importa el DTO
 import { MatCheckboxChange } from '@angular/material/checkbox'; // Importa MatCheckboxChange

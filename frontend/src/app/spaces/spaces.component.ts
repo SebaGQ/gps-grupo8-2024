@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SpaceService } from './space.service';
+import { SpaceService } from '../services/space.service';
 import { Observable } from 'rxjs';
 
 
