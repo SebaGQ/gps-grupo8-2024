@@ -75,6 +75,25 @@ async function getUserById(id) {
 }
 
 /**
+ * Obtiene todos los usuarios de un departamento específico
+ * @param {number} departmentNumber Número de departamento
+ * @returns {Promise} Promesa con la lista de usuarios del departamento
+ */
+async function getUsersByDepartmentNumber(departmentNumber) {
+  try {
+    const users = await User.find({ departmentNumber })
+      .select("-password")
+      .populate("roles")
+      .exec();
+    if (!users) return [null, "No hay usuarios para el departamento especificado"];
+
+    return [users, null];
+  } catch (error) {
+    handleError(error, "user.service -> getUsersByDepartmentNumber");
+  }
+}
+
+/**
  * Actualiza un usuario por su id en la base de datos
  * @param {string} id Id del usuario
  * @param {Object} user Objeto de usuario
@@ -135,6 +154,7 @@ async function deleteUser(id) {
 
 export default {
   getUsers,
+  getUsersByDepartmentNumber,
   createUser,
   getUserById,
   updateUser,

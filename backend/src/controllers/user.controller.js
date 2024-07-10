@@ -24,6 +24,20 @@ async function getUsers(req, res) {
   }
 }
 
+async function getUsersByDepartmentNumber(req, res) {
+  try {
+    const departmentNumber = req.departmentNumber; // Obtenido del token
+    const [users, error] = await UserService.getUsersByDepartmentNumber(departmentNumber);
+
+    if (error) return respondError(req, res, 404, error);
+
+    respondSuccess(req, res, 200, users);
+  } catch (error) {
+    handleError(error, "user.controller -> getUsersByDepartmentNumber");
+    respondError(req, res, 500, "No se pudo obtener los usuarios del departamento");
+  }
+}
+
 /**
  * Crea un nuevo usuario
  * @param {Object} req - Objeto de petición
@@ -125,6 +139,7 @@ async function deleteUser(req, res) {
 
 export default {
   getUsers,
+  getUsersByDepartmentNumber,
   createUser,
   getUserById,
   updateUser,

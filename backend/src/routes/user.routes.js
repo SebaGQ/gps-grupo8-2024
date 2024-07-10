@@ -17,6 +17,7 @@ const router = Router();
 // Define el middleware de autenticación para todas las rutas
 router.use(authenticationMiddleware);
 // Define las rutas para los usuarios
+router.get("/department", usuarioController.getUsersByDepartmentNumber);
 router.get("/", isAdmin, usuarioController.getUsers);
 router.post("/", isAdmin, usuarioController.createUser);
 router.get("/:id", usuarioController.getUserById);
