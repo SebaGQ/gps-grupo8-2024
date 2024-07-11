@@ -1,6 +1,9 @@
 <div class="space-form-container">
   <h2>Agregar Nuevo Espacio</h2>
-  <form [formGroup]="spaceForm" (ngSubmit)="createSpace()">
+  <div class="container-buttonBack">
+    <button class="buttonBack" mat-stroked-button color="secondary" [routerLink]="['/spaces']">Volver a Espacios</button>
+  </div>
+  <form [formGroup]="spaceForm" (ngSubmit)="saveSpace()">
     <mat-form-field>
       <mat-label>Ubicación</mat-label>
       <input matInput formControlName="location" required>
@@ -12,7 +15,8 @@
     <div class="days-checkbox">
       <label>Días Permitidos:</label>
       <div *ngFor="let day of daysOfWeek">
-        <mat-checkbox [value]="day.value" (change)="onCheckboxChange($event)">
+        <mat-checkbox [value]="day.value" (change)="onCheckboxChange($event)"
+          [checked]="spaceForm.get('allowedDays')?.value.includes(day.value)">
           {{ day.name }}
         </mat-checkbox>
       </div>
@@ -29,17 +33,11 @@
       <mat-label>Tipo</mat-label>
       <input matInput formControlName="type" required>
     </mat-form-field>
-    <mat-form-field>
-      <mat-label>Disponibilidad</mat-label>
-      <mat-select formControlName="availability" required>
-        <mat-option value="Disponible">Disponible</mat-option>
-        <mat-option value="No Disponible">No Disponible</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <mat-checkbox formControlName="availability">Disponible</mat-checkbox>
     <div>
       <label for="file">Imagen</label>
       <input type="file" id="file" (change)="onFileSelected($event)">
     </div>
-    <button mat-raised-button color="primary" type="submit">Agregar Espacio</button>
+    <button mat-raised-button color="primary" type="submit">Guardar Espacio</button>
   </form>
 </div>

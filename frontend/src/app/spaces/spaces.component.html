@@ -1,5 +1,9 @@
 <div class="spaces-container">
   <h2 class="title">Espacios Disponibles</h2>
+  <!-- Botón para crear espacio común visible solo para Administrador o Janitor -->
+  <div class="buttonAdmin" *ngIf="isAdminOrJanitor">
+    <button mat-fab extended color="primary" [routerLink]="['/create-space']">Crear Espacio Común</button>
+  </div>
   <div *ngIf="spaces$ | async as spaces; else loading">
     <div *ngIf="spaces.length > 0; else noSpaces" class="spaces-list">
       <div class="space-card" *ngFor="let space of spaces">
@@ -8,19 +12,19 @@
             <mat-card-title class="space-title">{{ space.location }}</mat-card-title>
             <mat-card-subtitle>{{ space.availability }}</mat-card-subtitle>
           </mat-card-header>
-          <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData" alt="{{ space.name }} Image" class="space-image">
+          <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData"
+            alt="{{ space.name }} Image" class="space-image">
           <mat-card-content>
             <p>Capacidad: {{ space.capacity }} personas</p>
             <p>Tipo: {{ space.type }}</p>
             <p>Dias disponibles: {{ space.allowedDays.join(', ') }}</p>
             <p>Horario Apertura: {{ space.openingHour }}</p>
             <p>Horario Cierre: {{ space.closingHour }}</p>
-           
           </mat-card-content>
           <mat-card-actions>
-            <button mat-button color="primary">Reservar</button>
-            <button mat-button color="accent" (click)="updateSpace(space.id, space)">Actualizar</button>
-            <button mat-button color="warn" (click)="deleteSpace(space.id)">Eliminar</button>
+            <button mat-button color="primary" (click)="bookSpace(space._id)">Reservar</button>
+            <button mat-button color="accent" (click)="updateSpace(space._id)">Actualizar</button>
+            <button mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button>
           </mat-card-actions>
         </mat-card>
       </div>

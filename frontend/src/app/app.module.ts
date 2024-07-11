@@ -32,6 +32,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SpaceFormComponent } from './space-form/space-form.component';  // Importar MatProgressSpinnerModule
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { BookingComponent } from './booking/booking.component';
+import { UserBookingsComponent } from './user-bookings/user-bookings.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     RegisterComponent,
     OrderListComponent,
     SpacesComponent,
-    SpaceFormComponent
+    SpaceFormComponent,
+    BookingComponent,
+    UserBookingsComponent
   ],
   imports: [
     BrowserModule,

@@ -1,19 +1,17 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SpaceService } from '../services/space.service';
+import { ImageService } from '../services/image.service';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { CommonSpaceDto } from '../dto/space.dto'; // Importa el DTO
-import { MatCheckboxChange } from '@angular/material/checkbox'; // Importa MatCheckboxChange
-import { HttpClient } from '@angular/common/http';
-import { MatSelectModule } from '@angular/material/select';
+import { CommonSpaceDto } from '../dto/space.dto';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-space-form',
   templateUrl: './space-form.component.html',
   styleUrls: ['./space-form.component.css']
 })
-export class SpaceFormComponent {
-
+export class SpaceFormComponent implements OnInit {
   spaceForm: FormGroup;
   daysOfWeek = [
     { name: 'Lunes', value: 'monday' },
@@ -26,15 +24,17 @@ export class SpaceFormComponent {
   ];
   selectedFile: File | null = null;
   base64Image: string | null = null;
+  spaceId: string | null = null;
 
   constructor(
     private spaceService: SpaceService,
+    private imageService: ImageService,
     private router: Router,
-    private fb: FormBuilder,
-    private http: HttpClient
+    private route: ActivatedRoute,
+    private fb: FormBuilder
   ) {
     this.spaceForm = this.fb.group({
-      avaibility : [true, Validators.required],
+      availability: [true, Validators.required],
       location: ['', Validators.required],
       capacity: [0, Validators.required],
       allowedDays: this.fb.array([], Validators.required),
@@ -45,16 +45,38 @@ export class SpaceFormComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.spaceId = this.route.snapshot.paramMap.get('id');
+    if (this.spaceId) {
+      this.spaceService.getCommonSpaceById(this.spaceId).subscribe(space => {
+        this.spaceForm.patchValue(space);
+
+        // Limpiar el FormArray antes de agregar nuevos días
+        const allowedDays: FormArray = this.spaceForm.get('allowedDays') as FormArray;
+        allowedDays.clear();
+        space.allowedDays.forEach(day => {
+          allowedDays.push(this.fb.control(day));
+        });
+
+        if (space.image) {
+          this.base64Image = space.image;
+        }
+      });
+    }
+  }
+
   onCheckboxChange(event: MatCheckboxChange): void {
     const allowedDays: FormArray = this.spaceForm.get('allowedDays') as FormArray;
     if (event.checked) {
       allowedDays.push(this.fb.control(event.source.value));
-      console.log('Día agregado:', event.source.value);
     } else {
       const index = allowedDays.controls.findIndex(x => x.value === event.source.value);
       allowedDays.removeAt(index);
-      console.log('Día eliminado:', event.source.value);
     }
+
+    // Actualizar disponibilidad basado en los días permitidos
+    const availability = allowedDays.length > 0;
+    this.spaceForm.get('availability')?.setValue(availability);
   }
 
   onFileSelected(event: any): void {
@@ -64,7 +86,6 @@ export class SpaceFormComponent {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.base64Image = e.target.result.split(',')[1];
-        console.log('Imagen en Base64:', this.base64Image); // Verifica la conversión a Base64
       };
       reader.readAsDataURL(file);
     }
@@ -80,22 +101,18 @@ export class SpaceFormComponent {
         name: this.selectedFile?.name || 'image',
         imageData: this.base64Image
       };
-      this.http.post<{ _id: string, data: { _id: string } }>('http://localhost:1313/api/images', imageData)
-        .subscribe(
-          response => {
-            console.log('Imagen guardada:', response);
-            console.log('Imagen guardada con ID:', response._id); // Verifica la respuesta del servidor
-            resolve(response.data._id);
-          },
-          error => {
-            console.error('Error al guardar la imagen:', error);
-            reject(error);
-          }
-        );
+      this.imageService.uploadImage(imageData).subscribe(
+        response => {
+          resolve(response.data._id);
+        },
+        error => {
+          reject(error);
+        }
+      );
     });
   }
 
-  async createSpace(): Promise<void> {
+  async saveSpace(): Promise<void> {
     if (this.spaceForm.valid) {
       const spaceData: CommonSpaceDto = this.spaceForm.value;
       if (this.selectedFile) {
@@ -107,10 +124,15 @@ export class SpaceFormComponent {
           return;
         }
       }
-      console.log('Datos enviados al backend:', spaceData); // Verifica los datos antes de enviar
-      this.spaceService.createCommonSpace(spaceData).subscribe(() => {
-        this.router.navigate(['/spaces']);
-      });
+      if (this.spaceId) {
+        this.spaceService.updateCommonSpace(this.spaceId, spaceData).subscribe(() => {
+          this.router.navigate(['/spaces']);
+        });
+      } else {
+        this.spaceService.createCommonSpace(spaceData).subscribe(() => {
+          this.router.navigate(['/spaces']);
+        });
+      }
     } else {
       console.log('Formulario no válido');
     }

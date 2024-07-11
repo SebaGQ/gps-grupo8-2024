@@ -1,7 +1,8 @@
+// space.service.ts
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service'; // Usa el servicio HTTP personalizado
 import { Observable } from 'rxjs';
-import { CommonSpaceDto } from '../dto/space.dto'; // Importa el DTO
+import { CommonSpaceDto } from '../dto/space.dto';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -19,7 +20,9 @@ export class SpaceService {
   }
 
   getCommonSpaceById(id: string): Observable<CommonSpaceDto> {
-    return this.httpService.get<CommonSpaceDto>(`${this.spaceUrl}/${id}`);
+    return this.httpService.get<{ state: string, data: CommonSpaceDto }>(`${this.spaceUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
   createCommonSpace(space: CommonSpaceDto): Observable<CommonSpaceDto> {

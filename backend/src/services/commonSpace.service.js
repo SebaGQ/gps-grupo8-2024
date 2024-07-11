@@ -37,7 +37,7 @@ async function createCommonSpace(req) {
     try {
         const {
             type,
-            avaibility,
+            availability,
             location,
             openingHour,
             closingHour,
@@ -45,7 +45,6 @@ async function createCommonSpace(req) {
             capacity,
             image,
         } = req.body;
-        console.log(req.body);
         // validar los dias permitidos
         if (allowedDays.length === 0) {
             return [null, "Debe seleccionar al menos un día permitido"];
@@ -73,7 +72,7 @@ async function createCommonSpace(req) {
         }
         const newCommonSpace = new CommonSpace({
             type,
-            avaibility,
+            availability,
             location,
             openingHour,
             closingHour,

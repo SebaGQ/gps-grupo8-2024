@@ -50,3 +50,22 @@ button[type="submit"] {
   padding: 10px;
   font-size: 16px;
 }
+
+.buttonBack {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #ffffff;
+  border: 1px solid #333333;
+  border-radius: 10px;
+  cursor: pointer;
+  align-items: flex-end;
+}
+
+.container-buttonBack {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  max-width: 200px;
+  align-items: flex-end;
+}

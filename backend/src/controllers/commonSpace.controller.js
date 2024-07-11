@@ -47,7 +47,6 @@ async function getCommonSpaceById(req, res) {
  */
 async function createCommonSpace(req, res) {
     try {
-        console.log(req.body);
         const [commonSpace, errorCommonSpace] = await CommonSpaceService.createCommonSpace(req);
         if (errorCommonSpace) return respondError(req, res, 400, errorCommonSpace);
 
@@ -87,7 +86,6 @@ async function updateCommonSpace(req, res) {
 async function deleteCommonSpace(req, res) {
     try {
         const { params } = req;
-        console.log(req.headers.authorization);
         const [deletedCommonSpace, errorCommonSpace] = await CommonSpaceService.deleteCommonSpace(
             params.id,
             req,

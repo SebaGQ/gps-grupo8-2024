@@ -120,7 +120,6 @@ async function isUser(req, res, next) {
 async function isJanitorOrAdmin(req, res, next) {
   try {
     const user = await User.findOne({ email: req.email });
-    console.log("User:", user);
     if (!user || !user.roles || user.roles.length === 0) {
       return respondError(
         req,

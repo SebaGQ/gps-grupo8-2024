@@ -1,0 +1,29 @@
+<div class="booking-form-container">
+    <h2>Reservar Espacio</h2>
+    <form [formGroup]="bookingForm" (ngSubmit)="createBooking()">
+        <mat-form-field>
+            <mat-label>Hora de Inicio</mat-label>
+            <input matInput formControlName="startTime" type="datetime-local" required>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Hora de Fin</mat-label>
+            <input matInput formControlName="endTime" type="datetime-local" required>
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">Reservar</button>
+    </form>
+
+    <h3>Reservas Existentes</h3>
+    <div *ngIf="bookings.length > 0; else noBookings">
+        <div *ngFor="let booking of bookings" class="booking-card">
+            <mat-card class="mat-elevation-z4">
+                <mat-card-header>
+                    <mat-card-title>{{ booking.startTime | date:'short' }} - {{ booking.endTime | date:'short'
+                        }}</mat-card-title>
+                </mat-card-header>
+            </mat-card>
+        </div>
+    </div>
+    <ng-template #noBookings>
+        <p>No hay reservas disponibles para este espacio.</p>
+    </ng-template>
+</div>
