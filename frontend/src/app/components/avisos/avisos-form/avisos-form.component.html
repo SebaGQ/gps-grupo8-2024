@@ -1,0 +1,16 @@
+<form [formGroup]="avisoForm" (ngSubmit)="onSubmit()">
+    <label for="title">Titulo:</label>
+    <input id="title" formControlName="title">
+    <div *ngIf="avisoForm.controls['title'].invalid && avisoForm.controls['title'].touched">
+        Es necesario introducir un título
+    </div>
+
+    <label for="description">Descripcion: </label>
+    <textarea id="description" formControlName="description"></textarea>
+    <div *ngIf="avisoForm.controls['description'].invalid && avisoForm.controls['description'].touched">
+        Es necesario introducir una descripción
+    </div>
+
+    <button type="submit" [disabled]="avisoForm.invalid">Guardar</button>
+    <button type="button" (click)="onCancel()">Cancelar</button>
+</form>

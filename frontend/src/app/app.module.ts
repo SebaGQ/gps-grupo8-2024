@@ -3,8 +3,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { VisitorComponent } from './visitor/visitor.component';
-import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +22,10 @@ import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VisitorFormDialogComponent } from './visitor/visitor-form-dialog/visitor-form-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AvisosService } from './services/avisos.service';
+import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
+import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
+import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
 
 
 
@@ -40,11 +44,15 @@ export function tokenGetter() {
     RegisterComponent,
     OrderListComponent,
     VisitorFormDialogComponent,
+    AvisosListComponent,
+    AvisosDetailComponent,
+    AvisosFormComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    ReactiveFormsModule,
     FormsModule,
     MatDialogModule,
     FormsModule,
@@ -57,7 +65,7 @@ export function tokenGetter() {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService,VisitorService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [AuthService, OrderService, VisitorService, AvisosService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
