@@ -1,6 +1,8 @@
+// src/app/components/avisos-list/avisos-list.component.ts
+
 import { Component, OnInit } from '@angular/core';
-import { Aviso } from 'src/app/models/avisos.models';
 import { AvisosService } from 'src/app/services/avisos.service';
+import { Aviso } from 'src/app/models/avisos.models';
 
 @Component({
   selector: 'app-avisos-list',
@@ -10,17 +12,17 @@ import { AvisosService } from 'src/app/services/avisos.service';
 export class AvisosListComponent implements OnInit {
   avisos: Aviso[] = [];
 
-  constructor(private avisosServices: AvisosService) { }
+  constructor(private avisosService: AvisosService) { }
 
   ngOnInit(): void {
-    this.getAvisos();
+    this.loadAvisos();
   }
 
-  getAvisos(): void {
-    this.avisosServices.getAvisos().subscribe((data: Aviso[]) => {
-      this.avisos = data
+  loadAvisos(): void {
+    this.avisosService.getAvisos().subscribe((data: Aviso[]) => {
+      this.avisos = data;
+    }, error => {
+      console.error('Error fetching avisos', error);
     });
-
   }
-
 }

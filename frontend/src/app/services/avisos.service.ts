@@ -1,7 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+// src/app/services/avisos.service.ts
+
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
 import { Aviso } from '../models/avisos.models';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root'
@@ -11,24 +14,27 @@ export class AvisosService {
 
   constructor(private http: HttpClient) { }
 
-  createAviso(aviso: Aviso): Observable<Aviso> {
-    return this.http.post<Aviso>(this.apiUrl, aviso);
-  }
-
   getAvisos(): Observable<Aviso[]> {
-    return this.http.get<Aviso[]>(this.apiUrl);
+    return this.http.get<{ data: Aviso[] }>(this.apiUrl).pipe(
+      map(response => response.data)
+    );
   }
 
   getAvisoById(id: string): Observable<Aviso> {
     return this.http.get<Aviso>(`${this.apiUrl}/${id}`);
   }
 
-  updateAviso(id: string, aviso: Aviso): Observable<Aviso> {
+  createAviso(aviso: Partial<Aviso>, token: string): Observable<Aviso> {
+    return this.http.post<Aviso>(this.apiUrl, aviso, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
+    });
+  }
+
+  updateAviso(id: string, aviso: Partial<Aviso>): Observable<Aviso> {
     return this.http.put<Aviso>(`${this.apiUrl}/${id}`, aviso);
   }
 
-  deleteAviso(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteAviso(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-
 }

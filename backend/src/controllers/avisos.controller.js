@@ -8,7 +8,10 @@ import { handleError } from "../utils/errorHandler.js";
  */
 export const createAviso = async (req, res) => {
     try {
-        const newAviso = new Aviso(req.body);
+        const newAviso = new Aviso({
+            ...req.body,
+            author: req.user._id
+        });
         const avisoSaved = await newAviso.save();
         respondSuccess(req, res, 201, avisoSaved);
     } catch (error) {
@@ -51,9 +54,20 @@ export const getAvisoById = async (req, res) => {
  */
 export const updateAviso = async (req, res) => {
     try {
-        const updatedAviso = await Aviso.findByIdAndUpdate(req.params.id, req.body, {
-            new: true
+
+        const { id } = req.params;
+        const updateData = { ...req.body };
+
+        // Asegurarse de que no se actualice el acampo author de manera incorrecta
+        if (updateData.author) {
+            delete updateData.author;
+        }
+
+        const updatedAviso = await Aviso.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true
         });
+
         if (!updatedAviso) {
             return respondError(req, res, 404, 'Aviso no encontrado');
         }
