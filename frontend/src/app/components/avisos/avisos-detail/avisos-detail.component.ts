@@ -9,7 +9,7 @@ import { AvisosService } from 'src/app/services/avisos.service';
   styleUrls: ['./avisos-detail.component.css']
 })
 export class AvisosDetailComponent implements OnInit {
-  aviso: Aviso | undefined;
+  aviso: Aviso | null = null;
 
   constructor(private route: ActivatedRoute, private avisosServices: AvisosService) { }
 
@@ -18,10 +18,11 @@ export class AvisosDetailComponent implements OnInit {
   }
 
   getAviso(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.avisosServices.getAvisoById(id).subscribe((data: Aviso) => {
-        this.aviso = data;
+    const avisoId = this.route.snapshot.paramMap.get('id');
+    if (avisoId) {
+      this.avisosServices.getAvisoById(avisoId).subscribe((response: any) => {
+        console.log('Aviso data:', response);
+        this.aviso = response.data;
       });
 
     }

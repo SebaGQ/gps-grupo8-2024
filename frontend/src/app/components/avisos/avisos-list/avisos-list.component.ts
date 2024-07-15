@@ -25,4 +25,16 @@ export class AvisosListComponent implements OnInit {
       console.error('Error fetching avisos', error);
     });
   }
+
+  deleteAviso(id?: string): void {
+    if (id) {
+      this.avisosService.deleteAviso(id).subscribe(() => {
+        this.loadAvisos();
+      }, error => {
+        console.error('Error deleting aviso', error);
+      });
+    } else {
+      console.error('Aviso ID is undefined');
+    }
+  }
 }

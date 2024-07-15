@@ -3,5 +3,8 @@
     <p>{{ aviso.description }}</p>
     <a [routerLink]="['/avisos', aviso._id]">Ver detalles</a>
     <a [routerLink]="['/avisos/edit', aviso._id]">Editar</a>
+    <button (click)="deleteAviso(aviso._id)">Eliminar</button>
+
+
 </div>
 <a routerLink="/avisos/new">Crear un nuevo aviso</a>

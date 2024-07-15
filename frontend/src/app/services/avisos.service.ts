@@ -20,8 +20,8 @@ export class AvisosService {
     );
   }
 
-  getAvisoById(id: string): Observable<Aviso> {
-    return this.http.get<Aviso>(`${this.apiUrl}/${id}`);
+  getAvisoById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
   createAviso(aviso: Partial<Aviso>, token: string): Observable<Aviso> {
