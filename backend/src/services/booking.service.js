@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 "use strict";
 import Booking from "../models/booking.model.js";
 import User from "../models/user.model.js";
@@ -5,6 +6,7 @@ import CommonSpace from "../models/commonSpace.model.js";
 import { handleError } from "../utils/errorHandler.js";
 
 import BinnacleService from "./binnacle.service.js";
+
 /**
  * Obtiene todas las reservaciones.
  */
@@ -52,12 +54,18 @@ async function createBooking(req) {
         // Verificar si el espacio existe
         const spaceExists = await CommonSpace.findById(spaceId);
         if (!spaceExists) return [null, "El espacio no existe"];
+
+        // Validaciones adicionales
+        const now = new Date();
+        if (new Date(startTime) < now) return [null, "No se puede reservar en una fecha anterior a la actual"];
+        if (new Date(endTime) <= new Date(startTime)) return [null, "La fecha de finalización debe ser posterior a la fecha de inicio"];
+
         // Verificar si la fecha de reserva está dentro de los días permitidos
-        const dayOfWeek = new Date(startTime).toLocaleString("en-US", { weekday: "long" })
-            .toLowerCase();
-        if (spaceExists.type === "barbecue" && !spaceExists.allowedDays.includes(dayOfWeek)) {
+        const dayOfWeek = new Date(startTime).toLocaleString("en-US", { weekday: "long" }).toLowerCase();
+        if (!spaceExists.allowedDays.includes(dayOfWeek)) {
             return [null, "El espacio no está disponible para reservas en este día"];
         }
+
         // Verificar si la fecha de reserva ya está ocupada
         const bookings = await Booking.find({
             spaceId: spaceId,
@@ -89,40 +97,46 @@ async function createBooking(req) {
 async function updateBooking(id, req) {
     try {
         const email = req.body.email;
+        const { spaceId, startTime, endTime } = req.body;
         const bookingUser = await Booking.findById(id).exec();
+
         // Verificar si el email ya está registrado
         const userId = await User
             .findOne({ email: email })
             .select("_id")
             .exec();
-        if (
-            userId != bookingUser.userId 
-            || (userId.roles != "admin" && userId.roles != "janitor")
-        ) {
+        if (userId != bookingUser.userId || (userId.roles != "admin" && userId.roles != "janitor")) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
-        Booking = req.body;
-        const spaceExists = await CommonSpace.findById(Bookinng.spaceId).exec();
+
+        // Verificar si el espacio existe
+        const spaceExists = await CommonSpace.findById(spaceId).exec();
         if (!spaceExists) return [null, "El espacio no existe"];
+
+        // Validaciones adicionales
+        const now = new Date();
+        if (new Date(startTime) < now) return [null, "No se puede reservar en una fecha anterior a la actual"];
+        if (new Date(endTime) <= new Date(startTime)) return [null, "La fecha de finalización debe ser posterior a la fecha de inicio"];
+
         // Verificar si la fecha de reserva está dentro de los días permitidos
-        const dayOfWeek = new Date(Booking.startTime).toLocaleString("en-US", { weekday: "long" })
-            .toLowerCase();
-        if (spaceExists.type === "barbecue" && !spaceExists.allowedDays.includes(dayOfWeek)) {
+        const dayOfWeek = new Date(startTime).toLocaleString("en-US", { weekday: "long" }).toLowerCase();
+        if (!spaceExists.allowedDays.includes(dayOfWeek)) {
             return [null, "El espacio no está disponible para reservas en este día"];
         }
+
         // Verificar si la fecha de reserva ya está ocupada
         const bookings = await Booking.find({
-            spaceId: Booking.spaceId,
+            spaceId: spaceId,
             $or: [
-                { startTime: { $lt: Booking.startTime }, endTime: { $gt: Booking.startTime } },
-                { startTime: { $lt: Booking.endTime }, endTime: { $gt: Booking.endTime } },
-                { startTime: { $gte: Booking.startTime }, endTime: { $lte: Booking.endTime } },
+                { startTime: { $lt: startTime }, endTime: { $gt: startTime } },
+                { startTime: { $lt: endTime }, endTime: { $gt: endTime } },
+                { startTime: { $gte: startTime }, endTime: { $lte: endTime } },
             ],
         }).exec();
 
         if (bookings.length > 0) return [null, "El espacio ya está reservado"];
 
-        const updatedBooking = await Booking.findByIdAndUpdate(id, Booking, { new: true }).exec();
+        const updatedBooking = await Booking.findByIdAndUpdate(id, { spaceId, startTime, endTime }, { new: true }).exec();
         if (!updatedBooking) {
             return [null, "No se encontró la reservación"];
         }
@@ -191,7 +205,7 @@ async function getBookingsBySpace(spaceId) {
         return [bookings, null];
     } catch (error) {
         handleError(error, "booking.service -> getBookingsBySpace");
-        return [null, error.message];
+        return [bookings, null];
     }
 }
 
@@ -208,7 +222,7 @@ async function getBookingsByDate(date) {
         return [bookings, null];
     } catch (error) {
         handleError(error, "booking.service -> getBookingsByDate");
-        return [null, error.message];
+        return [bookings, null];
     }
 }
 
