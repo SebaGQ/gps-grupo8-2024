@@ -98,6 +98,7 @@ async function createBooking(req) {
 async function updateBooking(id, req) {
     try {
         const email = req.email;
+        const { spaceId, startTime, endTime } = req.body;
         const bookingUser = await Booking.findById(id).exec();
         // Verificar si el email ya está registrado
         const userId = await User
