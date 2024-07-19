@@ -3,13 +3,15 @@ import { HttpService } from './http.service'; // Usa el servicio HTTP personaliz
 import { Observable } from 'rxjs';
 import { BookingDto } from '../dto/booking.dto'; 
 import { map } from 'rxjs/operators';
+import { SpaceService } from './space.service';
+import { CommonSpaceDto } from '../dto/space.dto';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingService {
   private bookingUrl = 'bookings'; // Cambia esto a la URL de tu API
-
+  private spaceService = new SpaceService(this.httpService);
   constructor(private httpService: HttpService) {}
 
   getAllBookings(): Observable<BookingDto[]> {
@@ -52,5 +54,15 @@ export class BookingService {
     return this.httpService.get<{ state: string, data: BookingDto[] }>(`${this.bookingUrl}/date/${date}`).pipe(
       map(response => response.data)
     );
+  }
+
+  getMyBookings(): Observable<BookingDto[]> {
+    return this.httpService.get<{ state: string, data: BookingDto[] }>(`${this.bookingUrl}/my-bookings`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  getSpaces(): Observable<CommonSpaceDto[]> {
+    return this.spaceService.getCommonSpaces();
   }
 }

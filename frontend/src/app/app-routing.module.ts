@@ -21,6 +21,8 @@ const routes: Routes = [
   { path: 'create-space/:id', component: SpaceFormComponent }, // Ruta para actualizar espacio
   { path: 'bookings/:id', component: BookingComponent }, // Ruta para ver y crear reservas para un espacio específico
   { path: 'my-bookings', component: UserBookingsComponent }, // Ruta para ver las reservas del usuario
+  { path: 'booking/:id', component: BookingComponent },
+  { path: 'booking/:id/:bookingId', component: BookingComponent },
   { path: '**', redirectTo: '/login', pathMatch: 'full'},
   { path: '', component: HomeComponent },
 ];

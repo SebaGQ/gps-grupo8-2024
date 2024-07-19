@@ -1,0 +1,77 @@
+.booking-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .booking-form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .booking-form-container h3 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .booking-form-container p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .booking-form-container img {
+    display: block;
+    margin: 10px auto;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .booking-form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .booking-form-container .mat-form-field {
+    width: 100%;
+  }
+  
+  .booking-form-container button {
+    align-self: center;
+    width: 100%;
+    max-width: 200px;
+    padding: 10px 20px;
+  }
+  
+  .booking-form-container .booking-card {
+    margin-top: 10px;
+  }
+  
+  .booking-form-container .mat-card {
+    margin-bottom: 10px;
+  }
+  
+  @media (max-width: 600px) {
+    .booking-form-container {
+      padding: 10px;
+    }
+  
+    .booking-form-container form {
+      gap: 10px;
+    }
+  
+    .booking-form-container button {
+      max-width: 100%;
+    }
+  }
+  
+  .no-bookings {
+    text-align: center;
+    color: #999;
+  }
+  

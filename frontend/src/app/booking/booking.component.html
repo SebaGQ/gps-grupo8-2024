@@ -1,15 +1,36 @@
 <div class="booking-form-container">
-    <h2>Reservar Espacio</h2>
-    <form [formGroup]="bookingForm" (ngSubmit)="createBooking()">
+    <h2>{{ isEditMode ? 'Editar Reserva' : 'Reservar Espacio' }}</h2>
+    <div *ngIf="space">
+        <h3>{{ space.name }}</h3>
+        <p><strong>Ubicación:</strong> {{ space.location }}</p>
+        <p><strong>Capacidad:</strong> {{ space.capacity }} personas</p>
+        <p><strong>Días Permitidos:</strong> {{ space.allowedDays.join(', ') }}</p>
+        <p><strong>Horario:</strong> {{ space.openingHour }} - {{ space.closingHour }}</p>
+        <img *ngIf="space.image" [src]="space.image" alt="{{ space.name }}" />
+    </div>
+
+    <form [formGroup]="bookingForm" (ngSubmit)="createOrUpdateBooking()">
+        <mat-form-field>
+            <mat-label>Fecha de Inicio</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="startDate" required>
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
         <mat-form-field>
             <mat-label>Hora de Inicio</mat-label>
-            <input matInput formControlName="startTime" type="datetime-local" required>
+            <input matInput formControlName="startTime" type="time" required>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Fecha de Fin</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="endDate" required>
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
         </mat-form-field>
         <mat-form-field>
             <mat-label>Hora de Fin</mat-label>
-            <input matInput formControlName="endTime" type="datetime-local" required>
+            <input matInput formControlName="endTime" type="time" required>
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Reservar</button>
+        <button mat-raised-button color="primary" type="submit">{{ isEditMode ? 'Actualizar Reserva' : 'Reservar' }}</button>
     </form>
 
     <h3>Reservas Existentes</h3>
@@ -17,13 +38,12 @@
         <div *ngFor="let booking of bookings" class="booking-card">
             <mat-card class="mat-elevation-z4">
                 <mat-card-header>
-                    <mat-card-title>{{ booking.startTime | date:'short' }} - {{ booking.endTime | date:'short'
-                        }}</mat-card-title>
+                    <mat-card-title>{{ booking.startTime | date:'short' }} - {{ booking.endTime | date:'short' }}</mat-card-title>
                 </mat-card-header>
             </mat-card>
         </div>
     </div>
     <ng-template #noBookings>
-        <p>No hay reservas disponibles para este espacio.</p>
+        <p class="no-bookings">No hay reservas disponibles para este espacio.</p>
     </ng-template>
 </div>

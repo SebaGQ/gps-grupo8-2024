@@ -17,6 +17,12 @@ import { OrderService } from './services/order.service'; // Importar el servicio
 import { OrderListComponent } from './components/order-list/order-list.component'; // Asegúrate de importar tu componente de órdenes
 import { MatSelectModule } from '@angular/material/select'; // Importa MatSelectModule
 
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+
 
 
 export function tokenGetter() {
@@ -34,6 +40,7 @@ import { SpaceFormComponent } from './space-form/space-form.component';  // Impo
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -71,7 +78,13 @@ import { UserBookingsComponent } from './user-bookings/user-bookings.component';
     MatCardModule,
     ReactiveFormsModule,
     MatCheckboxModule,
-    MatSelectModule
+    MatSelectModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [AuthService, OrderService, HttpService],
   bootstrap: [AppComponent]

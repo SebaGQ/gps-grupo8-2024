@@ -4,6 +4,7 @@ import Booking from "../models/booking.model.js";
 import User from "../models/user.model.js";
 import CommonSpace from "../models/commonSpace.model.js";
 import { handleError } from "../utils/errorHandler.js";
+import Role from "../models/role.model.js";
 
 import BinnacleService from "./binnacle.service.js";
 
@@ -96,16 +97,26 @@ async function createBooking(req) {
  */
 async function updateBooking(id, req) {
     try {
-        const email = req.body.email;
-        const { spaceId, startTime, endTime } = req.body;
+        const email = req.email;
         const bookingUser = await Booking.findById(id).exec();
-
         // Verificar si el email ya está registrado
         const userId = await User
             .findOne({ email: email })
-            .select("_id")
             .exec();
-        if (userId != bookingUser.userId || (userId.roles != "admin" && userId.roles != "janitor")) {
+        const roles = await Role.find({ _id: { $in: userId.roles } });
+        const nameRole = roles.map((role) => role.name);
+        const notEqual = false;
+
+        if (userId._id.toString() != bookingUser.userId.toString() ) {
+            notEqual = true;
+            console.log("no son iguales");
+        }
+        const noAdminOrJanitor = false;
+        if (nameRole[0] != "admin" && nameRole[0] != "janitor") {
+            noAdminOrJanitor = true;
+            console.log("no es admin ni janitor");
+        }
+        if ( notEqual == true || noAdminOrJanitor == true) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
 
@@ -153,13 +164,26 @@ async function updateBooking(id, req) {
  */
 async function deleteBooking(id, req) {
     try {
-        const email = req.body.email;
+        const email = req.email;
+        const bookingUser = await Booking.findById(id).exec();
         // Verificar si el email ya está registrado
         const userId = await User
             .findOne({ email: email })
-            .select("_id")
             .exec();
-        if (userId != bookingUser.userId || userId.roles != "admin") {
+        const roles = await Role.find({ _id: { $in: userId.roles } });
+        const nameRole = roles.map((role) => role.name);
+        const notEqual = false;
+
+        if (userId._id.toString() != bookingUser.userId.toString() ) {
+            notEqual = true;
+            console.log("no son iguales");
+        }
+        const noAdminOrJanitor = false;
+        if (nameRole[0] != "admin" && nameRole[0] != "janitor") {
+            noAdminOrJanitor = true;
+            console.log("no es admin ni janitor");
+        }
+        if ( notEqual == true || noAdminOrJanitor == true) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
 

@@ -1,5 +1,6 @@
 // src/app/dto/common-space.dto.ts
 export interface CommonSpaceDto {
+    _id: string;
     name: string;
     location: string;
     capacity: number;
