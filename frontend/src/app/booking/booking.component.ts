@@ -69,9 +69,9 @@ export class BookingComponent implements OnInit {
 
   createOrUpdateBooking(): void {
     if (this.bookingForm.valid && this.spaceId) {
-      const startDate = this.bookingForm.value.startDate;
+      const startDate = this.bookingForm.value.startDate instanceof Date ? this.bookingForm.value.startDate : new Date(this.bookingForm.value.startDate);
       const startTime = this.bookingForm.value.startTime;
-      const endDate = this.bookingForm.value.endDate;
+      const endDate = this.bookingForm.value.endDate instanceof Date ? this.bookingForm.value.endDate : new Date(this.bookingForm.value.endDate);
       const endTime = this.bookingForm.value.endTime;
 
       const startDateTime = new Date(
