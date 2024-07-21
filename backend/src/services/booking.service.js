@@ -106,13 +106,13 @@ async function updateBooking(id, req) {
             .exec();
         const roles = await Role.find({ _id: { $in: userId.roles } });
         const nameRole = roles.map((role) => role.name);
-        const notEqual = false;
+        let notEqual = false;
 
         if (userId._id.toString() != bookingUser.userId.toString() ) {
             notEqual = true;
             console.log("no son iguales");
         }
-        const noAdminOrJanitor = false;
+        let noAdminOrJanitor = false;
         if (nameRole[0] != "admin" && nameRole[0] != "janitor") {
             noAdminOrJanitor = true;
             console.log("no es admin ni janitor");
@@ -136,9 +136,10 @@ async function updateBooking(id, req) {
             return [null, "El espacio no está disponible para reservas en este día"];
         }
 
-        // Verificar si la fecha de reserva ya está ocupada
+        // Verificar si la fecha de reserva ya está ocupada, excluyendo la reserva actual
         const bookings = await Booking.find({
             spaceId: spaceId,
+            _id: { $ne: id }, // Excluir la reserva actual
             $or: [
                 { startTime: { $lt: startTime }, endTime: { $gt: startTime } },
                 { startTime: { $lt: endTime }, endTime: { $gt: endTime } },
