@@ -9,6 +9,7 @@ import { SpacesComponent } from './spaces/spaces.component';
 import { SpaceFormComponent } from './space-form/space-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
+import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'binnacles', component: BinnaclesComponent, },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'my-bookings', component: UserBookingsComponent }, // Ruta para ver las reservas del usuario
   { path: 'booking/:id', component: BookingComponent },
   { path: 'booking/:id/:bookingId', component: BookingComponent },
+  { path: 'admin-bookings', component: AdminBookingsComponent },
   { path: '**', redirectTo: '/login', pathMatch: 'full'},
   { path: '', component: HomeComponent },
 ];

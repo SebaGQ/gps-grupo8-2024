@@ -13,7 +13,7 @@ import BinnacleService from "./binnacle.service.js";
  */
 async function getAllBookings(req, res) {
     try {
-        const bookings = await Booking.find().exec();
+        const bookings = await Booking.find().populate("userId").exec();
         if (!bookings) return [null, "No se encontraron reservaciones"];
         return [bookings, null];
     } catch (error) {
@@ -242,13 +242,19 @@ async function getBookingsBySpace(spaceId) {
  */
 async function getBookingsByDate(date) {
     try {
+        const startDate = new Date(date);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 1);
+
         const bookings = await Booking.find({
-            startTime: { $gte: date, $lt: date + 1 } }).exec();
-        if (!bookings) return [null, "No se encontraron reservaciones"];
+            startTime: { $gte: startDate, $lt: endDate }
+        }).exec();
+
+        if (!bookings || bookings.length === 0) return [null, "No se encontraron reservaciones"];
         return [bookings, null];
     } catch (error) {
         handleError(error, "booking.service -> getBookingsByDate");
-        return [bookings, null];
+        return [null, error.message];
     }
 }
 

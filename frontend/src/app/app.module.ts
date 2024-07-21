@@ -38,6 +38,7 @@ import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
 
 import { MomentDateAdapter, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
+import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -67,7 +68,8 @@ export const MY_DATE_FORMATS = {
     SpacesComponent,
     SpaceFormComponent,
     BookingComponent,
-    UserBookingsComponent
+    UserBookingsComponent,
+    AdminBookingsComponent
   ],
   imports: [
     BrowserModule,
