@@ -22,6 +22,57 @@ async function getVisitors() {
 }
 
 /**
+ * Gets all visitors who have not exited yet
+ * @returns {Promise} Promise with the found visitors
+ */
+async function getActiveVisitors() {
+  try {
+    const activeVisitors = await Visitor.find({ exitDate: new Date('9999-12-31') }).populate("departmentNumber").populate("roles").exec();;
+
+    if (!activeVisitors || activeVisitors.length === 0) {
+      return [null, "No active visitors found"];
+    }
+
+    return [activeVisitors, null];
+  } catch (error) {
+    handleError(error, "visitor.service -> getActiveVisitors");
+    return [null, error.message];
+  }
+}
+
+/**
+ * Obtiene todos los visitantes de la base de datos
+ * @returns {Promise} Promesa con el objeto de los visitantes
+ */
+async function getFrequentVisitors() {
+  try {
+    const frequentVisitors = await Visitor.aggregate([
+      { $match: { frequent: true } },
+      { $sort: { visitDate: -1 } },
+      {
+        $group: {
+          _id: "$rut",
+          latestVisit: { $first: "$$ROOT" }
+        }
+      },
+      {
+        $replaceRoot: { newRoot: "$latestVisit" }
+      },
+      { $sort: { visitDate: -1 } } 
+    ]);
+
+    if (!frequentVisitors || frequentVisitors.length === 0) {
+      return [null, "No se encontraron visitantes frecuentes"];
+    }
+
+    return [frequentVisitors, null];
+  } catch (error) {
+    handleError(error, "visitor.service -> getFrequentVisitors");
+    return [null, error.message];
+  }
+}
+
+/**
  * Crea un nuevo visitante en la base de datos
  * @param {Object} visitor Objeto de visitante
  * @returns {Promise} Promesa con el objeto de visitante creado
@@ -31,9 +82,9 @@ async function createVisitor(req) {
   try {
     let email = req.email;
     let visitor = req.body;
-
-    const existingVisitor = await Visitor.findOne({ rut: visitor.rut });
-    if (existingVisitor) return [null, "El visitante con este RUT ya está registrado."];
+    const now = new Date();
+    
+    const existingVisitor = await Visitor.findOne({ rut: visitor.rut }).sort({ exitDate: -1 });
 
     // Verifica si el departamento existe
     const department = await Department.findById(visitor.departmentNumber);
@@ -55,8 +106,19 @@ async function createVisitor(req) {
       exitDate: new Date("9999-12-31"), // Fecha de salida indefinida
     });
 
+    // Verificar si el visitante ya está registrado y si la fecha de salida es menor a la hora actual
+    if (existingVisitor && existingVisitor.exitDate && new Date(existingVisitor.exitDate) > now) {
+      return [null, "El visitante con este RUT ya está registrado y aún no ha salido."];
+    }
+
     //await BinnacleService.createEntryVisitor(req);
     await newVisitor.save();
+
+    // Verificar si es frecuente
+    const visitas = await Visitor.countDocuments({ rut: visitor.rut });
+    if (visitas > 3) {
+      await Visitor.updateMany({ rut: visitor.rut }, { frequent: true });
+    }
 
     return [newVisitor, null];
   } catch (error) {
@@ -161,8 +223,10 @@ async function deleteVisitor(id) {
 
 export default {
   getVisitors,
+  getActiveVisitors,
   createVisitor,
   getVisitorById,
+  getFrequentVisitors,
   updateVisitor,
   updateVisitorExitDate,
   deleteVisitor,

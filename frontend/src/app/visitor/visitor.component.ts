@@ -12,24 +12,37 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class VisitorComponent implements OnInit {
   visitors: VisitorDTO[] = [];
+  filteredVisitors: VisitorDTO[] = [];
+  showCompleted: boolean = false;
 
 
   constructor(private visitorService: VisitorService, public dialog: MatDialog) {}
 
   ngOnInit() {
-    this.fetchVisitors();
+    this.getActiveVisitors();
   }
 
-  fetchVisitors() {
-    this.visitorService.getVisitors().subscribe(
-      (data: VisitorDTO[]) => {
-        console.log('Datos recibidos:', data);
-        this.visitors = data;
-      },
-      error => {
-        console.error('Error fetching visitors', error);
-      }
-    );
+  getActiveVisitors() {
+    this.visitorService.getActiveVisitors().subscribe(data => {
+      this.visitors = data;
+      this.filteredVisitors = data;
+    });
+  }
+
+  getCompletedVisitors() {
+    this.visitorService.getVisitors().subscribe(data => {
+      this.visitors = data.filter(visitor => !this.isExitDate9999(visitor.exitDate));
+      this.filteredVisitors = this.visitors;
+    });
+  }
+
+  toggleCompletedVisitors() {
+    this.showCompleted = !this.showCompleted;
+    if (this.showCompleted) {
+      this.getCompletedVisitors();
+    } else {
+      this.getActiveVisitors();
+    }
   }
 
   openDialog(visitor?: VisitorDTO) {
@@ -37,14 +50,14 @@ export class VisitorComponent implements OnInit {
       data: visitor || undefined
     });
     dialogRef.afterClosed().subscribe(() => {
-      this.fetchVisitors();
+      this.getActiveVisitors();
     });
   }
 
   registerExit(visitorId: string) {
     this.visitorService.registerExit(visitorId).subscribe(
       () => {
-        this.fetchVisitors();
+        this.getActiveVisitors();
       },
       error => {
         console.error('Error registering exit for visitor', error);
@@ -56,12 +69,24 @@ export class VisitorComponent implements OnInit {
   deleteVisitor(visitorId: string) {
     this.visitorService.deleteVisitor(visitorId).subscribe(
       () => {
-        this.fetchVisitors();
+        this.getActiveVisitors();
       },
       error => {
         console.error('Error deleting visitor', error);
       }
     );
+  }
+
+  isExitDate9999(exitDate: string | Date): boolean {
+    return new Date(exitDate).getFullYear() === 9999;
+  }
+
+  filterByDate(event: any) {
+    const selectedDate = new Date(event.target.value);
+    this.visitors = this.visitors.filter(visitor => {
+      const entryDate = new Date(visitor.entryDate);
+      return entryDate.toDateString() === selectedDate.toDateString();
+    });
   }
   
 }

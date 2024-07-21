@@ -1,25 +1,37 @@
-<!-- visitor.component.html -->
-<div class="container mt-4">
-  <div class="d-flex justify-content-between mb-3">
-    <h1>Lista de Visitantes</h1>
-    <button class="btn btn-primary" (click)="openDialog()">Registrar Nueva Visita</button>
+<div class="mat-container">
+  <div class="mat-toolbar">
+    <h1>{{ showCompleted ? 'Lista de Visitantes Completados' : 'Lista de Visitantes Activos' }}</h1>
+    <button mat-raised-button color="primary" (click)="openDialog()">Registrar Nueva Visita</button>
+    <button mat-raised-button color="accent" (click)="toggleCompletedVisitors()">
+      {{ showCompleted ? 'Mostrar Visitantes Activos' : 'Mostrar Visitantes Completados' }}
+    </button>
   </div>
-  <div class="row">
-    <div *ngFor="let visitor of visitors" class="col-md-4 mb-4">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{{ visitor.name }} {{ visitor.lastName }}</h5>
-          <p class="card-text"><strong>RUT:</strong> {{ visitor.rut }}</p>
-          <p class="card-text"><strong>Departamento:</strong> {{ visitor.departmentNumber.departmentNumber }}</p>
-          <p class="card-text"><strong>Fecha de Entrada:</strong> {{ visitor.entryDate | date }}</p>
-          <p class="card-text"><strong>Fecha de Salida:</strong> {{ visitor.exitDate | date }}</p>
-          <div class="d-flex justify-content-between">
-            <button class="btn btn-success btn-sm" (click)="registerExit(visitor._id!)">Registrar Salida</button>
-            <button class="btn btn-warning btn-sm" (click)="openDialog(visitor)">Modificar</button>
-            <button class="btn btn-danger btn-sm" (click)="deleteVisitor(visitor._id!)">Eliminar</button>
-          </div>
-        </div>
-      </div>
+  <div class="mat-row">
+    <mat-form-field class="example-full-width">
+      <mat-label>Filtrar por fecha</mat-label>
+      <input matInput [matDatepicker]="picker" (dateChange)="filterByDate($event)">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <div class="mat-row">
+    <div *ngFor="let visitor of filteredVisitors" class="mat-col-4 mat-mb-4">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>{{ visitor.name }} {{ visitor.lastName }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p><strong>RUT:</strong> {{ visitor.rut }}</p>
+          <p><strong>Departamento:</strong> {{ visitor.departmentNumber.departmentNumber }}</p>
+          <p><strong>Fecha de Entrada:</strong> {{ visitor.entryDate | date }}</p>
+          <p *ngIf="!isExitDate9999(visitor.exitDate)"><strong>Fecha de Salida:</strong> {{ visitor.exitDate | date }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button *ngIf="!showCompleted" mat-button color="accent" (click)="registerExit(visitor._id!)">Registrar Salida</button>
+          <button mat-button color="warn" (click)="openDialog(visitor)">Modificar</button>
+          <button mat-button color="primary" (click)="deleteVisitor(visitor._id!)">Eliminar</button>
+        </mat-card-actions>
+      </mat-card>
     </div>
   </div>
 </div>

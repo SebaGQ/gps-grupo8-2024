@@ -82,4 +82,21 @@ const visitorExitDateSchema = Joi.object({
   }),
 });
 
-export { visitorBodySchema, visitorIdSchema, visitorExitDateSchema };
+
+/**
+ * Esquema de validación para el RUT del visitante.
+ * @constant {Object}
+ */
+const rutSchema = Joi.object({
+  rut: Joi.string()
+    .required()
+    .max(10)
+    .messages({
+      "string.empty": "El RUT no puede estar vacío.",
+      "any.required": "El RUT es obligatorio.",
+      "string.base": "El RUT debe ser de tipo string.",
+      "string.max": "El RUT debe tener al menos 10 caracteres.",
+    }),
+});
+
+export { visitorBodySchema, visitorIdSchema, visitorExitDateSchema, rutSchema };

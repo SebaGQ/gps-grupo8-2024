@@ -1,26 +1,50 @@
-<!-- visitor-form-dialog.component.html -->
 <div class="dialog-container">
-    <h2>Registrar Visita</h2>
-    <form (ngSubmit)="onSubmit()" #visitorForm="ngForm">
-      <div>
-        <label for="name">Nombre</label>
-        <input type="text" id="name" required [(ngModel)]="visitor.name" name="name">
-      </div>
-      <div>
-        <label for="lastName">Apellido</label>
-        <input type="text" id="lastName" required [(ngModel)]="visitor.lastName" name="lastName">
-      </div>
-      <div>
-        <label for="rut">RUT</label>
-        <input type="text" id="rut" required [(ngModel)]="visitor.rut" name="rut">
-      </div>
-      <div>
-        <label for="department">Departamento</label>
-        <select id="department" required [(ngModel)]="visitor.departmentNumber" name="departmentNumber">
-          <option *ngFor="let department of departments" [ngValue]="department">{{ department.departmentNumber }}</option>
-        </select>
-      </div>
-      <button type="submit">Registrar</button>
-    </form>
-  </div>
-  
+  <h2>Registrar Visita</h2>
+  <form [formGroup]="visitorForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="example-full-width">
+      <mat-label>RUT</mat-label>
+      <input matInput formControlName="rut" placeholder="Ingrese el RUT" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+        <mat-option *ngFor="let visitor of (filteredFrequentVisitors$ | async)" [value]="visitor.rut">
+          {{ visitor.rut }} - {{ visitor.name }} {{ visitor.lastName }}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="visitorForm.controls['rut'].hasError('required')">
+        El RUT es <strong>obligatorio</strong>
+      </mat-error>
+      <mat-error *ngIf="visitorForm.controls['rut'].hasError('pattern')">
+        El RUT debe tener el formato XXXXXXXX-X
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" placeholder="Ingrese el nombre">
+      <mat-error *ngIf="visitorForm.controls['name'].hasError('required')">
+        El nombre es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Apellido</mat-label>
+      <input matInput formControlName="lastName" placeholder="Ingrese el apellido">
+      <mat-error *ngIf="visitorForm.controls['lastName'].hasError('required')">
+        El apellido es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Departamento</mat-label>
+      <mat-select formControlName="departmentNumber">
+        <mat-option *ngFor="let department of departments" [value]="department._id">
+          {{ department.departmentNumber }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="visitorForm.controls['departmentNumber'].hasError('required')">
+        El departamento es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="visitorForm.invalid">Registrar</button>
+  </form>
+</div>
