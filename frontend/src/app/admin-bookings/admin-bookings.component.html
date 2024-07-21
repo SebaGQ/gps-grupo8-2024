@@ -29,13 +29,13 @@
         <!-- Fecha de Inicio Column -->
         <ng-container matColumnDef="startTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Inicio</th>
-          <td mat-cell *matCellDef="let booking">{{ booking.startTime | date: 'short' }}</td>
+          <td mat-cell *matCellDef="let booking">{{ formatDate(booking.startTime) }}</td>
         </ng-container>
   
         <!-- Fecha de Fin Column -->
         <ng-container matColumnDef="endTime">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Fin</th>
-          <td mat-cell *matCellDef="let booking">{{ booking.endTime | date: 'short' }}</td>
+          <td mat-cell *matCellDef="let booking">{{ formatDate(booking.endTime) }}</td>
         </ng-container>
   
         <!-- Espacio Column -->

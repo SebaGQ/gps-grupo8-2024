@@ -17,7 +17,7 @@
           <mat-card-content>
             <p>Capacidad: {{ space.capacity }} personas</p>
             <p>Tipo: {{ space.type }}</p>
-            <p>Dias disponibles: {{ space.allowedDays.join(', ') }}</p>
+            <p>Días disponibles: <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
             <p>Horario Apertura: {{ space.openingHour }}</p>
             <p>Horario Cierre: {{ space.closingHour }}</p>
           </mat-card-content>

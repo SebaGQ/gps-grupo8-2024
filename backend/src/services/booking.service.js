@@ -247,7 +247,7 @@ async function getBookingsByDate(date) {
         endDate.setDate(startDate.getDate() + 1);
 
         const bookings = await Booking.find({
-            startTime: { $gte: startDate, $lt: endDate }
+            startTime: { $gte: startDate, $lt: endDate },
         }).exec();
 
         if (!bookings || bookings.length === 0) return [null, "No se encontraron reservaciones"];

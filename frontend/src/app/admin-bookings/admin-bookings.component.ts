@@ -7,11 +7,13 @@ import { BookingService } from '../services/booking.service';
 import { SpaceService } from '../services/space.service';
 import { BookingDto } from '../dto/booking.dto';
 import { CommonSpaceDto } from '../dto/space.dto';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-bookings',
   templateUrl: './admin-bookings.component.html',
-  styleUrls: ['./admin-bookings.component.css']
+  styleUrls: ['./admin-bookings.component.css'],
+  providers: [DatePipe]
 })
 export class AdminBookingsComponent implements OnInit, AfterViewInit {
   filterForm: FormGroup;
@@ -25,7 +27,8 @@ export class AdminBookingsComponent implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private bookingService: BookingService,
-    private spaceService: SpaceService
+    private spaceService: SpaceService,
+    private datePipe: DatePipe
   ) {
     this.filterForm = this.fb.group({
       date: [''],
@@ -47,6 +50,7 @@ export class AdminBookingsComponent implements OnInit, AfterViewInit {
   loadSpaces(): void {
     this.spaceService.getCommonSpaces().subscribe(spaces => {
       this.spaces = spaces;
+      this.spaces.unshift({ _id: '', name: '', location: 'Todos los Espacios', capacity: 0, allowedDays: [], openingHour: '', closingHour: '', type: '' });
     });
   }
 
@@ -66,9 +70,13 @@ export class AdminBookingsComponent implements OnInit, AfterViewInit {
         this.dataSource.data = bookings;
       });
     } else if (spaceId) {
-      this.bookingService.getBookingsBySpace(spaceId).subscribe(bookings => {
-        this.dataSource.data = bookings;
-      });
+      if (spaceId === '') {
+        this.loadAllBookings();
+      } else {
+        this.bookingService.getBookingsBySpace(spaceId).subscribe(bookings => {
+          this.dataSource.data = bookings;
+        });
+      }
     } else if (userId) {
       this.bookingService.getBookingsByUser(userId).subscribe(bookings => {
         this.dataSource.data = bookings;
@@ -81,5 +89,9 @@ export class AdminBookingsComponent implements OnInit, AfterViewInit {
   getSpaceName(spaceId: string): string {
     const space = this.spaces.find(s => s._id === spaceId);
     return space ? space.location : 'Desconocido';
+  }
+
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'dd/MM/yyyy') || '';
   }
 }

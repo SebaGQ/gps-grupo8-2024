@@ -1,12 +1,11 @@
 <div class="booking-form-container">
     <h2>{{ isEditMode ? 'Editar Reserva' : 'Reservar Espacio' }}</h2>
     <div *ngIf="space">
-        <h3>{{ space.name }}</h3>
+        <h3>{{ space.location }}</h3>
         <p><strong>Ubicación:</strong> {{ space.location }}</p>
         <p><strong>Capacidad:</strong> {{ space.capacity }} personas</p>
-        <p><strong>Días Permitidos:</strong> {{ space.allowedDays.join(', ') }}</p>
+        <p><strong>Días Permitidos: </strong> <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
         <p><strong>Horario:</strong> {{ space.openingHour }} - {{ space.closingHour }}</p>
-        <img *ngIf="space.image" [src]="space.image" alt="{{ space.name }}" />
     </div>
 
     <form [formGroup]="bookingForm" (ngSubmit)="createOrUpdateBooking()">
