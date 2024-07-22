@@ -1,0 +1,68 @@
+/* src/app/components/avisos/avisos-list.component.css */
+
+.forum-container {
+    width: 60%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.forum-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.post-button,
+.language-button {
+    margin: 0 5px;
+    padding: 10px 15px;
+    border: none;
+    background-color: green;
+    color: white;
+    cursor: pointer;
+}
+
+.posts-list {
+    margin-top: 20px;
+}
+
+.post {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-content {
+    margin-top: 10px;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+}
+
+.post-footer button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.comments-section {
+    margin-top: 20px;
+}
+
+.comment {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+}

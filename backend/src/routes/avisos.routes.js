@@ -1,6 +1,6 @@
 "use strict";
 import { Router } from "express";
-import { createAviso, getAvisos, getAvisoById, updateAviso, deleteAviso } from "../controllers/avisos.controller.js";
+import { createAviso, getAvisos, getAvisoById, updateAviso, deleteAviso, likeAviso, dislikeAviso } from "../controllers/avisos.controller.js";
 import { createComment, deleteComment, getAvisoCommentsById, getCommentsByAvisoId, updateComment } from "../controllers/comments.controller.js";
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
 
@@ -12,6 +12,10 @@ router.get("/", getAvisos);
 router.get("/:id", getAvisoById);
 router.put("/:id", authenticationMiddleware, updateAviso);
 router.delete("/:id", authenticationMiddleware, deleteAviso);
+
+// Rutas de likes y dislikes
+router.post("/:id/like", authenticationMiddleware, likeAviso);
+router.post("/:id/dislike", authenticationMiddleware, dislikeAviso);
 
 // Rutas de comentarios dentro de avisos
 router.post("/:avisoId/comments", authenticationMiddleware, createComment);

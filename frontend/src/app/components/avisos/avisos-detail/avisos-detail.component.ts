@@ -11,7 +11,9 @@ import { AvisosService } from 'src/app/services/avisos.service';
 export class AvisosDetailComponent implements OnInit {
   aviso: Aviso | null = null;
 
-  constructor(private route: ActivatedRoute, private avisosServices: AvisosService) { }
+
+  constructor(
+    private route: ActivatedRoute, private avisosServices: AvisosService) { }
 
   ngOnInit(): void {
     this.getAviso();
@@ -21,7 +23,6 @@ export class AvisosDetailComponent implements OnInit {
     const avisoId = this.route.snapshot.paramMap.get('id');
     if (avisoId) {
       this.avisosServices.getAvisoById(avisoId).subscribe((response: any) => {
-        console.log('Aviso data:', response);
         this.aviso = response.data;
       });
 

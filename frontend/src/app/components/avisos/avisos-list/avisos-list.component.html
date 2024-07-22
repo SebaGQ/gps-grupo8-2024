@@ -1,10 +1,37 @@
-<div *ngFor="let aviso of avisos">
-    <h2>{{ aviso.title }}</h2>
-    <p>{{ aviso.description }}</p>
-    <a [routerLink]="['/avisos', aviso._id]">Ver detalles</a>
-    <a [routerLink]="['/avisos/edit', aviso._id]">Editar</a>
-    <button (click)="deleteAviso(aviso._id)">Eliminar</button>
-
-
+<div class="forum-container">
+    <div class="forum-header">
+        <h1>Avisos Administracion</h1>
+        <p>En este foro se daran a conocer todos los mensajes importantes que necesite dar la administracion a sus
+            residentes </p>
+    </div>
+    <div class="posts-list">
+        <div *ngFor="let aviso of avisos" class="post">
+            <div class="post-header">
+                <h2>{{ aviso.title }}</h2>
+                <p>{{ aviso.createdAt | date:'medium' }}</p>
+            </div>
+            <div class="post-content">
+                <p>{{ aviso.description }}</p>
+            </div>
+            <div class="post-footer">
+                <button (click)="likeAviso(aviso._id)">
+                    <i class="fa fa-thumbs-up"></i> {{ aviso.reactions?.likes ?? 0 }}
+                </button>
+                <button (click)="dislikeAviso(aviso._id)">
+                    <i class="fa fa-thumbs-down"></i> {{ aviso.reactions?.dislikes ?? 0 }}
+                </button>
+                <button>
+                    <i class="fa fa-comments"></i> {{ aviso.comments?.length ?? 0 }}
+                </button>
+            </div>
+            <div class="comments-section">
+                <div *ngFor="let comment of aviso.comments" class="comment">
+                    <p>{{ comment.content }}</p>
+                    <button (click)="deleteComment(aviso._id, comment._id)">Delete</button>
+                </div>
+                <input [(ngModel)]="newComments[aviso._id]" placeholder="Add a comment" />
+                <button (click)="addComment(aviso._id)">Add Comment</button>
+            </div>
+        </div>
+    </div>
 </div>
-<a routerLink="/avisos/new">Crear un nuevo aviso</a>

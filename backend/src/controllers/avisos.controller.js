@@ -93,3 +93,42 @@ export const deleteAviso = async (req, res) => {
         respondError(req, res, 500, error.message);
     }
 };
+
+/**
+ * Manejar Like en un aviso
+ */
+export const likeAviso = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const aviso = await Aviso.findById(id);
+        if (!aviso) {
+            return respondError(req, res, 404, 'Aviso no encontrado');
+        }
+        aviso.reactions.likes += 1;
+        await aviso.save();
+        respondSuccess(req, res, 200, aviso);
+    } catch (error) {
+        handleError(error, "likeAviso");
+        respondError(req, res, 500, error.message);
+    }
+};
+
+
+/**
+ * Manejar Dislike en un aviso
+ */
+export const dislikeAviso = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const aviso = await Aviso.findById(id);
+        if (!aviso) {
+            return respondError(req, res, 404, 'Aviso no encontrado');
+        }
+        aviso.reactions.dislikes += 1;
+        await aviso.save();
+        respondSuccess(req, res, 200, aviso);
+    } catch (error) {
+        handleError(error, "dislikeAviso");
+        respondError(req, res, 500, error.message);
+    }
+};

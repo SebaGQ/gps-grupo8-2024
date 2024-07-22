@@ -11,7 +11,7 @@ export class AuthService {
   private authUrl = 'auth';
   private authState = new BehaviorSubject<boolean>(this.isAuthenticated());
 
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   login(credentials: { email: string, password: string }): Observable<any> {
     return this.httpService.post<any>(`${this.authUrl}/login`, credentials)

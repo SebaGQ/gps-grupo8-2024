@@ -26,6 +26,7 @@ import { AvisosService } from './services/avisos.service';
 import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
 import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
 import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
+import { CommentsService } from './services/comment.service';
 
 
 
@@ -65,7 +66,7 @@ export function tokenGetter() {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService, VisitorService, AvisosService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [AuthService, OrderService, VisitorService, AvisosService, CommentsService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
