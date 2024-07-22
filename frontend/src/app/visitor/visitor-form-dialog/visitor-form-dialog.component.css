@@ -1,0 +1,58 @@
+.dialog-container {
+  width: 400px;
+  padding: 20px;
+  background-color: aliceblue;
+}
+
+.example-full-width {
+  width: 100%;
+  margin-bottom: 16px;
+  background-color: aliceblue;
+}
+
+.mat-form-field {
+  background-color: white;
+  border-radius: 4px;
+}
+
+.mat-form-field-wrapper {
+  padding: 8px;
+  background-color: aliceblue;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding: 0 14px; /* Ajustar el relleno para que se vea mejor */
+}
+
+.mat-form-field-appearance-outline .mat-form-field-flex {
+  background-color: white; /* Fondo blanco para los campos de entrada */
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-start, 
+.mat-form-field-appearance-outline .mat-form-field-outline-end {
+  border-radius: 4px;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-start, 
+.mat-form-field-appearance-outline .mat-form-field-outline-end,
+.mat-form-field-appearance-outline .mat-form-field-outline-gap {
+  border-radius: 4px;
+}
+
+
+
+
+
+
+button {
+  display: block;
+  margin: 16px auto;
+}

@@ -6,6 +6,7 @@ import {
   visitorBodySchema,
   visitorIdSchema,
   visitorExitDateSchema,
+  rutSchema,
 } from "../schema/visitor.schema.js";
 import { handleError } from "../utils/errorHandler.js";
 
@@ -27,6 +28,25 @@ async function getVisitors(req, res) {
     respondError(req, res, 400, error.message);
   }
 }
+
+/**
+ * Gets all visitors who have not exited yet
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ */
+async function getActiveVisitors(req, res) {
+  try {
+    const [activeVisitors, error] = await VisitorService.getActiveVisitors();
+
+    if (error) return respondError(req, res, 404, error);
+
+    respondSuccess(req, res, 200, activeVisitors);
+  } catch (error) {
+    handleError(error, "visitor.controller -> getActiveVisitors");
+    respondError(req, res, 500, "Could not get the active visitors list");
+  }
+}
+
 
 /**
  * Crea un nuevo visitante
@@ -53,6 +73,7 @@ async function createVisitor(req, res) {
   }
 }
 
+
 /**
  * Obtiene un visitante por su id
  * @param {Object} req - Objeto de petición
@@ -74,6 +95,24 @@ async function getVisitorById(req, res) {
   } catch (error) {
     handleError(error, "visitor.controller -> getVisitorById");
     respondError(req, res, 500, "No se pudo obtener el visitante");
+  }
+}
+
+/**
+ * Gets all frequent visitors
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ */
+async function getFrequentVisitors(req, res) {
+  try {
+    const [frequentVisitors, error] = await VisitorService.getFrequentVisitors();
+
+    if (error) return respondError(req, res, 404, error);
+
+    respondSuccess(req, res, 200, frequentVisitors);
+  } catch (error) {
+    handleError(error, "visitor.controller -> getFrequentVisitors");
+    respondError(req, res, 500, "Could not get the frequent visitors list");
   }
 }
 
@@ -167,8 +206,10 @@ async function deleteVisitor(req, res) {
 
 export default {
   getVisitors,
+  getActiveVisitors,
   createVisitor,
   getVisitorById,
+  getFrequentVisitors,
   updateVisitor,
   updateVisitorExitDate,
   deleteVisitor,
