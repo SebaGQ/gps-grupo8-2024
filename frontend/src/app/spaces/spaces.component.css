@@ -1,0 +1,95 @@
+.spaces-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333333;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.spaces-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.space-card {
+  flex: 1 1 calc(25% - 20px); /* Ajustar a 4 tarjetas por fila con un gap de 20px */
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  max-width: calc(25% - 20px); /* Asegurar el mismo ancho para todas las tarjetas */
+}
+
+.mat-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Hacer que la tarjeta ocupe toda la altura del contenedor */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.mat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.buttonAdmin {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  color: white;
+  padding: 8px 16px;
+
+}
+.mat-card-header {
+  align-items: center;
+}
+
+.mat-card-title,
+.mat-card-subtitle {
+  margin-left: 8px;
+}
+
+.space-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc; /* Añadir borde a la imagen */
+  border-radius: 4px;
+  margin: 10px 0; /* Añadir espaciado alrededor de la imagen */
+}
+
+.mat-card-content {
+  flex-grow: 1; /* Hacer que el contenido crezca para ocupar el espacio disponible */
+}
+
+.mat-card-content p {
+  margin: 8px 0;
+}
+
+.mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.no-spaces-message {
+  text-align: center;
+  color: #ff5722;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}

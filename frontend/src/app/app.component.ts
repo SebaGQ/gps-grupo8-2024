@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'frontend';
+  mostrarMensaje(): void {
+    alert('Hola');
+  }
 }

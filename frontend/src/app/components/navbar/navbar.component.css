@@ -1,0 +1,15 @@
+.navbar {
+  background-color: #007bff;
+  padding: 10px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+}
+.navbar .logout {
+  margin-left: auto;
+}

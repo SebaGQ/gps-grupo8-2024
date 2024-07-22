@@ -21,6 +21,7 @@ async function createRoles() {
       new Role({ name: "user" }).save(),
       new Role({ name: "admin" }).save(),
       new Role({ name: "janitor" }).save(),
+      new Role({ name: "visitor"}).save(),
     ]);
     console.log("* => Roles creados exitosamente");
   } catch (error) {
@@ -68,8 +69,19 @@ async function createUsers() {
         rut: "12345678-8",
         password: await User.encryptPassword("janitor123"),
         roles: janitor._id,
+      }).save(),
+
+      new User({
+        firstName: "janitor2",
+        lastName: "janitor2",
+        email: "janitor2@email.com",
+        rut: "12345672-8",
+        password: await User.encryptPassword("janitor123"),
+        roles: janitor._id,
       }).save()
     ]);
+
+    
     console.log("* => Users creados exitosamente");
   } catch (error) {
     console.error(error);

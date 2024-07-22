@@ -1,0 +1,16 @@
+<div class="home-container">
+    <div class="home-card">
+      <h1>¡Bienvenido a la Página de Inicio!</h1>
+      <p *ngIf="isAuthenticated">Estás autenticado</p>
+      <p *ngIf="!isAuthenticated">No estás autenticado</p>
+      
+      <div *ngIf="isAuthenticated; else showLogin">
+        <button (click)="logout()">Cerrar Sesión</button>
+      </div>
+      
+      <ng-template #showLogin>
+        <app-login></app-login>
+      </ng-template>
+    </div>
+  </div>
+  
