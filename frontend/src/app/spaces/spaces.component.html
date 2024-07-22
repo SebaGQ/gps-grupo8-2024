@@ -11,7 +11,7 @@
           <mat-card-header>
             <h3 class="space-title">{{ space.location }}</h3>
           </mat-card-header>
-          <mat-card-content>
+          <mat-card-content class="mat-card-content">
             <div class="image-container">
               <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData"
               alt="{{ space.name }} Image" class="space-image">
@@ -21,11 +21,11 @@
               <mat-icon *ngIf="space.availability"> check_circle</mat-icon>
               <mat-icon *ngIf="!space.availability"> cancel</mat-icon>
             </h5>
-            <p>Capacidad: {{ space.capacity }} personas</p>
-            <p>Tipo: {{ space.type }}</p>
-            <p>Días disponibles: <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
-            <p>Horario Apertura: {{ space.openingHour }}</p>
-            <p>Horario Cierre: {{ space.closingHour }}</p>
+            <h5>Capacidad: {{ space.capacity }} personas</h5>
+            <h5>Tipo: {{ space.type }}</h5>
+            <h5>Horario Apertura: {{ space.openingHour }}</h5>
+            <h5>Horario Cierre: {{ space.closingHour }}</h5>
+            <h4>Días disponibles:</h4> <p> <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
           </mat-card-content>
           <mat-card-actions>
             <button mat-button color="primary" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
