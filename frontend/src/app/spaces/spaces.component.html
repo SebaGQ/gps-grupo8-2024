@@ -9,12 +9,18 @@
       <div class="space-card" *ngFor="let space of spaces">
         <mat-card class="mat-elevation-z4">
           <mat-card-header>
-            <mat-card-title class="space-title">{{ space.location }}</mat-card-title>
-            <mat-card-subtitle>{{ space.availability }}</mat-card-subtitle>
+            <h3 class="space-title">{{ space.location }}</h3>
           </mat-card-header>
-          <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData"
-            alt="{{ space.name }} Image" class="space-image">
           <mat-card-content>
+            <div class="image-container">
+              <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData"
+              alt="{{ space.name }} Image" class="space-image">
+            </div>
+            <h5>
+              Disponible: 
+              <mat-icon *ngIf="space.availability"> check_circle</mat-icon>
+              <mat-icon *ngIf="!space.availability"> cancel</mat-icon>
+            </h5>
             <p>Capacidad: {{ space.capacity }} personas</p>
             <p>Tipo: {{ space.type }}</p>
             <p>Días disponibles: <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
@@ -22,9 +28,9 @@
             <p>Horario Cierre: {{ space.closingHour }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-button color="primary" (click)="bookSpace(space._id)">Reservar</button>
-            <button mat-button color="accent" (click)="updateSpace(space._id)">Actualizar</button>
-            <button mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button>
+            <button mat-button color="primary" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
+            <button *ngIf="isAdminOrJanitor" mat-button color="accent" (click)="updateSpace(space._id)">Actualizar</button>
+            <button *ngIf="isAdminOrJanitor" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button>
           </mat-card-actions>
         </mat-card>
       </div>

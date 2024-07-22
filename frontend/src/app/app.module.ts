@@ -38,6 +38,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
 
 
 
@@ -105,6 +106,12 @@ export const MY_DATE_FORMATS = {
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
+    MatIconModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,
@@ -114,7 +121,7 @@ export const MY_DATE_FORMATS = {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService, HttpService],
+  providers: [AuthService, OrderService, HttpService, VisitorService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

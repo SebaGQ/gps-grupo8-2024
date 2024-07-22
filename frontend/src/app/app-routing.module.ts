@@ -20,7 +20,6 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'visitor', component: VisitorComponent },
-  { path: '**', redirectTo: '/home', pathMatch: 'full'}
   { path: 'spaces', component: SpacesComponent },
   { path: 'create-space', component: SpaceFormComponent },
   { path: 'create-space/:id', component: SpaceFormComponent },
