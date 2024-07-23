@@ -1,0 +1,77 @@
+<div class="janitor-order-list-container">
+    <h1>Lista de Todos los Pedidos</h1>
+  
+    <!-- Filtros -->
+    <div class="filters">
+      <h3>Filtrar</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre del Destinatario</mat-label>
+        <input matInput placeholder="Nombre del Destinatario" [(ngModel)]="filters.recipientFirstName" (ngModelChange)="applyFilters()">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Apellido del Destinatario</mat-label>
+        <input matInput placeholder="Apellido del Destinatario" [(ngModel)]="filters.recipientLastName" (ngModelChange)="applyFilters()">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Número de Departamento</mat-label>
+        <input matInput type="number" placeholder="Número de Departamento" [(ngModel)]="filters.departmentNumber" (ngModelChange)="applyFilters()">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
+          <mat-option value="">Todos los estados</mat-option>
+          <mat-option value="PENDING">Pendiente</mat-option>
+          <mat-option value="READY">Listo para Retirar</mat-option>
+          <mat-option value="WITHDRAWN">Retirado</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de Entrega</mat-label>
+        <input matInput type="date" placeholder="Fecha de Entrega" [(ngModel)]="filters.deliveryTime" (ngModelChange)="applyFilters()">
+      </mat-form-field>
+    </div>
+  
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+  
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef> Seleccionar </th>
+          <td mat-cell *matCellDef="let order">
+            <mat-checkbox (change)="toggleOrderSelection(order._id)" [checked]="order._id ? selectedOrderIds.includes(order._id) : false"></mat-checkbox>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del Destinatario </th>
+          <td mat-cell *matCellDef="let order"> {{order.recipientFirstName}} </td>
+        </ng-container>
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Destinatario </th>
+          <td mat-cell *matCellDef="let order"> {{order.recipientLastName}} </td>
+        </ng-container>
+        <ng-container matColumnDef="departmentNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Número de Departamento </th>
+          <td mat-cell *matCellDef="let order"> {{order.departmentNumber}} </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
+          <td mat-cell *matCellDef="let order"> {{order.status}} </td>
+        </ng-container>
+        <ng-container matColumnDef="deliveryTime">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de Entrega </th>
+          <td mat-cell *matCellDef="let order"> {{order.deliveryTime | date: 'short'}} </td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> Acción </th>
+          <td mat-cell *matCellDef="let order">
+            <button mat-raised-button color="primary" *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+  
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of orders"></mat-paginator>
+    </div>
+  </div>
+  

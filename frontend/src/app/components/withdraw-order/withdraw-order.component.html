@@ -1,0 +1,30 @@
+<div class="withdraw-order-container">
+  <h2>Registrar Retiro de Pedidos</h2>
+  <form (ngSubmit)="withdrawOrders()">
+    <label for="withdrawerType">¿Quién está haciendo el retiro?</label>
+    <select id="withdrawerType" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" required>
+      <option value="" disabled selected>Selecciona una opción</option>
+      <option value="resident">Residente Registrado</option>
+      <option value="other">Otra Persona</option>
+    </select>
+
+    <div *ngIf="selectedWithdrawerType === 'resident'">
+      <label for="residentId">Seleccionar Residente</label>
+      <select id="residentId" [(ngModel)]="withdrawData.selectedResidentId" name="selectedResidentId" required>
+        <option *ngFor="let resident of residents" [value]="resident._id">
+          {{ resident.firstName }} {{ resident.lastName }}
+        </option>
+      </select>
+    </div>
+
+    <div *ngIf="selectedWithdrawerType === 'other'">
+      <label for="withdrawnPersonFirstName">Nombre de la Persona que Retira</label>
+      <input type="text" id="withdrawnPersonFirstName" [(ngModel)]="withdrawData.withdrawnPersonFirstName" name="withdrawnPersonFirstName" required>
+
+      <label for="withdrawnPersonLastName">Apellido de la Persona que Retira</label>
+      <input type="text" id="withdrawnPersonLastName" [(ngModel)]="withdrawData.withdrawnPersonLastName" name="withdrawnPersonLastName" required>
+    </div>
+
+    <button type="submit">Registrar Retiro</button>
+  </form>
+</div>

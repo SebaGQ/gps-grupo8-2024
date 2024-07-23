@@ -5,21 +5,21 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { OrderService } from '../../services/order.service';
 import { OrderDTO } from '../../dto/order.dto';
-import { SelectWithdrawerComponent } from '../select-withdrawer/select-withdrawer.component';
+import { WithdrawOrderComponent } from '../withdraw-order/withdraw-order.component';
 
 @Component({
-  selector: 'app-order-list',
-  templateUrl: './order-list.component.html',
-  styleUrls: ['./order-list.component.css']
+  selector: 'app-janitor-order-list',
+  templateUrl: './janitor-order-list.component.html'
 })
-export class OrderListComponent implements OnInit {
-  displayedColumns: string[] = ['select', 'recipientFirstName', 'recipientLastName', 'status', 'deliveryTime', 'action'];
+export class JanitorOrderListComponent implements OnInit {
+  displayedColumns: string[] = ['select', 'firstName', 'lastName', 'departmentNumber', 'status', 'deliveryTime', 'action'];
   dataSource: MatTableDataSource<OrderDTO> = new MatTableDataSource();
   selectedOrderIds: string[] = [];
 
   filters = {
     recipientFirstName: '',
     recipientLastName: '',
+    departmentNumber: null,
     status: '',
     deliveryTime: ''
   };
@@ -27,14 +27,14 @@ export class OrderListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private orderService: OrderService, private dialog: MatDialog) {}
+  constructor(private orderService: OrderService, public dialog: MatDialog) {}
 
   ngOnInit() {
     this.fetchOrders();
   }
 
   fetchOrders() {
-    this.orderService.getOwnedOrders().subscribe(
+    this.orderService.getOrders().subscribe(
       (data: OrderDTO[]) => {
         this.dataSource.data = data;
         this.dataSource.paginator = this.paginator;
@@ -45,25 +45,13 @@ export class OrderListComponent implements OnInit {
     );
   }
 
-  toggleOrderSelection(orderId: string | undefined) {
-    if (orderId) {
-      const index = this.selectedOrderIds.indexOf(orderId);
-      if (index > -1) {
-        this.selectedOrderIds.splice(index, 1);
-      } else {
-        this.selectedOrderIds.push(orderId);
-      }
-    } else {
-      console.error('Order ID is undefined');
-    }
-  }
-
   applyFilters() {
     this.dataSource.filterPredicate = (order: OrderDTO, filters: string) => {
       const matchFilter = [];
       const filterArray = filters.split('$');
       const columns = Object.keys(this.filters) as (keyof OrderDTO)[];
 
+      // Añadir las condiciones de filtro
       const customFilter = (column: any, filter: string) => {
         if (!filter) return true;
         return column?.toString().toLowerCase().includes(filter.toLowerCase());
@@ -79,14 +67,27 @@ export class OrderListComponent implements OnInit {
     this.dataSource.filter = filterString.trim().toLowerCase();
   }
 
-  openSelectWithdrawerDialog(orderId: string) {
-    const dialogRef = this.dialog.open(SelectWithdrawerComponent, {
+  toggleOrderSelection(orderId: string | undefined) {
+    if (orderId) {
+      const index = this.selectedOrderIds.indexOf(orderId);
+      if (index > -1) {
+        this.selectedOrderIds.splice(index, 1);
+      } else {
+        this.selectedOrderIds.push(orderId);
+      }
+    } else {
+      console.error('Order ID is undefined');
+    }
+  }
+
+  openWithdrawOrderDialog(order: OrderDTO) {
+    const dialogRef = this.dialog.open(WithdrawOrderComponent, {
       width: '400px',
-      data: { orderId: orderId }
+      data: { orderIds: [order._id], departmentNumber: order.departmentNumber }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      this.fetchOrders(); // Actualiza la lista de pedidos después de cerrar el diálogo
     });
   }
 }

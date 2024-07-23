@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service'; // Usa el servicio HTTP personalizado
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { OrderDTO } from '../dto/order.dto';
 
 @Injectable({
@@ -12,27 +13,39 @@ export class OrderService {
   constructor(private httpService: HttpService) {}
 
   getOrders(): Observable<OrderDTO[]> {
-    return this.httpService.get<OrderDTO[]>(`${this.orderUrl}/`);
+    return this.httpService.get<{ state: string, data: OrderDTO[] }>(`${this.orderUrl}/`).pipe(
+      map(response => response.data)
+    );
   }
 
   getOrderById(id: string): Observable<OrderDTO> {
-    return this.httpService.get<OrderDTO>(`${this.orderUrl}/${id}`);
+    return this.httpService.get<{ state: string, data: OrderDTO }>(`${this.orderUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
   getOwnedOrders(): Observable<OrderDTO[]> {
-    return this.httpService.get<OrderDTO[]>(`${this.orderUrl}/owned`);
+    return this.httpService.get<{ state: string, data: OrderDTO[] }>(`${this.orderUrl}/owned`).pipe(
+      map(response => response.data)
+    );
   }
 
   getOrdersByDepartmentNumber(departmentNumber: number): Observable<OrderDTO[]> {
-    return this.httpService.get<OrderDTO[]>(`${this.orderUrl}/by-department/${departmentNumber}`);
+    return this.httpService.get<{ state: string, data: OrderDTO[] }>(`${this.orderUrl}/by-department/${departmentNumber}`).pipe(
+      map(response => response.data)
+    );
   }
 
   createOrder(order: OrderDTO): Observable<OrderDTO> {
-    return this.httpService.post<OrderDTO>(`${this.orderUrl}/`, order);
+    return this.httpService.post<{ state: string, data: OrderDTO }>(`${this.orderUrl}/`, order).pipe(
+      map(response => response.data)
+    );
   }
 
   updateOrder(id: string, order: OrderDTO): Observable<OrderDTO> {
-    return this.httpService.put<OrderDTO>(`${this.orderUrl}/${id}`, order);
+    return this.httpService.put<{ state: string, data: OrderDTO }>(`${this.orderUrl}/${id}`, order).pipe(
+      map(response => response.data)
+    );
   }
 
   deleteOrder(id: string): Observable<void> {

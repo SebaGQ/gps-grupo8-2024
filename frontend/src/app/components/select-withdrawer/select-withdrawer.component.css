@@ -1,0 +1,9 @@
+.select-withdrawer-container {
+  padding: 20px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}

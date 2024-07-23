@@ -1,10 +1,10 @@
 export interface OrderDTO {
-    _id : string;
-    departmentNumber: number;
-    janitorId: string;
-    recipientFirstName: string;
-    recipientLastName: string;
-    deliveryTime: Date;
+    _id? : string;
+    departmentNumber?: number;
+    janitorId?: string;
+    recipientFirstName?: string;
+    recipientLastName?: string;
+    deliveryTime?: Date;
     withdrawnTime?: Date;
     withdrawnResidentId?: string;
     withdrawnPersonFirstName?: string;

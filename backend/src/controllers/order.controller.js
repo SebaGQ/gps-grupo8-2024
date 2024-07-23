@@ -180,6 +180,7 @@ async function withdrawOrders(req, res) {
     try {
         const orderIds = req.body.orderIds;
         const withdrawData = {
+            residentId : req.body.residentId,
             withdrawnPersonFirstName: req.body.withdrawnPersonFirstName,
             withdrawnPersonLastName: req.body.withdrawnPersonLastName
         };

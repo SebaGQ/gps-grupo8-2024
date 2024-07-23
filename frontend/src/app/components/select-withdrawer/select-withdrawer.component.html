@@ -1,0 +1,37 @@
+<div class="select-withdrawer-container">
+  <h2>Seleccionar Retirante</h2>
+  <form (ngSubmit)="markAsReadyToWithdraw()">
+    <mat-radio-group [(ngModel)]="withdrawMethod" name="withdrawMethod">
+      <mat-radio-button value="self">Yo</mat-radio-button>
+      <mat-radio-button value="resident">Otro Residente De Mi Depto</mat-radio-button>
+      <mat-radio-button value="other">Otra Persona</mat-radio-button>
+    </mat-radio-group>
+
+    <div *ngIf="withdrawMethod === 'resident'">
+      <mat-form-field appearance="fill">
+        <mat-label>Seleccionar Residente</mat-label>
+        <mat-select [(ngModel)]="withdrawData.withdrawnResidentId" name="withdrawnResidentId">
+          <mat-option *ngFor="let resident of residents" [value]="resident._id">
+            {{ resident.firstName }} {{ resident.lastName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="withdrawMethod === 'other'">
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre del Retirante</mat-label>
+        <input matInput [(ngModel)]="withdrawData.expectedWithdrawnPersonFirstName" name="expectedWithdrawnPersonFirstName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido del Retirante</mat-label>
+        <input matInput [(ngModel)]="withdrawData.expectedWithdrawnPersonLastName" name="expectedWithdrawnPersonLastName">
+      </mat-form-field>
+    </div>
+
+    <div class="button-group">
+      <button mat-raised-button color="primary" type="submit">Marcar Como Listo para Retirar</button>
+      <button mat-raised-button type="button" (click)="onNoClick()">Cancelar</button>
+    </div>
+  </form>
+</div>

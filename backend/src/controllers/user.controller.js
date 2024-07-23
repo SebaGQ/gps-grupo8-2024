@@ -39,6 +39,25 @@ async function getUsersByDepartmentNumber(req, res) {
 }
 
 /**
+ * Obtiene todos los usuarios de un departamento específico dado como input
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function getUsersByDepartmentNumberInput(req, res) {
+  try {
+    const { departmentNumber } = req.params;
+    const [users, error] = await UserService.getUsersByDepartmentNumberInput(departmentNumber);
+
+    if (error) return respondError(req, res, 404, error);
+
+    respondSuccess(req, res, 200, users);
+  } catch (error) {
+    handleError(error, "user.controller -> getUsersByDepartmentNumberInput");
+    respondError(req, res, 500, "No se pudo obtener los usuarios del departamento");
+  }
+}
+
+/**
  * Crea un nuevo usuario
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
@@ -140,6 +159,7 @@ async function deleteUser(req, res) {
 export default {
   getUsers,
   getUsersByDepartmentNumber,
+  getUsersByDepartmentNumberInput,
   createUser,
   getUserById,
   updateUser,
