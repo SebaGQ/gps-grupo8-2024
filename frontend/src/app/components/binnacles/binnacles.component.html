@@ -1,28 +1,91 @@
-<header>
-    <h1>Bitácoras de Conserjes</h1>
+<!-- <header>
+  <h1>Bitácoras de Conserjes</h1>
 </header>
 <div class="bitacoras-container">
   <div class="actions-card">
-      <div class="actions">
-          <select [(ngModel)]="searchType">
-            <option value="date">Buscar por fecha</option>
-            <option value="janitor">Buscar por conserje</option>
-            <option value="activity">Buscar por actividad</option>
-            <option value="all">Buscar todo</option>
-          </select>
-          <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
-          <button *ngIf="searchType === 'date'" type="date" (click)="buscar()">Buscar</button>
-          <label *ngIf="searchType === 'activity'">Eliga una actividad:</label>
-          <select *ngIf="searchType === 'activity'" [(ngModel)]="selectedActivity">
-            <option value="Visita">Visita</option>
-            <option value="Espacio">Reserva de espacios</option>
-            <option value="3">Delivery</option>
-          </select>
-          <button *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" type="submit" (click)="buscarVisita()">Buscar visitas</button>
-          <button *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" type="submit" (click)="buscarEspacio()">Buscar Reservas</button>
-      </div>
+    <div class="actions">
+        <select [(ngModel)]="searchType">
+          <option value="date">Buscar por fecha</option>
+          <option value="janitor">Buscar por conserje</option>
+          <option value="activity">Buscar por actividad</option>
+          <option value="all">Buscar todo</option>
+        </select>
+        <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
+        <button *ngIf="searchType === 'date'" type="date" (click)="buscarFecha()">Buscar</button>
+        <input *ngIf="searchType === 'janitor'" type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
+        <button *ngIf="searchType === 'janitor'" type="submit" (click)="buscarConserje()">Buscar</button>
+        <label *ngIf="searchType === 'activity'">Eliga una actividad:</label>
+        <select *ngIf="searchType === 'activity'" [(ngModel)]="selectedActivity">
+          <option value="Visita">Visita</option>
+          <option value="Espacio">Reserva de espacios</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+        <button *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" type="submit" (click)="buscarVisita()">Buscar visitas</button>
+        <button *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" type="submit" (click)="buscarEspacio()">Buscar Reservas</button>
+        <button *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" type="submit" (click)="buscarDelivery()">Buscar Delivery</button>
+        <button *ngIf="searchType === 'all'" type="submit" (click)="buscarTodo()">Buscar todo</button>
+        <select [(ngModel)]="filterActivity" *ngIf="searchType === 'all'">
+          <option value="">Sin filtro</option>
+          <option value="Visita">Visita</option>
+          <option value="Espacio Comunitario">Reserva de espacios</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+        <button *ngIf="searchType === 'all'" type="submit" (click)="buscarTodo()">Aplicar filtro</button>
+    </div>
   </div>
-<div class="details-container" *ngIf="binnacles.length >= 0">
+  <div class="details-container" *ngIf="binnacles.length >= 0">
+    <div *ngFor="let binnacle of formattedBinnacles" class="log">
+      <h3>Conserje: {{ binnacle.janitorID }}</h3>
+      <p>Actividad: {{ binnacle.activityType }}</p>
+      <p>Descripción: {{ binnacle.description }}</p>
+      <p>Fecha: {{ formatDate(binnacle.createdAt) }}</p>
+    </div>
+  </div>
+</div> -->
+
+<header>
+  <h1>Bitácoras de Conserjes</h1>
+</header>
+<div class="bitacoras-container">
+  <div class="actions-card">
+    <div class="actions">
+        <select [(ngModel)]="searchType">
+          <option value="date">Buscar por fecha</option>
+          <option value="janitor">Buscar por conserje</option>
+          <option value="activity">Buscar por actividad</option>
+          <option value="all">Buscar todo</option>
+        </select>
+        <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
+        <button *ngIf="searchType === 'date'" type="date" (click)="buscarFecha()">Buscar</button>
+        <select [(ngModel)]="filterActivity" *ngIf="searchType === 'date'">
+          <option value="">Sin filtro</option>
+          <option value="Visita">Visita</option>
+          <option value="Espacio Comunitario">Reserva de espacios</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+        <button *ngIf="searchType === 'date'" type="submit" (click)="buscarFecha()">Aplicar filtro</button>
+        <input *ngIf="searchType === 'janitor'" type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
+        <button *ngIf="searchType === 'janitor'" type="submit" (click)="buscarConserje()">Buscar</button>
+        <label *ngIf="searchType === 'activity'">Eliga una actividad:</label>
+        <select *ngIf="searchType === 'activity'" [(ngModel)]="selectedActivity">
+          <option value="Visita">Visita</option>
+          <option value="Espacio">Reserva de espacios</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+        <button *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" type="submit" (click)="buscarVisita()">Buscar visitas</button>
+        <button *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" type="submit" (click)="buscarEspacio()">Buscar Reservas</button>
+        <button *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" type="submit" (click)="buscarDelivery()">Buscar Delivery</button>
+        <button *ngIf="searchType === 'all'" type="submit" (click)="buscarTodo()">Buscar todo</button>
+        <select [(ngModel)]="filterActivity" *ngIf="searchType === 'all'">
+          <option value="">Sin filtro</option>
+          <option value="Visita">Visita</option>
+          <option value="Espacio Comunitario">Reserva de espacios</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+        <button *ngIf="searchType === 'all'" type="submit" (click)="buscarTodo()">Aplicar filtro</button>
+    </div>
+  </div>
+  <div class="details-container" *ngIf="binnacles.length >= 0">
     <div *ngFor="let binnacle of formattedBinnacles" class="log">
       <h3>Conserje: {{ binnacle.janitorID }}</h3>
       <p>Actividad: {{ binnacle.activityType }}</p>
@@ -31,4 +94,3 @@
     </div>
   </div>
 </div>
-

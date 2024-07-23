@@ -3,6 +3,7 @@ import { BinnaclesService } from '../../services/binnacles.service';
 import { BinnacleDTO } from 'src/app/dto/binnacle.dto';
 import { BinnacleVisitorDTO } from 'src/app/dto/binnacleVisitor.dto';
 import { BinnacleSpacesDTO } from 'src/app/dto/binnacleSpaces.dto';
+import { BinnacleDeliveryDTO } from 'src/app/dto/binnacleDelivery.dto';
 
 @Component({
   selector: 'app-binnacles',
@@ -13,15 +14,33 @@ export class BinnaclesComponent {
   selectedDate: string = '';
   searchType: string = 'date';
   selectedActivity: string = '';
+  janitorName: string = ''; // Variable para almacenar el nombre del conserje
   formattedBinnacles: any[] = [];
-  binnacles: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[] = [];
+  binnacles: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO)[] = [];
   binnaclesVisitor: BinnacleVisitorDTO[] = [];
+  filterActivity: string = '';
 
   constructor(private binnaclesService: BinnaclesService) {}
 
-  buscar() {
+  buscarFecha() {
     if (this.selectedDate) {
       this.binnaclesService.getBinnaclesByDate(this.selectedDate).subscribe(
+        (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
+          this.binnacles = data;
+          this.applyFilters();
+          this.formatBinnacles();
+          console.log('Binnacles', this.binnacles);
+        },
+        (error) => {
+          console.error('Error fetching binnacles', error);
+        }
+      );
+    }
+  }
+
+  buscarConserje() {
+    if (this.janitorName) {
+      this.binnaclesService.getBinnacleByJanitor(this.janitorName).subscribe(
         (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
           this.binnacles = data;
           this.formatBinnacles();
@@ -32,6 +51,20 @@ export class BinnaclesComponent {
         }
       );
     }
+  }
+
+  buscarTodo() {
+    this.binnaclesService.getAllBinnacles().subscribe(
+      (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
+        this.binnacles = data;
+        this.applyFilters();
+        this.formatBinnacles();
+        console.log('All Binnacles', this.binnacles);
+      },
+      (error) => {
+        console.error('Error fetching all binnacles', error);
+      }
+    );
   }
 
   buscarVisita() {
@@ -60,6 +93,33 @@ export class BinnaclesComponent {
     );
   }
 
+  buscarDelivery() {
+    this.binnaclesService.getBinnaclesByDelivery().subscribe(
+      (data: BinnacleDeliveryDTO[]) => {
+        this.binnacles = data;
+        this.formatBinnacles();
+        console.log('BinnaclesDelivery', this.binnacles);
+      },
+      (error) => {
+        console.error('Error fetching binnacles', error);
+      }
+    );
+  }
+
+  applyFilters() {
+    if (this.filterActivity) {
+      this.binnacles = this.binnacles.sort((a, b) => {
+        if (a.activityType === this.filterActivity && b.activityType !== this.filterActivity) {
+          return -1;
+        } else if (a.activityType !== this.filterActivity && b.activityType === this.filterActivity) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+    }
+  }
+
   formatBinnacles() {
     this.formattedBinnacles = this.binnacles.map(binnacle => {
       if (binnacle.activityType === 'Visita') {
@@ -80,6 +140,15 @@ export class BinnaclesComponent {
           createdAt: spacesBinnacle.createdAt,
           description: `Espacio: ${spacesBinnacle.spaceId}, Inicio: ${this.formatDate(spacesBinnacle.startTime)}, Fin: ${this.formatDate(spacesBinnacle.endTime)}`
         };
+      } else if (binnacle.activityType === 'Delivery') {
+        // Es BinnacleDeliveryDTO
+      const deliveryBinnacle = binnacle as BinnacleDeliveryDTO;
+      return {
+        janitorID: deliveryBinnacle.janitorID || 'N/A',
+        activityType: deliveryBinnacle.activityType,
+        createdAt: deliveryBinnacle.createdAt,
+        description: `Departamento: ${deliveryBinnacle.departNumber}, Destinatario: ${deliveryBinnacle.recipientFirstName} ${deliveryBinnacle.recipientLastName}, Entregado por: ${deliveryBinnacle.deliveryPersonName}, Entrega: ${this.formatDate(deliveryBinnacle.deliveryTime)}. Estado: ${deliveryBinnacle.status}`
+      };       
       } else {
         return ;
       }

@@ -94,7 +94,7 @@ async function createOrder(req) {
         let newOrder = new Order({ ...orderData});
         newOrder.janitorId = user._id; //Se asigna el id del usuario que está haciendo la solicitud (Conserje)
         newOrder.status = ORDER_STATUSES[0]; //Se establece como 'Pendiente'
-        await BinnacleService.createEntry(newOrder.janitorId, "Delivery", orderData);
+        await BinnacleService.createEntryDelivery(newOrder.janitorId, "Delivery", orderData);
         await newOrder.save(); 
         //Aquí ya se guardó correctamente el pedido, se procede a generar la notificación.
         

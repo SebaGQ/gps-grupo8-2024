@@ -1,17 +1,17 @@
 "use strict";
 import Joi from "joi";
-import ACTIVITY_TYPES from "../constants/activitytypes.constants.js";
+import CATEGORIES from "../constants/binnaclecategories.constants.js";
 import ORDER_STATUSES from "../constants/orderstatus.constants.js";
 
 const commonFields = {
-    janitorId: Joi.string().required().messages({
+    janitorId: Joi.string().messages({
         "string.empty": "El id del conserje no puede estar vacío.",
         "any.required": "El id del conserje es requerido."
     }),
-    activityType: Joi.string().required().valid(...ACTIVITY_TYPES).messages({
+    activityType: Joi.string().required().valid(...CATEGORIES).messages({
         "string.empty": "El tipo de actividad no puede estar vacío.",
         "any.required": "El tipo de actividad es requerido.",
-        "any.only": `El tipo de actividad debe ser uno de: ${ACTIVITY_TYPES.join(', ')}.`
+        "any.only": `El tipo de actividad debe ser uno de: ${CATEGORIES.join(', ')}.`
     })
 };
 
@@ -56,46 +56,25 @@ const deliverySchema = Joi.object({
         "any.required": "El número de departamento es requerido para la entrega."
     }),
     recipientFirstName: Joi.string().required().messages({
-        "string.empty": "El nombre del destinatario no puede estar vacío.",
+        "string.base": "El nombre del destinatario no puede estar vacío.",
         "any.required": "El nombre del destinatario es requerido."
     }),
     recipientLastName: Joi.string().required().messages({
-        "string.empty": "El apellido del destinatario no puede estar vacío.",
+        "string.base": "El apellido del destinatario no puede estar vacío.",
         "any.required": "El apellido del destinatario es requerido."
     }),
     deliveryTime: Joi.date().required().messages({
         "date.base": "El tiempo de entrega debe ser una fecha válida.",
         "any.required": "El tiempo de entrega es requerido."
     }),
-    withdrawnTime: Joi.date().required().messages({
+    withdrawnTime: Joi.date().allow(null).messages({
         "date.base": "El tiempo de retiro debe ser una fecha válida.",
-        "any.required": "El tiempo de retiro es requerido."
     }),
-    withdrawnResidentId: Joi.string().required().messages({
-        "string.empty": "El id del residente que retira no puede estar vacío.",
-        "any.required": "El id del residente que retira es requerido."
-    }),
-    withdrawnPersonFirstName: Joi.string().required().messages({
-        "string.empty": "El nombre de la persona que retira no puede estar vacío.",
-        "any.required": "El nombre de la persona que retira es requerido."
-    }),
-    withdrawnPersonLastName: Joi.string().required().messages({
-        "string.empty": "El apellido de la persona que retira no puede estar vacío.",
-        "any.required": "El apellido de la persona que retira es requerido."
-    }),
-    expectedWithdrawnPersonFirstName: Joi.string().required().messages({
-        "string.empty": "El nombre esperado de la persona que retira no puede estar vacío.",
-        "any.required": "El nombre esperado de la persona que retira es requerido."
-    }),
-    expectedWithdrawnPersonLastName: Joi.string().required().messages({
-        "string.empty": "El apellido esperado de la persona que retira no puede estar vacío.",
-        "any.required": "El apellido esperado de la persona que retira es requerido."
-    }),
-    deliveryPersonName: Joi.string().required().messages({
+    deliveryPersonName: Joi.string().messages({
         "string.empty": "El nombre de la persona que entrega no puede estar vacío.",
         "any.required": "El nombre de la persona que entrega es requerido."
     }),
-    status: Joi.string().required().valid(...ORDER_STATUSES).messages({
+    status: Joi.string().valid(...ORDER_STATUSES).messages({
         "string.empty": "El estado no puede estar vacío.",
         "any.required": "El estado es requerido.",
         "any.only": `El estado debe ser uno de: ${ORDER_STATUSES.join(', ')}.`

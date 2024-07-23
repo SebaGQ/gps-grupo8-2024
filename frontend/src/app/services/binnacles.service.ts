@@ -4,6 +4,7 @@ import { HttpService } from './http.service';
 import { BinnacleDTO } from '../dto/binnacle.dto';
 import { BinnacleVisitorDTO } from '../dto/binnacleVisitor.dto';
 import { BinnacleSpacesDTO } from '../dto/binnacleSpaces.dto';
+import { BinnacleDeliveryDTO } from '../dto/binnacleDelivery.dto';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -26,7 +27,16 @@ export class BinnaclesService {
   getBinnaclesBySpace(): Observable<BinnacleSpacesDTO[]> {
     return this.HttpService.get<{data: BinnacleSpacesDTO[]}>(`${this.binnacleUrl}/booking`).pipe(map(response=>response.data));
   }
-  // getBinnacles(): Observable<any> {
-  //   return this.http.get(`${this.baseUrl}/getAll`);
-  // }
+  
+  getBinnacleByJanitor(name: string): Observable<BinnacleDTO[] | BinnacleVisitorDTO[] | BinnacleSpacesDTO[]> {
+    return this.HttpService.get<{data: BinnacleDTO[] | BinnacleVisitorDTO[] | BinnacleSpacesDTO[]}>(`${this.binnacleUrl}/id/${name}`).pipe(map(response => response.data));
+  }
+
+  getAllBinnacles(): Observable<BinnacleDTO[] | BinnacleVisitorDTO[] | BinnacleSpacesDTO[]> {
+    return this.HttpService.get<{data: BinnacleDTO[] | BinnacleVisitorDTO[] | BinnacleSpacesDTO[] }>(`${this.binnacleUrl}/getAll`).pipe(map(response => response.data));
+  }
+  
+  getBinnaclesByDelivery(): Observable<BinnacleDeliveryDTO[]> {
+    return this.HttpService.get<{data: BinnacleDeliveryDTO[]}>(`${this.binnacleUrl}/delivery`).pipe(map(response => response.data));
+  }
 }

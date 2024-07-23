@@ -14,8 +14,11 @@ router.use(authenticationMiddleware);
 
 
 router.post("/EntryVisitor", isJanitorOrAdmin,BinnacleController.createEntryVisitor);
-router.get("/getAll", isJanitorOrAdmin, BinnacleController.getBinnacles);
-router.get("/id/:id", isJanitorOrAdmin,BinnacleController.getBinnacleByJanitorID);
+router.post("/EntryBooking", isJanitorOrAdmin,BinnacleController.createEntryBooking);
+router.post("/EntryDelivery", isJanitorOrAdmin,BinnacleController.createEntryDelivery);
+router.get("/delivery", isJanitorOrAdmin,BinnacleController.getBinnacleDelivery);
+router.get("/getAll", isJanitorOrAdmin, BinnacleController.getAllBinnacles);
+router.get("/id/:name", isJanitorOrAdmin,BinnacleController.getBinnacleByJanitorName);
 router.get("/visitor", isJanitorOrAdmin,BinnacleController.getBinnaclesVisitor);
 router.get("/booking", isJanitorOrAdmin,BinnacleController.getBinnaclesBooking);
 router.get("/date/:date", isJanitorOrAdmin,BinnacleController.getBinnacleByDate);
