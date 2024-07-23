@@ -4,7 +4,7 @@ import { Router } from "express";
 
 import BinnacleController from "../controllers/binnacle.controller.js";
 
-import { isJanitorOrAdmin } from "../middlewares/authorization.middleware.js";
+import { isJanitorOrAdmin, isAdmin } from "../middlewares/authorization.middleware.js";
 
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
 
@@ -17,13 +17,13 @@ router.post("/EntryVisitor", isJanitorOrAdmin,BinnacleController.createEntryVisi
 router.post("/EntryBooking", isJanitorOrAdmin,BinnacleController.createEntryBooking);
 router.post("/EntryDelivery", isJanitorOrAdmin,BinnacleController.createEntryDelivery);
 router.get("/delivery", isJanitorOrAdmin,BinnacleController.getBinnacleDelivery);
-router.get("/getAll", isJanitorOrAdmin, BinnacleController.getAllBinnacles);
+router.get("/getAll", isJanitorOrAdmin, BinnacleController.getBinnacles);
 router.get("/id/:name", isJanitorOrAdmin,BinnacleController.getBinnacleByJanitorName);
 router.get("/visitor", isJanitorOrAdmin,BinnacleController.getBinnaclesVisitor);
 router.get("/booking", isJanitorOrAdmin,BinnacleController.getBinnaclesBooking);
 router.get("/date/:date", isJanitorOrAdmin,BinnacleController.getBinnacleByDate);
 router.get("/excel", isJanitorOrAdmin,BinnacleController.exportToExcel);
-
+router.delete("/:id", isAdmin,BinnacleController.deleteBinnacleId);
 
 
 export default router;

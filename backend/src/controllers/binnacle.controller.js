@@ -3,7 +3,7 @@
 import { respondSuccess, respondError } from "../utils/resHandler.js";
 import BinnacleService from "../services/binnacle.service.js";
 import { handleError } from "../utils/errorHandler.js";
-import { validateBinnacleBody } from '../schema/binnacle.schema.js';
+import { validateBinnacleBody, binnacleIdSchema } from '../schema/binnacle.schema.js';
 
 
 
@@ -181,7 +181,7 @@ async function getBinnacleByDate(req, res) {
 /**
  * Obtener todas las entradas de la bitácora
  */
-async function getAllBinnacles(req, res) {
+async function getBinnacles(req, res) {
     try {
         const [binnacles, error] = await BinnacleService.getBinnacles();
         if (error) return respondError(req, res, 500, error);
@@ -193,6 +193,27 @@ async function getAllBinnacles(req, res) {
     }
 }
 
+/**
+ * Eliminar una entrada por su id
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function deleteBinnacleId(req, res) {
+    try {
+        const { params } = req;
+        const { error: paramsError } = binnacleIdSchema.validate(params);
+        if (paramsError) return respondError(req, res, 400, error);
+        const deletedBinnacle = await BinnacleService.deleteBinnacleId(params.id);
+        if (!deletedBinnacle) {
+            return respondError(req, res, 404, "No se encontró la bitácora");
+        }
+        respondSuccess(req, res, 200, deletedBinnacle);        
+    } catch (error) {
+        handleError(error, "binnacle.controller -> deleteBinnacleId");
+        respondError(req, res, 500, "No se pudo eliminar la bitácora");
+    }
+}
+
 export default {
     exportToExcel,
     createEntryVisitor,
@@ -200,9 +221,10 @@ export default {
     createEntryDelivery,
     getBinnaclesBooking,
     getBinnacleDelivery,
-    getAllBinnacles,
+    getBinnacles,
     getBinnacleByJanitorName,
     getBinnaclesVisitor,
-    getBinnacleByDate
+    getBinnacleByDate,
+    deleteBinnacleId
 };
 

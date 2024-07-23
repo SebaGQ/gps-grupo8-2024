@@ -70,7 +70,7 @@ async function createEntryVisitor(req) {
         return [newBinnacleEntry, null];
     } catch (error) {
         handleError(error, "binnacle.service -> createEntry");
-        return [null, error.message];
+        return [null, "Error en el servidor"];
     }
 }
 
@@ -102,7 +102,7 @@ async function createEntryDelivery(req) {
         return [newBinnacleEntry, null];
     } catch (error) {
         handleError(error, "binnacle.service -> createEntryDelivery");
-        return [null, error.message];
+        return [null, "Error en el servidor"];
     }
 
 }
@@ -132,7 +132,7 @@ async function createEntryBooking(req) {
         return [newBinnacleEntry, null];
     }catch(error){
         handleError(error, "binnacle.service -> createEntryBooking");
-        return [null, error.message];
+        return [null, "Error en el servidor"];
     }
         
 }
@@ -192,7 +192,7 @@ async function getBinnaclesVisitor() {
 
         return [formattedBinnacles, null];
     } catch (error) {
-        return [null, error.message];
+        handleError(error, "binnacle.service -> getBinnaclesVisitor");
     }
 }
 
@@ -251,7 +251,7 @@ async function getBinnaclesBooking() {
 
         return [formattedBinnacles, null];
     } catch (error) {
-        return [null, error.message];
+        handleError(error, "binnacle.service -> getBinnaclesBooking");
     }
 }
 
@@ -297,7 +297,7 @@ async function getBinnaclesDelivery() {
 
         return [formattedBinnacles, null];
     } catch (error) {
-        return [null, error.message];
+        handleError(error, "binnacle.service -> getBinnaclesDelivery");
     }
 }
 
@@ -347,7 +347,7 @@ async function getBinnacleByJanitorName(name) {
 
         return [formattedBinnacles, null];
     } catch (error) {
-        return [null, error.message];
+        handleError(error, "binnacle.service -> getBinnacleByJanitorName");
     }
 }
 
@@ -417,7 +417,7 @@ async function getBinnacleByDate(date) {
         // Enviamos la respuesta
         return [result, null];
     } catch (error) {
-        return [null, error.message];
+        handleError(error, "binnacle.service -> getBinnacleByDate");
     }
 }
 
@@ -472,7 +472,18 @@ async function getBinnacles() {
         // Enviamos la respuesta
         return [result, null];
     } catch (error) {
-        return [null, error.message];
+        handleError(error, "binnacle.service -> getBinnacles");
+    }
+}
+
+/**
+ * Funcion para eliminar una entrada por su ID
+ */
+async function deleteBinnacleId(id) {
+    try {
+        return await Binnacle.findByIdAndDelete(id);
+    } catch (error) {
+       handleError(error, "binnacle.service -> deleteBinnacleId");
     }
 }
 
@@ -487,5 +498,6 @@ export default {
     getBinnaclesDelivery,
     getBinnacleByJanitorName,
     getBinnacleByDate,
-    getBinnacles
+    getBinnacles,
+    deleteBinnacleId
 };
