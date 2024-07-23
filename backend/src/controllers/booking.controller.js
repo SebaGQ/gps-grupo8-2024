@@ -156,6 +156,28 @@ async function getBookingByDate(req, res) {
     }
 }
 
+/**
+ * Obtiene las reservaciones del usuario actual.
+ * @param {object} req - La solicitud HTTP.
+ * @param {object} res - La respuesta HTTP.
+ */
+async function getMyBookings(req, res) {
+    try {
+        const email = req.email;
+        const [bookings, errorBookings] = await BookingService.getBookingsByUser(email);
+
+        if (errorBookings) return respondError(req, res, 404, errorBookings);
+        if (!bookings) {
+            return respondError(req, res, 404, "No se encontraron reservaciones");
+        }
+
+        respondSuccess(req, res, 200, bookings);
+    } catch (error) {
+        handleError(error, "booking.controller -> getMyBookings");
+        respondError(req, res, 500, "No se pudo obtener la reservación");
+    }
+}
+
 export default {
     getAllBookings,
     getBookingById,
@@ -165,4 +187,5 @@ export default {
     getBookingByUser,
     getBookingBySpace,
     getBookingByDate,
+    getMyBookings,
 };

@@ -71,7 +71,7 @@ router.use("/department", authenticationMiddleware, departmentRoutes);
 router.use("/bookings", authenticationMiddleware, bookingRoutes);
 
 // Define las rutas para los espacios comunes /api/commonSpaces
-router.use("/commonSpaces", commonSpaceRoutes);
+router.use("/commonSpaces", authenticationMiddleware, commonSpaceRoutes);
 
 // Define las rutas para las imagenes /api/images
 router.use("/images", imageFileRoutes);

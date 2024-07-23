@@ -5,10 +5,9 @@ import Joi from "joi";
  * Esquema de validación para el cuerpo de la solicitud de CommonSpace.
  */
 const commonSpaceSchemaJoi = Joi.object({
-    type: Joi.string().valid("parking", "barbecue").required().messages({
+    type: Joi.string().required().messages({
         "string.base": "El tipo debe ser de tipo string.",
         "any.required": "El tipo es obligatorio.",
-        "any.only": "El tipo debe ser 'parking' o 'barbecue'.",
     }),
     capacity: Joi.number().min(0).optional().messages({
         "number.base": "La capacidad debe ser de tipo number.",

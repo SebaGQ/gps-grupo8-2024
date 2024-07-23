@@ -35,8 +35,12 @@ const VisitorSchema = new Schema(
         },
         exitDate: {
             type: Date,
-            default: new Date("9999-12-31")
-        }
+            default: null
+        },
+        frequent: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         versionKey: false,

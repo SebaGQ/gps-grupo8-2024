@@ -47,7 +47,6 @@ async function getCommonSpaceById(req, res) {
  */
 async function createCommonSpace(req, res) {
     try {
-        console.log(req.body);
         const [commonSpace, errorCommonSpace] = await CommonSpaceService.createCommonSpace(req);
         if (errorCommonSpace) return respondError(req, res, 400, errorCommonSpace);
 

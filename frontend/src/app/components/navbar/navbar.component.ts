@@ -30,7 +30,29 @@ export class NavbarComponent {
       }else{
         this.router.navigate(['/login']);
       }
-    } 
+    }
+    if (destination === "spaces") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/spaces']);
+      }else{
+        this.router.navigate(['/create-space']);
+      }
+    
+    }
+    if (destination === "visitor") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/visitor']);
+      }else{
+        this.router.navigate(['/login']);
+      }
+    }
+    if (destination === "my-bookings") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/my-bookings']);
+      }else{
+        this.router.navigate(['/login']);
+      }
+    }
   }
   logout() {
     this.authService.logout();

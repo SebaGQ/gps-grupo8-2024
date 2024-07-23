@@ -1,10 +1,9 @@
 <div class="space-form-container">
   <h2>Agregar Nuevo Espacio</h2>
-  <form [formGroup]="spaceForm" (ngSubmit)="createSpace()">
-    <mat-form-field>
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="name" required>
-    </mat-form-field>
+  <div class="container-buttonBack">
+    <button class="buttonBack" mat-stroked-button color="secondary" [routerLink]="['/spaces']">Volver a Espacios</button>
+  </div>
+  <form [formGroup]="spaceForm" (ngSubmit)="saveSpace()">
     <mat-form-field>
       <mat-label>Ubicación</mat-label>
       <input matInput formControlName="location" required>
@@ -16,7 +15,8 @@
     <div class="days-checkbox">
       <label>Días Permitidos:</label>
       <div *ngFor="let day of daysOfWeek">
-        <mat-checkbox [value]="day.value" (change)="onCheckboxChange($event)">
+        <mat-checkbox [value]="day.value" (change)="onCheckboxChange($event)"
+          [checked]="spaceForm.get('allowedDays')?.value.includes(day.value)">
           {{ day.name }}
         </mat-checkbox>
       </div>
@@ -33,10 +33,17 @@
       <mat-label>Tipo</mat-label>
       <input matInput formControlName="type" required>
     </mat-form-field>
-    <div>
-      <label for="file">Imagen</label>
-      <input type="file" id="file" (change)="onFileSelected($event)">
-    </div>
-    <button mat-raised-button color="primary" type="submit">Agregar Espacio</button>
+    <mat-checkbox formControlName="availability">Disponible</mat-checkbox>
+    
+    <mat-form-field>
+      <mat-label>Imagen</mat-label>
+      <input matInput [value]="selectedFile?.name" readonly>
+      <button mat-button matSuffix (click)="fileInput.click()">Seleccionar Archivo</button>
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept=".jpg, .jpeg, .png" style="display: none;">
+    </mat-form-field>
+    
+    <img *ngIf="base64Image" [src]="'data:image/png;base64,' + base64Image" alt="Imagen del espacio" class="image-preview">
+
+    <button mat-raised-button color="primary" type="submit">Guardar Espacio</button>
   </form>
 </div>

@@ -6,6 +6,9 @@ const router = express.Router();
 // Listar todas las reservaciones
 router.get("/", BookingController.getAllBookings);
 
+// Obtener mis reservas
+router.get("/my-bookings", BookingController.getMyBookings);
+
 // Obtener una reservación específica por ID
 router.get("/:id", BookingController.getBookingById);
 

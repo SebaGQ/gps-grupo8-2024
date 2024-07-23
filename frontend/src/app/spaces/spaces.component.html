@@ -1,34 +1,47 @@
 <div class="spaces-container">
-  <h2>Espacios Disponibles</h2>
+  <h2 class="title">Espacios Disponibles</h2>
+  <!-- Botón para crear espacio común visible solo para Administrador o Janitor -->
+  <div class="buttonAdmin" *ngIf="isAdminOrJanitor">
+    <button mat-fab extended color="primary" [routerLink]="['/create-space']">Crear Espacio Común</button>
+  </div>
   <div *ngIf="spaces$ | async as spaces; else loading">
-    <div *ngIf="spaces.length > 0; else noSpaces">
+    <div *ngIf="spaces.length > 0; else noSpaces" class="spaces-list">
       <div class="space-card" *ngFor="let space of spaces">
-        <mat-card>
+        <mat-card class="mat-elevation-z4">
           <mat-card-header>
-            <mat-card-title>{{ space.name }}</mat-card-title>
-            <mat-card-subtitle>{{ space.location }}</mat-card-subtitle>
+            <h3 class="space-title">{{ space.location }}</h3>
           </mat-card-header>
-          <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData" alt="{{ space.name }} Image">
-          <mat-card-content>
-            <p>Capacidad: {{ space.capacity }} personas</p>
-            <p>Equipamiento: {{ space.allowedDays.join(', ') }}</p>
-            <p>Horario Apertura: {{ space.openingHour }}</p>
-            <p>Horario Cierre: {{ space.closingHour }}</p>
-            <p>Tipo: {{ space.type }}</p>
+          <mat-card-content class="mat-card-content">
+            <div class="image-container">
+              <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData"
+              alt="{{ space.name }} Image" class="space-image">
+            </div>
+            <h5>
+              Disponible: 
+              <mat-icon *ngIf="space.availability"> check_circle</mat-icon>
+              <mat-icon *ngIf="!space.availability"> cancel</mat-icon>
+            </h5>
+            <h5>Capacidad: {{ space.capacity }} personas</h5>
+            <h5>Tipo: {{ space.type }}</h5>
+            <h5>Horario Apertura: {{ space.openingHour }}</h5>
+            <h5>Horario Cierre: {{ space.closingHour }}</h5>
+            <h4>Días disponibles:</h4> <p> <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-button color="primary">Reservar</button>
-            <button mat-button color="accent" (click)="updateSpace(space.id, space)">Actualizar</button>
-            <button mat-button color="warn" (click)="deleteSpace(space.id)">Eliminar</button>
+            <button mat-button color="primary" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
+            <button *ngIf="isAdminOrJanitor" mat-button color="accent" (click)="updateSpace(space._id)">Actualizar</button>
+            <button *ngIf="isAdminOrJanitor" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button>
           </mat-card-actions>
         </mat-card>
       </div>
     </div>
     <ng-template #noSpaces>
-      <p>No hay espacios disponibles en este momento.</p>
+      <p class="no-spaces-message">No hay espacios disponibles en este momento.</p>
     </ng-template>
   </div>
   <ng-template #loading>
-    <mat-spinner></mat-spinner>
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
   </ng-template>
 </div>
