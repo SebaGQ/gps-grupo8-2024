@@ -1,13 +1,15 @@
 .dialog-container {
   width: 400px;
   padding: 20px;
-  background-color: aliceblue;
+  background-color: #f1f1f1;
+  margin: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .example-full-width {
   width: 100%;
   margin-bottom: 16px;
-  background-color: aliceblue;
 }
 
 .mat-form-field {
@@ -17,15 +19,14 @@
 
 .mat-form-field-wrapper {
   padding: 8px;
-  background-color: aliceblue;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-wrapper {
-  padding: 0 14px; /* Ajustar el relleno para que se vea mejor */
+  padding: 0 14px;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-flex {
-  background-color: white; /* Fondo blanco para los campos de entrada */
+  background-color: white;
 }
 
 .mat-form-field-appearance-outline .mat-form-field-outline {
@@ -41,18 +42,9 @@
   border-radius: 4px;
 }
 
-.mat-form-field-appearance-outline .mat-form-field-outline-start, 
-.mat-form-field-appearance-outline .mat-form-field-outline-end,
-.mat-form-field-appearance-outline .mat-form-field-outline-gap {
-  border-radius: 4px;
-}
-
-
-
-
-
-
 button {
   display: block;
   margin: 16px auto;
+  background-color: #194E30; /* Usar el color 900 de tu paleta personalizada */
+  color: white;
 }

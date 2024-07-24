@@ -1,19 +1,23 @@
 <div class="mat-container">
   <div class="mat-toolbar">
-    <h1>{{ showCompleted ? 'Lista de Visitantes Completados' : 'Lista de Visitantes Activos' }}</h1>
-    <button mat-raised-button color="primary" (click)="openDialog()">Registrar Nueva Visita</button>
-    <button mat-raised-button color="accent" (click)="toggleCompletedVisitors()">
-      {{ showCompleted ? 'Mostrar Visitantes Activos' : 'Mostrar Visitantes Completados' }}
-    </button>
+    <h1>Lista de Visitantes Activos</h1>
   </div>
-  <div class="mat-row">
-    <mat-form-field class="example-full-width">
-      <mat-label>Filtrar por fecha</mat-label>
-      <input matInput [matDatepicker]="picker" (dateChange)="filterByDate($event)">
+
+  <div class="button-container">
+    <mat-form-field appearance="fill">
+      <mat-label>Elegir Fecha</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="filterByDate($event)">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+    <button mat-raised-button (click)="clearDateFilter()">Limpiar fecha</button>
+    
+    <button mat-raised-button color="primary" *ngIf="canViewVisitors()" (click)="toggleCompletedVisitors()">
+      {{ showCompleted ? 'Mostrar Visitantes Activos' : 'Mostrar Visitantes Completados' }}
+    </button>
+    <button mat-raised-button color="primary" *ngIf="canViewVisitors()" (click)="openDialog()">Registrar Nueva Visita</button>
   </div>
+
   <div class="mat-row">
     <div *ngFor="let visitor of filteredVisitors" class="mat-col-4 mat-mb-4">
       <mat-card>
@@ -26,10 +30,10 @@
           <p><strong>Fecha de Entrada:</strong> {{ visitor.entryDate | date }}</p>
           <p *ngIf="!isExitDate9999(visitor.exitDate)"><strong>Fecha de Salida:</strong> {{ visitor.exitDate | date }}</p>
         </mat-card-content>
-        <mat-card-actions>
-          <button *ngIf="!showCompleted" mat-button color="accent" (click)="registerExit(visitor._id!)">Registrar Salida</button>
-          <button mat-button color="warn" (click)="openDialog(visitor)">Modificar</button>
-          <button mat-button color="primary" (click)="deleteVisitor(visitor._id!)">Eliminar</button>
+        <mat-card-actions class="button-container">
+          <button mat-raised-button color="primary" *ngIf="canModifyVisitor()" (click)="registerExit(visitor._id!)">Registrar Salida</button>
+          <button mat-raised-button color="primary" *ngIf="canModifyVisitor()" (click)="openDialog(visitor)">Modificar</button>
+          <button mat-raised-button color="primary" *ngIf="canDeleteVisitor()" (click)="deleteVisitor(visitor._id!)">Eliminar</button>
         </mat-card-actions>
       </mat-card>
     </div>

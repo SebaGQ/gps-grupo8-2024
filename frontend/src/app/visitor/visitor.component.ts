@@ -4,19 +4,23 @@ import { VisitorService } from '../services/visitor.service';
 import { VisitorDTO } from '../dto/visitor.dto';
 import { VisitorFormDialogComponent } from './visitor-form-dialog/visitor-form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-visitor',
   templateUrl: './visitor.component.html',
-  styleUrls: ['./visitor.component.css']
+  styleUrls: ['./visitor.component.css'],
 })
 export class VisitorComponent implements OnInit {
   visitors: VisitorDTO[] = [];
+  activeVisitors: VisitorDTO[] = [];
+  completedVisitors: VisitorDTO[] = [];
   filteredVisitors: VisitorDTO[] = [];
   showCompleted: boolean = false;
+  selectedDate: any = null;
 
 
-  constructor(private visitorService: VisitorService, public dialog: MatDialog) {}
+  constructor(private visitorService: VisitorService,private authService: AuthService, public dialog: MatDialog) {}
 
   ngOnInit() {
     this.getActiveVisitors();
@@ -25,6 +29,7 @@ export class VisitorComponent implements OnInit {
   getActiveVisitors() {
     this.visitorService.getActiveVisitors().subscribe(data => {
       this.visitors = data;
+      this.activeVisitors = data;
       this.filteredVisitors = data;
     });
   }
@@ -32,6 +37,7 @@ export class VisitorComponent implements OnInit {
   getCompletedVisitors() {
     this.visitorService.getVisitors().subscribe(data => {
       this.visitors = data.filter(visitor => !this.isExitDate9999(visitor.exitDate));
+      this.completedVisitors = this.visitors;
       this.filteredVisitors = this.visitors;
     });
   }
@@ -60,7 +66,7 @@ export class VisitorComponent implements OnInit {
         this.getActiveVisitors();
       },
       error => {
-        console.error('Error registering exit for visitor', error);
+        console.error('Error al registrar salida de visitante', error);
       }
     );
   }
@@ -72,7 +78,7 @@ export class VisitorComponent implements OnInit {
         this.getActiveVisitors();
       },
       error => {
-        console.error('Error deleting visitor', error);
+        console.error('Error al eliminar visitante', error);
       }
     );
   }
@@ -82,11 +88,32 @@ export class VisitorComponent implements OnInit {
   }
 
   filterByDate(event: any) {
-    const selectedDate = new Date(event.target.value);
-    this.visitors = this.visitors.filter(visitor => {
+    const selectedDate = event.value;
+    this.filteredVisitors = this.visitors.filter(visitor => {
       const entryDate = new Date(visitor.entryDate);
-      return entryDate.toDateString() === selectedDate.toDateString();
+      return entryDate.toDateString() === new Date(selectedDate).toDateString();
     });
+    // If needed, manually set the value of the selectedDate to update the view
+    this.selectedDate = selectedDate;
+  }
+
+
+  clearDateFilter() {
+    this.selectedDate = null;
+    this.filteredVisitors = this.visitors; // Reset to show all visitors
+  }
+  
+  // Métodos para verificar roles
+  canDeleteVisitor(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  canModifyVisitor(): boolean {
+    return this.authService.isAdmin() || this.authService.isJanitor();
+  }
+
+  canViewVisitors(): boolean {
+    return this.authService.isAdmin() || this.authService.isJanitor();
   }
   
 }

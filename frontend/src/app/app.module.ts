@@ -30,8 +30,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MY_FORMATS } from './My-format';
+
 
 
 
@@ -78,7 +80,8 @@ export function tokenGetter() {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService,VisitorService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [AuthService, OrderService,VisitorService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
