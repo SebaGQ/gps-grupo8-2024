@@ -31,6 +31,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MY_FORMATS } from './My-format';
+
 
 import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
@@ -121,7 +123,8 @@ export const MY_DATE_FORMATS = {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService, HttpService, VisitorService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },],
+  providers: [AuthService, OrderService,VisitorService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

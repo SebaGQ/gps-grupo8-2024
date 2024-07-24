@@ -1,12 +1,17 @@
-/* styles.css */
-.mat-container {
-  padding: 20px;
-}
+/* Estilos específicos para el componente de visitantes */
 
 .mat-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.mat-toolbar button {
+  margin-right: 10px;
+  background-color: #1C5F37 !important; /* Verde oscuro */
+  color: white !important; /* Texto blanco */
+  border-radius: 5px;
+  margin-right: 5px;
 }
 
 .mat-row {
@@ -24,7 +29,9 @@
 }
 
 .visitor-card {
-  background-color: #f5f5f5;  /* Fondo más claro para las tarjetas */
+  background-color: #f5f5f5; /* Fondo más claro para las tarjetas */
+  border-radius: 8px;
+  padding: 15px;
 }
 
 .mat-card-title {
@@ -37,18 +44,41 @@
 
 .mat-card-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 16px;
+  gap: 10px; /* Añade espacio entre los botones */
 }
 
-button[mat-stroked-button] {
-  border-width: 2px;
-  border-radius: 4px;
-  margin-right: 8px;
+.button-container button {
+  background-color: #1C5F37 !important; /* Verde oscuro */
+  color: white !important; /* Texto blanco */
+  border-radius: 5px;
+  margin-right: 5px;
+  gap: 10px;
 }
-.mat-card {
-  background-color: #f5f5f5;
+
+.mat-toolbar h1 {
+  margin-left: 20px;
 }
-.mat-mdc-card {
-  background-color: #f5f5f5;
+
+.mat-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1C5F37;
+  color: white;
+  padding: 10px;
 }
+
+.mat-toolbar h1 {
+  margin: 0;
+}
+
+.button-container button, .button-container mat-form-field {
+  margin: 0 10px;
+}
+
+.mat-form-field {
+  min-width: 250px;
+}
+
