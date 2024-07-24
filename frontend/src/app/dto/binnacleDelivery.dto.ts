@@ -14,4 +14,5 @@ export interface BinnacleDeliveryDTO{
     deliveryPersonName?: string;
     status?: string;
     createdAt?: string;
+    _id: string;
 }

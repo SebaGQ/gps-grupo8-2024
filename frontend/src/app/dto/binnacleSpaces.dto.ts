@@ -5,4 +5,5 @@ export interface BinnacleSpacesDTO{
     startTime: string;
     endTime: string;
     createdAt: string;
+    _id: string;
 }

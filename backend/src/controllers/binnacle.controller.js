@@ -214,6 +214,41 @@ async function deleteBinnacleId(req, res) {
     }
 }
 
+/**
+ * Actualiza una entrada en la bitácora.
+ */
+async function updateBinnacle(req, res) {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+        const [updatedBinnacle, error] = await BinnacleService.updateBinnacle(id, updateData);
+        if (error) return respondError(req, res, 400, error);
+        respondSuccess(req, res, 200, updatedBinnacle);
+    } catch (error) {
+        handleError(error, "binnacle.controller -> updateBinnacle");
+        respondError(req, res, 500, "No se pudo actualizar la bitácora");
+    }
+}
+
+/**
+ * Obtiene una entrada de la bitácora por id
+ */
+async function getBinnacleById(req, res) {
+    try {
+        const { id } = req.params;
+        console.log("ID", id);
+        const [binnacle, error] = await BinnacleService.getBinnacleById(id);
+        if (error) return respondError(req, res, 404, error);
+        if (!binnacle) {
+            return respondError(req, res, 404, "No se encontró la bitácora");
+        }
+        respondSuccess(req, res, 200, binnacle);
+    } catch (error) {
+        handleError(error, "binnacle.controller -> getBinnacleById");
+        respondError(req, res, 500, "No se pudo obtener la bitácora");
+    }
+}
+
 export default {
     exportToExcel,
     createEntryVisitor,
@@ -222,9 +257,11 @@ export default {
     getBinnaclesBooking,
     getBinnacleDelivery,
     getBinnacles,
+    getBinnacleById,
     getBinnacleByJanitorName,
     getBinnaclesVisitor,
     getBinnacleByDate,
-    deleteBinnacleId
+    deleteBinnacleId,
+    updateBinnacle
 };
 

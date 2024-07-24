@@ -6,4 +6,5 @@ export interface BinnacleVisitorDTO{
     name: string;
     lastName: string;
     rut: string;
+    _id: string;
 }

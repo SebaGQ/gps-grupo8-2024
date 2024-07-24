@@ -1,51 +1,203 @@
 <header>
   <h1>Bitácoras de Conserjes</h1>
 </header>
+
 <div class="bitacoras-container">
-  <div class="actions-card">
+  <mat-card class="actions-card">
     <div class="actions">
-        <select [(ngModel)]="searchType">
-          <option value="date">Buscar por fecha</option>
-          <option value="janitor">Buscar por conserje</option>
-          <option value="activity">Buscar por actividad</option>
-          <option value="all">Buscar todo</option>
-        </select>
-        <input *ngIf="searchType === 'date'" type="date" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
-        <button *ngIf="searchType === 'date'" type="date" (click)="buscarFecha()">Buscar</button>
-        <select [(ngModel)]="filterActivity" *ngIf="searchType === 'date'">
-          <option value="">Sin filtro</option>
-          <option value="Visita">Visita</option>
-          <option value="Espacio Comunitario">Reserva de espacios</option>
-          <option value="Delivery">Delivery</option>
-        </select>
-        <button *ngIf="searchType === 'date'" type="submit" (click)="buscarFecha()">Aplicar filtro</button>
-        <input *ngIf="searchType === 'janitor'" type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
-        <button *ngIf="searchType === 'janitor'" type="submit" (click)="buscarConserje()">Buscar</button>
-        <label *ngIf="searchType === 'activity'">Eliga una actividad:</label>
-        <select *ngIf="searchType === 'activity'" [(ngModel)]="selectedActivity">
-          <option value="Visita">Visita</option>
-          <option value="Espacio">Reserva de espacios</option>
-          <option value="Delivery">Delivery</option>
-        </select>
-        <button *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" type="submit" (click)="buscarVisita()">Buscar visitas</button>
-        <button *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" type="submit" (click)="buscarEspacio()">Buscar Reservas</button>
-        <button *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" type="submit" (click)="buscarDelivery()">Buscar Delivery</button>
-        <button *ngIf="searchType === 'all'" type="submit" (click)="buscarTodo()">Buscar todo</button>
-        <select [(ngModel)]="filterActivity" *ngIf="searchType === 'all'">
-          <option value="">Sin filtro</option>
-          <option value="Visita">Visita</option>
-          <option value="Espacio Comunitario">Reserva de espacios</option>
-          <option value="Delivery">Delivery</option>
-        </select>
-        <button *ngIf="searchType === 'all'" type="submit" (click)="buscarTodo()">Aplicar filtro</button>
+      <mat-form-field appearance="fill">
+        <mat-label>Tipo de búsqueda</mat-label>
+        <mat-select [(ngModel)]="searchType">
+          <mat-option value="date">Buscar por fecha</mat-option>
+          <mat-option value="janitor">Buscar por conserje</mat-option>
+          <mat-option value="activity">Buscar por actividad</mat-option>
+          <mat-option value="all">Buscar todo</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="searchType === 'date'" appearance="fill">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" placeholder="dd-mm-aaaa" [(ngModel)]="selectedDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" *ngIf="searchType === 'date'" (click)="buscarFecha()">Buscar</button>
+
+      <mat-form-field *ngIf="searchType === 'date'" appearance="fill">
+        <mat-label>Filtrar actividad</mat-label>
+        <mat-select [(ngModel)]="filterActivity">
+          <mat-option value="">Sin filtro</mat-option>
+          <mat-option value="Visita">Visita</mat-option>
+          <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
+          <mat-option value="Delivery">Delivery</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" *ngIf="searchType === 'date'" (click)="buscarFecha()">Aplicar filtro</button>
+
+      <mat-form-field *ngIf="searchType === 'janitor'" appearance="fill">
+        <mat-label>Nombre del conserje</mat-label>
+        <input matInput type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" *ngIf="searchType === 'janitor'" (click)="buscarConserje()">Buscar</button>
+
+      <mat-form-field *ngIf="searchType === 'activity'" appearance="fill">
+        <mat-label>Eliga una actividad</mat-label>
+        <mat-select [(ngModel)]="selectedActivity">
+          <mat-option value="Visita">Visita</mat-option>
+          <mat-option value="Espacio">Reserva de espacios</mat-option>
+          <mat-option value="Delivery">Delivery</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" (click)="buscarVisita()">Buscar visitas</button>
+      <button mat-raised-button color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" (click)="buscarEspacio()">Buscar Reservas</button>
+      <button mat-raised-button color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" (click)="buscarDelivery()">Buscar Delivery</button>
+      <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="buscarTodo()">Buscar todo</button>
+
+      <mat-form-field *ngIf="searchType === 'all'" appearance="fill">
+        <mat-label>Filtrar actividad</mat-label>
+        <mat-select [(ngModel)]="filterActivity">
+          <mat-option value="">Sin filtro</mat-option>
+          <mat-option value="Visita">Visita</mat-option>
+          <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
+          <mat-option value="Delivery">Delivery</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="buscarTodo()">Aplicar filtro</button>
     </div>
-  </div>
+  </mat-card>
+
   <div class="details-container" *ngIf="binnacles.length >= 0">
-    <div *ngFor="let binnacle of formattedBinnacles" class="log">
-      <h3>Conserje: {{ binnacle.janitorID }}</h3>
-      <p>Actividad: {{ binnacle.activityType }}</p>
-      <p>Descripción: {{ binnacle.description }}</p>
-      <p>Fecha: {{ formatDate(binnacle.createdAt) }}</p>
-    </div>
+    <mat-card *ngFor="let binnacle of formattedBinnacles" class="log">
+      <div class="mat-card-content">
+        <div class="log-content">
+          <h3>Conserje: {{ binnacle.janitorID }}</h3>
+          <p>Actividad: {{ binnacle.activityType }}</p>
+          <p>Descripción: {{ binnacle.description }}</p>
+          <p>Fecha: {{ formatDate(binnacle.createdAt) }}</p>
+        </div>
+        <div class="log-actions" *ngIf="isAdmin">
+          <button mat-raised-button color="primary" class="btn-modificar" (click)="abrirModificarModal(binnacle)">Modificar</button>
+          <button mat-raised-button color="warn" class="eliminar-btn" (click)="eliminar(binnacle)">Eliminar</button>
+        </div>
+      </div>
+    </mat-card>
   </div>
 </div>
+
+<!-- Modal para modificar bitácora -->
+<mat-dialog-content *ngIf="isModalOpen">
+  <h2 mat-dialog-title>Modificar Bitácora</h2>
+  <form (ngSubmit)="modificarBinnacle()">
+    <!-- Visita -->
+    <div *ngIf="binnacleSeleccionado.activityType === 'Visita'">
+      <mat-form-field appearance="fill">
+        <mat-label>Conserje</mat-label>
+        <input matInput type="text" id="janitorID" [(ngModel)]="binnacleSeleccionado.janitorID" name="janitorID" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre</mat-label>
+        <input matInput type="text" id="name" [(ngModel)]="binnacleSeleccionado.name" name="name" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido</mat-label>
+        <input matInput type="text" id="lastName" [(ngModel)]="binnacleSeleccionado.lastName" name="lastName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>RUT</mat-label>
+        <input matInput type="text" id="rut" [(ngModel)]="binnacleSeleccionado.rut" name="rut" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Número de Departamento</mat-label>
+        <input matInput type="text" id="departmentNumber" [(ngModel)]="binnacleSeleccionado.departmentNumber" name="departmentNumber" required>
+      </mat-form-field>
+    </div>
+    <!-- Espacio Comunitario -->
+    <div *ngIf="binnacleSeleccionado.activityType === 'Espacio Comunitario'">
+      <mat-form-field appearance="fill">
+        <mat-label>Conserje</mat-label>
+        <input matInput type="text" id="janitorID" [(ngModel)]="binnacleSeleccionado.janitorID" name="janitorID" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>ID del Espacio</mat-label>
+        <input matInput type="text" id="spaceId" [(ngModel)]="binnacleSeleccionado.spaceId" name="spaceId" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Hora de Inicio</mat-label>
+        <input matInput type="datetime-local" id="startTime" [(ngModel)]="binnacleSeleccionado.startTime" name="startTime" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Hora de Fin</mat-label>
+        <input matInput type="datetime-local" id="endTime" [(ngModel)]="binnacleSeleccionado.endTime" name="endTime" required>
+      </mat-form-field>
+    </div>
+    <!-- Delivery -->
+    <div *ngIf="binnacleSeleccionado.activityType === 'Delivery'">
+      <mat-form-field appearance="fill">
+        <mat-label>Conserje</mat-label>
+        <input matInput type="text" id="janitorID" [(ngModel)]="binnacleSeleccionado.janitorID" name="janitorID" readonly>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Número de Departamento</mat-label>
+        <input matInput type="text" id="departNumber" [(ngModel)]="binnacleSeleccionado.departNumber" name="departNumber" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre del Destinatario</mat-label>
+        <input matInput type="text" id="recipientFirstName" [(ngModel)]="binnacleSeleccionado.recipientFirstName" name="recipientFirstName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido del Destinatario</mat-label>
+        <input matInput type="text" id="recipientLastName" [(ngModel)]="binnacleSeleccionado.recipientLastName" name="recipientLastName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre del Repartidor (opcional)</mat-label>
+        <input matInput type="text" id="deliveryPersonName" [(ngModel)]="binnacleSeleccionado.deliveryPersonName" name="deliveryPersonName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Hora de Entrega</mat-label>
+        <input matInput type="datetime-local" id="deliveryTime" [(ngModel)]="binnacleSeleccionado.deliveryTime" name="deliveryTime" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Hora de Retiro (opcional)</mat-label>
+        <input matInput type="datetime-local" id="withdrawalTime" [(ngModel)]="binnacleSeleccionado.withdrawalTime" name="withdrawalTime">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>ID del Residente que Retira (opcional)</mat-label>
+        <input matInput type="text" id="withdrawnResidentId" [(ngModel)]="binnacleSeleccionado.withdrawnResidentId" name="withdrawnResidentId">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre de la persona que retira (opcional)</mat-label>
+        <input matInput type="text" id="withdrawnPersonFirstName" [(ngModel)]="binnacleSeleccionado.withdrawnPersonFirstName" name="withdrawnPersonFirstName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido de la persona que retira (opcional)</mat-label>
+        <input matInput type="text" id="withdrawnPersonLastName" [(ngModel)]="binnacleSeleccionado.withdrawnPersonLastName" name="withdrawnPersonLastName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Nombre del tercero que retirará el pedido (opcional)</mat-label>
+        <input matInput type="text" id="expectedWithdrawnPersonFirstName" [(ngModel)]="binnacleSeleccionado.expectedWithdrawnPersonFirstName" name="expectedWithdrawnPersonFirstName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Apellido del tercero que retirará el pedido (opcional)</mat-label>
+        <input matInput type="text" id="expectedWithdrawnPersonLastName" [(ngModel)]="binnacleSeleccionado.expectedWithdrawnPersonLastName" name="expectedWithdrawnPersonLastName">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Estado</mat-label>
+        <mat-select id="status" [(ngModel)]="binnacleSeleccionado.status" name="status">
+          <mat-option value="PENDING">Pendiente</mat-option>
+          <mat-option value="READY">Listo</mat-option>
+          <mat-option value="DELIVERED">Retirado</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="fill">
+      <mat-label>Tipo de Actividad</mat-label>
+      <input matInput type="text" id="activityType" [(ngModel)]="binnacleSeleccionado.activityType" name="activityType" readonly>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Guardar cambios</button>
+  </form>
+</mat-dialog-content>

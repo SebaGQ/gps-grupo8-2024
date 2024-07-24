@@ -422,6 +422,37 @@ async function getBinnacleByDate(date) {
 }
 
 /**
+ * Obtener la entrada de la bitacora por ID
+ */
+async function getBinnacleById(id) {
+    try {
+        const binnacle = await Binnacle.findById(id).lean();
+        if (!binnacle) {
+            return [null, "No se encontró la bitácora"];
+        }
+
+        // Obtener el ID del conserje de la bitácora
+        const janitorId = binnacle.janitorID;
+
+        // Obtener el nombre del conserje
+        const janitor = await Users.findById(janitorId).select('firstName lastName').lean();
+        if (!janitor) {
+            return [null, "No se encontró el conserje"];
+        }
+
+        // Formatear el janitorID para que incluya el nombre completo del conserje
+        const janitorFullName = `${janitor.firstName} ${janitor.lastName}`;
+        binnacle.janitorID = janitorFullName;
+
+        return [binnacle, null];
+    } catch (error) {
+        handleError(error, "binnacle.service -> getBinnacleById");
+        return [null, "Error en el servidor"];
+    }
+}
+
+
+/**
  * Obtener todas las entradas de la bitácora
  */
 async function getBinnacles() {
@@ -487,6 +518,64 @@ async function deleteBinnacleId(id) {
     }
 }
 
+/**
+ * Actualiza una entrada en la bitácora.
+ * @param {String} id - ID de la entrada a actualizar.
+ * @param {Object} updateData - Datos a actualizar.
+ * @returns {Promise} Promesa con la entrada de bitácora actualizada.
+ */
+async function updateBinnacle(id, updateData) {
+    try {
+        const binnacle = await Binnacle.findById(id);
+        if (!binnacle) return [null, "No se encontró la bitácora"];
+
+        // Verificar y convertir janitorID a ObjectId si es necesario
+        if (typeof updateData.janitorID === 'string') {
+            const janitor = await Users.findOne({ $or: [{ firstName: updateData.janitorID.split(' ')[0] }, { lastName: updateData.janitorID.split(' ')[1] }] }).lean();
+            if (janitor) {
+                updateData.janitorID = janitor._id;
+            } else {
+                return [null, "No se encontró el conserje con ese nombre"];
+            }
+        }
+
+        // Actualizar campos comunes
+        Object.assign(binnacle, updateData);
+
+        // Limpiar campos no necesarios según el tipo de actividad
+        if (binnacle.activityType !== 'Visita') {
+            binnacle.roles = undefined;
+            binnacle.exitDate = undefined;
+        }
+        if (binnacle.activityType !== 'Delivery') {
+            binnacle.departNumber = undefined;
+            binnacle.recipientFirstName = undefined;
+            binnacle.recipientLastName = undefined;
+            binnacle.deliveryTime = undefined;
+            binnacle.withdrawnTime = undefined;
+            binnacle.withdrawnResidentId = undefined;
+            binnacle.withdrawnPersonFirstName = undefined;
+            binnacle.withdrawnPersonLastName = undefined;
+            binnacle.expectedWithdrawnPersonFirstName = undefined;
+            binnacle.expectedWithdrawnPersonLastName = undefined;
+            binnacle.deliveryPersonName = undefined;
+            binnacle.status = undefined;
+        }
+        if (binnacle.activityType !== 'Espacio Comunitario') {
+            binnacle.spaceId = undefined;
+            binnacle.startTime = undefined;
+            binnacle.endTime = undefined;
+        }
+
+        await binnacle.save();
+        return [binnacle, null];
+    } catch (error) {
+        handleError(error, "binnacle.service -> updateBinnacle");
+        return [null, "Error en el servidor"];
+    }
+}
+
+
 
 export default {
     exportDataToExcel,
@@ -499,5 +588,7 @@ export default {
     getBinnacleByJanitorName,
     getBinnacleByDate,
     getBinnacles,
-    deleteBinnacleId
+    getBinnacleById,
+    deleteBinnacleId,
+    updateBinnacle
 };

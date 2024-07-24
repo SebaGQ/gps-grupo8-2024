@@ -3,4 +3,5 @@ export interface BinnacleDTO{
     activityType: string;
     description: string;
     createdAt: string;
+    _id: string;
 }
