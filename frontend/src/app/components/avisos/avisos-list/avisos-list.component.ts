@@ -4,7 +4,7 @@ import { CommentsService } from 'src/app/services/comment.service';
 import { ReactionsService } from 'src/app/services/reactions.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Aviso } from 'src/app/models/avisos.models';
-import { Comment } from 'src/app/models/comments.models';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-avisos-list',
@@ -14,15 +14,21 @@ import { Comment } from 'src/app/models/comments.models';
 export class AvisosListComponent implements OnInit {
   avisos: Aviso[] = [];
   newComments: { [key: string]: string } = {};
+  showComments: { [key: string]: boolean } = {};
+  userRole: string | null = null;
+  userId: string = '';
 
   constructor(
     private avisosService: AvisosService,
     private commentsService: CommentsService,
     private reactionsService: ReactionsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.userRole = this.authService.getUserRole();
+    this.userId = this.authService.getUserId() || '';
     this.loadAvisos();
   }
 
@@ -30,7 +36,7 @@ export class AvisosListComponent implements OnInit {
     this.avisosService.getAvisos().subscribe((data: Aviso[]) => {
       this.avisos = data.map(aviso => {
         if (!aviso.reactions) {
-          aviso.reactions = { likes: 0, dislikes: 0 };
+          aviso.reactions = { likes: 0, dislikes: 0, likedBy: [], dislikedBy: [] };
         }
         if (!aviso.comments) {
           aviso.comments = [];
@@ -78,39 +84,38 @@ export class AvisosListComponent implements OnInit {
 
   likeAviso(avisoId: string): void {
     const token = this.authService.getToken();
-    if (token) {
-      this.reactionsService.likePost(avisoId, token).subscribe(() => {
-        const aviso = this.avisos.find(a => a._id === avisoId);
-        if (aviso && aviso.reactions) {
-          aviso.reactions.likes++;
-        } else if (aviso) {
-          aviso.reactions = { likes: 1, dislikes: 0 };
-        }
+    if (token && this.userId) {
+      this.reactionsService.likePost(avisoId, token, this.userId).subscribe((response) => {
+        this.updateAvisoReactions(response);
       }, error => {
         console.error('Error liking post', error);
       });
     } else {
-      console.error('No token found. Please log in.');
+      console.error('No token found or userId is null. Please log in.');
     }
   }
 
   dislikeAviso(avisoId: string): void {
     const token = this.authService.getToken();
-    if (token) {
-      this.reactionsService.dislikePost(avisoId, token).subscribe(() => {
-        const aviso = this.avisos.find(a => a._id === avisoId);
-        if (aviso && aviso.reactions) {
-          aviso.reactions.dislikes++;
-        } else if (aviso) {
-          aviso.reactions = { likes: 0, dislikes: 1 };
-        }
+    if (token && this.userId) {
+      this.reactionsService.dislikePost(avisoId, token, this.userId).subscribe((response) => {
+        this.updateAvisoReactions(response);
       }, error => {
         console.error('Error disliking post', error);
       });
     } else {
-      console.error('No token found. Please log in.');
+      console.error('No token found or userId is null. Please log in.');
     }
   }
+
+  private updateAvisoReactions(updatedAviso: Aviso): void {
+    const index = this.avisos.findIndex(aviso => aviso._id === updatedAviso._id);
+    if (index !== -1) {
+      this.avisos[index] = updatedAviso;
+    }
+  }
+
+
 
   deleteAviso(id?: string): void {
     if (id) {
@@ -122,5 +127,21 @@ export class AvisosListComponent implements OnInit {
     } else {
       console.error('Aviso ID is undefined');
     }
+  }
+
+  navigateToCreateAviso(): void {
+    this.router.navigate(['/avisos/new']);
+  }
+
+  canDelete(): boolean {
+    return this.userRole === 'admin' || this.userRole === 'janitor';
+  }
+
+  canCreate(): boolean {
+    return this.userRole === 'admin' || this.userRole === 'janitor';
+  }
+
+  toggleComments(avisoId: string): void {
+    this.showComments[avisoId] = !this.showComments[avisoId];
   }
 }

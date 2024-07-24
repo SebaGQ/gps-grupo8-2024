@@ -9,6 +9,8 @@ export interface Aviso {
     reactions?: {
         likes: number;
         dislikes: number;
+        likedBy: string[];
+        dislikedBy: string[];
     };
     createdAt?: Date;
     updatedAt?: Date;

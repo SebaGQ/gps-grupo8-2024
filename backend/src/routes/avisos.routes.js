@@ -14,8 +14,8 @@ router.put("/:id", authenticationMiddleware, updateAviso);
 router.delete("/:id", authenticationMiddleware, deleteAviso);
 
 // Rutas de likes y dislikes
-router.post("/:id/like", authenticationMiddleware, likeAviso);
-router.post("/:id/dislike", authenticationMiddleware, dislikeAviso);
+router.post('/:avisoId/like', authenticationMiddleware, likeAviso);
+router.post('/:avisoId/dislike', authenticationMiddleware, dislikeAviso);
 
 // Rutas de comentarios dentro de avisos
 router.post("/:avisoId/comments", authenticationMiddleware, createComment);

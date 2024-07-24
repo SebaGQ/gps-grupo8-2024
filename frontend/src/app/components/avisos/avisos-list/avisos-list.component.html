@@ -1,36 +1,43 @@
 <div class="forum-container">
     <div class="forum-header">
-        <h1>Avisos Administracion</h1>
-        <p>En este foro se daran a conocer todos los mensajes importantes que necesite dar la administracion a sus
-            residentes </p>
+        <h1>Avisos Administración</h1>
+        <p>En este foro se darán a conocer todos los mensajes importantes que necesite dar la administración a sus
+            residentes.</p>
+    </div>
+    <div *ngIf="canCreate()">
+        <button (click)="navigateToCreateAviso()">Crear un nuevo aviso</button>
     </div>
     <div class="posts-list">
         <div *ngFor="let aviso of avisos" class="post">
             <div class="post-header">
                 <h2>{{ aviso.title }}</h2>
-                <p>{{ aviso.createdAt | date:'medium' }}</p>
+                <p>{{ aviso.createdAt | date: 'medium' }}</p>
             </div>
             <div class="post-content">
                 <p>{{ aviso.description }}</p>
             </div>
             <div class="post-footer">
-                <button (click)="likeAviso(aviso._id)">
+                <button [class.selected]="aviso.reactions?.likedBy?.includes(userId)" (click)="likeAviso(aviso._id)">
                     <i class="fa fa-thumbs-up"></i> {{ aviso.reactions?.likes ?? 0 }}
                 </button>
-                <button (click)="dislikeAviso(aviso._id)">
+                <button [class.selected]="aviso.reactions?.dislikedBy?.includes(userId)"
+                    (click)="dislikeAviso(aviso._id)">
                     <i class="fa fa-thumbs-down"></i> {{ aviso.reactions?.dislikes ?? 0 }}
                 </button>
-                <button>
+                <button (click)="toggleComments(aviso._id)">
                     <i class="fa fa-comments"></i> {{ aviso.comments?.length ?? 0 }}
                 </button>
+                <button *ngIf="canDelete()" (click)="deleteAviso(aviso._id)">
+                    <i class="fa fa-trash"></i> Eliminar
+                </button>
             </div>
-            <div class="comments-section">
+            <div *ngIf="showComments[aviso._id]" class="comments-section">
                 <div *ngFor="let comment of aviso.comments" class="comment">
                     <p>{{ comment.content }}</p>
-                    <button (click)="deleteComment(aviso._id, comment._id)">Delete</button>
+                    <button (click)="deleteComment(aviso._id, comment._id)">Eliminar</button>
                 </div>
-                <input [(ngModel)]="newComments[aviso._id]" placeholder="Add a comment" />
-                <button (click)="addComment(aviso._id)">Add Comment</button>
+                <input [(ngModel)]="newComments[aviso._id]" placeholder="Añadir un comentario" />
+                <button (click)="addComment(aviso._id)">Añadir comentario</button>
             </div>
         </div>
     </div>

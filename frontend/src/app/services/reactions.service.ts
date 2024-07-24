@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +10,13 @@ export class ReactionsService {
 
   constructor(private http: HttpClient) { }
 
-  likePost(avisoId: string, token: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${avisoId}/like`, {}, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
-    });
+  likePost(avisoId: string, token: string, userId: string): Observable<any> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post(`${this.apiUrl}/${avisoId}/like`, { userId }, { headers });
   }
 
-  dislikePost(avisoId: string, token: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${avisoId}/dislike`, {}, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
-    });
+  dislikePost(avisoId: string, token: string, userId: string): Observable<any> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post(`${this.apiUrl}/${avisoId}/dislike`, { userId }, { headers });
   }
 }

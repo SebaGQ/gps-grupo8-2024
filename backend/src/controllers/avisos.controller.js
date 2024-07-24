@@ -99,17 +99,30 @@ export const deleteAviso = async (req, res) => {
  */
 export const likeAviso = async (req, res) => {
     try {
-        const { id } = req.params;
-        const aviso = await Aviso.findById(id);
+        const { avisoId } = req.params;
+        const { userId } = req.body;
+
+        const aviso = await Aviso.findById(avisoId);
         if (!aviso) {
-            return respondError(req, res, 404, 'Aviso no encontrado');
+            return res.status(404).json({ message: 'Aviso not found' });
         }
-        aviso.reactions.likes += 1;
+
+        if (aviso.reactions.likedBy.includes(userId)) {
+            aviso.reactions.likes += 1;
+            aviso.reactions.likedBy = aviso.reactions.likedBy.filter(id => id !== userId);
+        } else {
+            if (aviso.reactions.dislikedBy.includes(userId)) {
+                aviso.reactions.dislikes -= 1;
+                aviso.reactions.dislikedBy = aviso.reactions.dislikedBy.filter(id => id !== userId);
+            }
+            aviso.reactions.likes += 1;
+            aviso.reactions.likedBy.push(userId);
+        }
+
         await aviso.save();
-        respondSuccess(req, res, 200, aviso);
+        res.status(200).json(aviso);
     } catch (error) {
-        handleError(error, "likeAviso");
-        respondError(req, res, 500, error.message);
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -119,16 +132,33 @@ export const likeAviso = async (req, res) => {
  */
 export const dislikeAviso = async (req, res) => {
     try {
-        const { id } = req.params;
-        const aviso = await Aviso.findById(id);
+        const { avisoId } = req.params;
+        const { userId } = req.body;
+
+        const aviso = await Aviso.findById(avisoId);
         if (!aviso) {
-            return respondError(req, res, 404, 'Aviso no encontrado');
+            return res.status(404).json({ message: 'Aviso not found' });
         }
-        aviso.reactions.dislikes += 1;
+
+        if (aviso.reactions.dislikedBy.includes(userId)) {
+            aviso.reactions.dislikes += 1;
+            aviso.reactions.dislikedBy = aviso.reactions.dislikedBy.filter(id => id !== userId);
+        } else {
+            if (aviso.reactions.likedBy.includes(userId)) {
+                aviso.reactions.likes -= 1;
+                aviso.reactions.likedBy = aviso.reactions.likedBy.filter(id => id !== userId);
+            }
+            aviso.reactions.dislikes += 1;
+            aviso.reactions.dislikedBy.push(userId);
+        }
+
         await aviso.save();
-        respondSuccess(req, res, 200, aviso);
+        res.status(200).json(aviso);
     } catch (error) {
-        handleError(error, "dislikeAviso");
-        respondError(req, res, 500, error.message);
+        res.status(500).json({ message: error.message });
     }
 };
+
+
+
+
