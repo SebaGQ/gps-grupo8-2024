@@ -21,7 +21,6 @@ export class SpacesComponent implements OnInit {
 
   ngOnInit(): void {
     this.spaces$ = this.spaceService.getCommonSpaces();
-    this.spaces$.subscribe(spaces => console.log(spaces));
     this.isAdminOrJanitor = this.authService.isAdminOrJanitor();
   }
 
