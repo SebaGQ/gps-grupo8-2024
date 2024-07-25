@@ -35,7 +35,7 @@ export class NavbarComponent {
       if (this.isAuthenticated) {
         this.router.navigate(['/spaces']);
       }else{
-        this.router.navigate(['/create-space']);
+        this.router.navigate(['/login']);
       }
     
     }
@@ -49,6 +49,13 @@ export class NavbarComponent {
     if (destination === "my-bookings") {
       if (this.isAuthenticated) {
         this.router.navigate(['/my-bookings']);
+      }else{
+        this.router.navigate(['/login']);
+      }
+    }
+    if (destination === "admin-bookings") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/admin-bookings']);
       }else{
         this.router.navigate(['/login']);
       }
