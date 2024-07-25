@@ -31,6 +31,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
@@ -47,7 +48,7 @@ import { SpaceFormComponent } from './space-form/space-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
 
-import { MomentDateAdapter, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
+import { MomentDateAdapter, MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
 import { DayTranslatePipe } from './day-translate.pipe';
 
@@ -112,6 +113,7 @@ export const MY_DATE_FORMATS = {
     MatProgressSpinnerModule,
     MatCheckboxModule,
     MatIconModule,
+    MatGridListModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,
@@ -121,7 +123,12 @@ export const MY_DATE_FORMATS = {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService, HttpService, VisitorService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },],
+  providers: [AuthService, OrderService, HttpService, VisitorService, 
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

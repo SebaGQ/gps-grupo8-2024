@@ -1,11 +1,11 @@
-:host {
+/* :host {
   display: block;
   height: 100vh;
   width: 100vw;
   background-color: #ECF0F1;
   padding: 20px;
   box-sizing: border-box;
-}
+} */
 
 .bitacoras-container {
   display: flex;
@@ -29,6 +29,7 @@
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Añadido para manejar el desbordamiento vertical */
 }
 
 header {
@@ -78,60 +79,4 @@ header {
 
 .btn-modificar:hover {
   background-color: #31b0d5;
-}
-
-.modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-.modal-content {
-  width: 60%;
-  max-width: 800px;
-  background-color: #fefefe;
-  border: 1px solid #888;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover, .close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.form-group input, 
-.form-group select, 
-.form-group textarea  {
-  width: 100%;
-  padding: 8px;
-  margin: 4px 0;
-  box-sizing: border-box;
-}
-
-.mat-form-field {
-  width: 100%;
-}
-
-.mat-raised-button {
-  margin-top: 20px;
 }

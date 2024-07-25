@@ -331,17 +331,50 @@ async function getBinnacleByJanitorName(name) {
             return [null, "No se encontraron entradas de bitácora para los conserjes con ese nombre"];
         }
 
+        // Paso 4: Obtener los IDs de los departamentos de las entradas de la bitácora
+        const departmentIds = [...new Set(binnacles.map(binnacle => binnacle.departmentNumber))];
+        console.log("DEPARTMENTS IDS", departmentIds);
+
+        // Paso 5: Obtener los detalles de los departamentos usando _id
+        const departments = await Department.find({ _id: { $in: departmentIds } })
+            .select('_id departmentNumber')
+            .lean();
+        console.log("DEPARTMENTS", departments);
+
+        const spaceIds = [...new Set(binnacles.map(binnacle => binnacle.spaceId))];
+        console.log("SPACE IDS", spaceIds);
+
+        // Paso 5: Obtener los detalles de los espacios comunitarios usando _id
+        const spaces = await CommonSpace.find({ _id: { $in: spaceIds } })
+            .select('type location')
+            .lean();
+        console.log("SPACES", spaces);
+
+        // Crear un diccionario de espacios para acceso rápido
+        const spaceDict = {};
+        spaces.forEach(space => {
+            spaceDict[space._id] = space.type + " - " + space.location;
+        });
+
+        // Crear un diccionario de departamentos para acceso rápido
+        const departmentDict = {};
+        departments.forEach(department => {
+            departmentDict[department._id] = department.departmentNumber;
+        });
+
         // Crear un diccionario para mapear janitorID a nombres completos
         const janitorDict = {};
         janitors.forEach(janitor => {
             janitorDict[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
         });
 
-        // Reemplazar janitorID por nombres completos en las entradas de la bitácora
+        // Reemplazar janitorID por nombres completos y departmentID por números de departamento en las entradas de la bitácora
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 ...entry,
-                janitorID: janitorDict[entry.janitorID] || 'Nombre no encontrado'
+                janitorID: janitorDict[entry.janitorID] || 'Nombre no encontrado',
+                departmentNumber: departmentDict[entry.departmentNumber],
+                spaceId: spaceDict[entry.spaceId],
             };
         });
 
@@ -350,6 +383,7 @@ async function getBinnacleByJanitorName(name) {
         handleError(error, "binnacle.service -> getBinnacleByJanitorName");
     }
 }
+
 
 
 /**

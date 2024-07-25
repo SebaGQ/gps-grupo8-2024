@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, AfterViewChecked, OnInit, ChangeDetectorRef } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { BinnaclesService } from '../../services/binnacles.service';
 import { AuthService } from '../../services/auth.service';
 import { BinnacleDTO } from 'src/app/dto/binnacle.dto';
@@ -11,36 +13,55 @@ import { BinnacleDeliveryDTO } from 'src/app/dto/binnacleDelivery.dto';
   templateUrl: './binnacles.component.html',
   styleUrls: ['./binnacles.component.css']
 })
-export class BinnaclesComponent {
+export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewChecked {
   isAdmin: boolean = false;
   selectedDate: string = '';
   searchType: string = 'date';
   selectedActivity: string = '';
   janitorName: string = ''; // Variable para almacenar el nombre del conserje
-  formattedBinnacles: any[] = [];
-  binnacles: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO)[] = [];
-  binnaclesVisitor: BinnacleVisitorDTO[] = [];
   filterActivity: string = '';
   isModalOpen: boolean = false; // Controlar la visibilidad del modal
   binnacleSeleccionado: any = {}; // Bitácora seleccionada para modificación
+  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private binnaclesService: BinnaclesService,
-    private AuthService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.isAdmin = this.AuthService.isAdmin();
+    this.isAdmin = this.authService.isAdmin();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngAfterViewChecked() {
+    this.cdr.detectChanges();
+  }
+
+  resetPaginator() {
+    if (this.paginator) {
+      this.paginator.pageIndex = 0;
+    }
+  }
+
+  getPagedData() {
+    const startIndex = this.paginator ? this.paginator.pageIndex * this.paginator.pageSize : 0;
+    const endIndex = this.paginator ? (this.paginator.pageIndex + 1) * this.paginator.pageSize : this.dataSource.data.length;
+    return this.dataSource.data.slice(startIndex, endIndex);
   }
 
   buscarFecha() {
     if (this.selectedDate) {
       this.binnaclesService.getBinnaclesByDate(this.selectedDate).subscribe(
         (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO)[]) => {
-          this.binnacles = data;
-          this.applyFilters();
-          this.formatBinnacles();
-          console.log('Binnacles', this.binnacles);
+          this.dataSource.data = this.formatBinnacles(data);
+          this.resetPaginator();
         },
         (error) => {
           console.error('Error fetching binnacles', error);
@@ -53,9 +74,8 @@ export class BinnaclesComponent {
     if (this.janitorName) {
       this.binnaclesService.getBinnacleByJanitor(this.janitorName).subscribe(
         (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
-          this.binnacles = data;
-          this.formatBinnacles();
-          console.log('Binnacles', this.binnacles);
+          this.dataSource.data = this.formatBinnacles(data);
+          this.resetPaginator();
         },
         (error) => {
           console.error('Error fetching binnacles', error);
@@ -67,10 +87,8 @@ export class BinnaclesComponent {
   buscarTodo() {
     this.binnaclesService.getAllBinnacles().subscribe(
       (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
-        this.binnacles = data;
-        this.applyFilters();
-        this.formatBinnacles();
-        console.log('All Binnacles', this.binnacles);
+        this.dataSource.data = this.formatBinnacles(data);
+        this.resetPaginator();
       },
       (error) => {
         console.error('Error fetching all binnacles', error);
@@ -81,9 +99,8 @@ export class BinnaclesComponent {
   buscarVisita() {
     this.binnaclesService.getBinnaclesByVisitor().subscribe(
       (data: BinnacleVisitorDTO[]) => {
-        this.binnacles = data;
-        this.formatBinnacles();
-        console.log('BinnaclesVisitor', this.binnacles);
+        this.dataSource.data = this.formatBinnacles(data);
+        this.resetPaginator();
       },
       (error) => {
         console.error('Error fetching binnacles', error);
@@ -94,9 +111,8 @@ export class BinnaclesComponent {
   buscarEspacio() {
     this.binnaclesService.getBinnaclesBySpace().subscribe(
       (data: BinnacleSpacesDTO[]) => {
-        this.binnacles = data;
-        this.formatBinnacles();
-        console.log('BinnaclesSpaces', this.binnacles);
+        this.dataSource.data = this.formatBinnacles(data);
+        this.resetPaginator();
       },
       (error) => {
         console.error('Error fetching binnacles', error);
@@ -107,9 +123,8 @@ export class BinnaclesComponent {
   buscarDelivery() {
     this.binnaclesService.getBinnaclesByDelivery().subscribe(
       (data: BinnacleDeliveryDTO[]) => {
-        this.binnacles = data;
-        this.formatBinnacles();
-        console.log('BinnaclesDelivery', this.binnacles);
+        this.dataSource.data = this.formatBinnacles(data);
+        this.resetPaginator();
       },
       (error) => {
         console.error('Error fetching binnacles', error);
@@ -118,40 +133,18 @@ export class BinnaclesComponent {
   }
 
   eliminar(binnacle: any) {
-    this.binnaclesService.deleteBinnacle(binnacle.id).subscribe();
-  }
-  
-  abrirModificarModal(binnacle: any) {
-    this.binnacleSeleccionado = { ...binnacle };
-    console.log('Binnacle seleccionado', this.binnacleSeleccionado);
-  
-    this.binnaclesService.getBinnacleById(this.binnacleSeleccionado.id).subscribe(
-      (data: BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO) => {
-        this.binnacleSeleccionado = { ...data };
-        this.isModalOpen = true;
-      },
-      (error) => {
-        console.error('Error fetching binnacle by ID', error);
-      }
-    );
-  }
-  
-
-  cerrarModal() {
-    this.isModalOpen = false;
+    this.binnaclesService.deleteBinnacle(binnacle.id).subscribe(() => {
+      this.buscarTodo();
+    });
   }
 
   modificarBinnacle() {
     console.log('Binnacle seleccionado', this.binnacleSeleccionado._id);
-    // Eliminar el campo description antes de enviar el objeto
     delete this.binnacleSeleccionado.description;
-
-    // Formatear la bitácora según su actividad
     this.binnaclesService.updateBinnacle(this.binnacleSeleccionado._id, this.binnacleSeleccionado).subscribe(
       (response) => {
         console.log('Bitácora modificada con éxito', response);
-        this.buscarTodo(); // Actualizar la lista de bitácoras después de la modificación
-        this.cerrarModal();
+        this.buscarTodo();
       },
       (error) => {
         console.error('Error al modificar la bitácora', error);
@@ -161,22 +154,14 @@ export class BinnaclesComponent {
 
   applyFilters() {
     if (this.filterActivity) {
-      this.binnacles = this.binnacles.sort((a, b) => {
-        if (a.activityType === this.filterActivity && b.activityType !== this.filterActivity) {
-          return -1;
-        } else if (a.activityType !== this.filterActivity && b.activityType === this.filterActivity) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+      this.dataSource.data = this.dataSource.data.filter(binnacle => binnacle.activityType === this.filterActivity);
+      this.resetPaginator();
     }
   }
 
-  formatBinnacles() {
-    this.formattedBinnacles = this.binnacles.map(binnacle => {
+  formatBinnacles(binnacles: any[]): any[] {
+    return binnacles.map(binnacle => {
       if (binnacle.activityType === 'Visita') {
-        // Es BinnacleVisitorDTO
         const visitorBinnacle = binnacle as BinnacleVisitorDTO;
         return {
           id: visitorBinnacle._id,
@@ -186,7 +171,6 @@ export class BinnaclesComponent {
           description: `Nombre: ${visitorBinnacle.name} ${visitorBinnacle.lastName}, RUT: ${visitorBinnacle.rut} visita al departamento ${visitorBinnacle.departmentNumber}`
         };
       } else if (binnacle.activityType === 'Espacio Comunitario') {
-        // Es BinnacleSpacesDTO
         const spacesBinnacle = binnacle as BinnacleSpacesDTO;
         return {
           id: spacesBinnacle._id,
@@ -196,7 +180,6 @@ export class BinnaclesComponent {
           description: `Espacio: ${spacesBinnacle.spaceId}, Inicio: ${this.formatDate(spacesBinnacle.startTime)}, Fin: ${this.formatDate(spacesBinnacle.endTime)}`
         };
       } else if (binnacle.activityType === 'Delivery') {
-        // Es BinnacleDeliveryDTO
         const deliveryBinnacle = binnacle as BinnacleDeliveryDTO;
         return {
           id: deliveryBinnacle._id,
@@ -221,58 +204,4 @@ export class BinnaclesComponent {
     const seconds = String(date.getSeconds()).padStart(2, '0');
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
   }
-
-  formatBinnacleForUpdate(binnacle: any) {
-    let formattedBinnacle;
-    switch (binnacle.activityType) {
-      case 'Visita':
-        formattedBinnacle = {
-          _id: binnacle._id,
-          activityType: binnacle.activityType,
-          createdAt: binnacle.createdAt,
-          departmentNumber: binnacle.departmentNumber,
-          janitorID: binnacle.janitorID,
-          name: binnacle.name,
-          lastName: binnacle.lastName,
-          rut: binnacle.rut,
-        } as BinnacleVisitorDTO;
-        break;
-      case 'Espacio Comunitario':
-        formattedBinnacle = {
-          _id: binnacle._id,
-          janitorID: binnacle.janitorID,
-          activityType: binnacle.activityType,
-          spaceId: binnacle.spaceId,
-          startTime: binnacle.startTime,
-          endTime: binnacle.endTime,
-          createdAt: binnacle.createdAt,
-        } as BinnacleSpacesDTO;
-        break;
-      case 'Delivery':
-        formattedBinnacle = {
-          _id: binnacle.id,
-          janitorID: binnacle.janitorID,
-          activityType: binnacle.activityType,
-          departNumber: binnacle.departNumber,
-          recipientFirstName: binnacle.recipientFirstName,
-          recipientLastName: binnacle.recipientLastName,
-          deliveryTime: binnacle.deliveryTime,
-          withdrawnTime: binnacle.withdrawnTime,
-          withdrawnResidentId: binnacle.withdrawnResidentId,
-          withdrawnPersonFirstName: binnacle.withdrawnPersonFirstName,
-          withdrawnPersonLastName: binnacle.withdrawnPersonLastName,
-          expectedWithdrawnPersonFirstName: binnacle.expectedWithdrawnPersonFirstName,
-          expectedWithdrawnPersonLastName: binnacle.expectedWithdrawnPersonLastName,
-          deliveryPersonName: binnacle.deliveryPersonName,
-          status: binnacle.status,
-          createdAt: binnacle.createdAt,
-        } as BinnacleDeliveryDTO;
-        break;
-      default:
-        console.warn('Tipo de actividad desconocido:', binnacle.activityType);
-        formattedBinnacle = { ...binnacle };
-    }
-    return formattedBinnacle;
-  }
-
 }
