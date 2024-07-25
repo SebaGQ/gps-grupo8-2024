@@ -7,10 +7,16 @@
     <mat-form-field>
       <mat-label>Ubicación</mat-label>
       <input matInput formControlName="location" required>
+      <mat-error *ngIf="spaceForm.get('location')?.hasError('required')">
+        La ubicación es requerida.
+      </mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Capacidad</mat-label>
       <input matInput formControlName="capacity" type="number" required>
+      <mat-error *ngIf="spaceForm.get('capacity')?.hasError('min')">
+        La capacidad debe ser mayor o igual a 0.
+      </mat-error>
     </mat-form-field>
     <div class="days-checkbox">
       <label>Días Permitidos:</label>
@@ -24,26 +30,35 @@
     <mat-form-field>
       <mat-label>Horario de Apertura</mat-label>
       <input matInput formControlName="openingHour" type="time" required>
+      <mat-error *ngIf="spaceForm.get('openingHour')?.hasError('required')">
+        El horario de apertura es requerido.
+      </mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Horario de Cierre</mat-label>
       <input matInput formControlName="closingHour" type="time" required>
+      <mat-error *ngIf="spaceForm.hasError('endBeforeStart', 'closingHour')">
+        El horario de cierre debe ser posterior al horario de apertura.
+      </mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Tipo</mat-label>
       <input matInput formControlName="type" required>
+      <mat-error *ngIf="spaceForm.get('type')?.hasError('required')">
+        El tipo de espacio es requerido.
+      </mat-error>
     </mat-form-field>
     <mat-checkbox formControlName="availability">Disponible</mat-checkbox>
     
     <mat-form-field>
       <mat-label>Imagen</mat-label>
       <input matInput [value]="selectedFile?.name" readonly>
-      <button mat-button matSuffix (click)="fileInput.click()">Seleccionar Archivo</button>
+      <button mat-button matSuffix type="button" (click)="fileInput.click()">Seleccionar Archivo</button>
       <input type="file" #fileInput (change)="onFileSelected($event)" accept=".jpg, .jpeg, .png" style="display: none;">
     </mat-form-field>
     
     <img *ngIf="base64Image" [src]="'data:image/png;base64,' + base64Image" alt="Imagen del espacio" class="image-preview">
 
-    <button mat-raised-button color="primary" type="submit">Guardar Espacio</button>
+    <button mat-raised-button color="accent" type="submit">Guardar Espacio</button>
   </form>
 </div>

@@ -4,6 +4,7 @@
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
+  border: 1px solid #dddddd;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -11,7 +12,7 @@
   text-align: center;
   margin-bottom: 20px;
   color: #333333;
-  font-size: 2em;
+  font-size: 2.2em;
   font-weight: bold;
 }
 
@@ -28,6 +29,9 @@
   flex-direction: column;
   margin-bottom: 20px;
   max-width: calc(25% - 20px); /* Asegurar el mismo ancho para todas las tarjetas */
+  border-radius: 10px;
+  border: 3px solid #07811c;
+  overflow: hidden; /* Ocultar el desbordamiento de los elementos internos */
 }
 
 .mat-card {
@@ -49,6 +53,7 @@
   margin-right: 10px;
   color: white;
   padding: 8px 16px;
+  font-weight: bold;
 }
 
 .mat-card-header {
@@ -101,3 +106,9 @@ p {
   flex-grow: 1;
   font-size: 0.9em;
 }
+
+
+.buttonCard {
+  font-size: 16px;
+  font-weight: bold;
+ }

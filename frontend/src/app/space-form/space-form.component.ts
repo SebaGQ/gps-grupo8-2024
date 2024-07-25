@@ -5,6 +5,8 @@ import { ImageService } from '../services/image.service';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { CommonSpaceDto } from '../dto/space.dto';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-space-form',
@@ -31,18 +33,19 @@ export class SpaceFormComponent implements OnInit {
     private imageService: ImageService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar
   ) {
     this.spaceForm = this.fb.group({
       availability: [true, Validators.required],
       location: ['', Validators.required],
-      capacity: [0, Validators.required],
+      capacity: [0, [Validators.required, Validators.min(0)]],
       allowedDays: this.fb.array([], Validators.required),
       openingHour: ['', Validators.required],
       closingHour: ['', Validators.required],
       type: ['', Validators.required],
       image: [null]
-    });
+    }, { validators: this.timeRangeValidator });
   }
 
   ngOnInit(): void {
@@ -120,21 +123,55 @@ export class SpaceFormComponent implements OnInit {
           const imageId = await this.uploadImage();
           spaceData.image = imageId;
         } catch (error) {
-          console.error('Error al subir la imagen:', error);
+          this.snackBar.open(`Error al subir la imagen: ${error}`, 'Cerrar', {
+            duration: 3000
+          });
           return;
         }
       }
       if (this.spaceId) {
-        this.spaceService.updateCommonSpace(this.spaceId, spaceData).subscribe(() => {
-          this.router.navigate(['/spaces']);
-        });
+        this.spaceService.updateCommonSpace(this.spaceId, spaceData).subscribe(
+          () => {
+            this.snackBar.open('Espacio actualizado correctamente', 'Cerrar', {
+              duration: 3000
+            });
+            this.router.navigate(['/spaces']);
+          },
+          error => {
+            this.snackBar.open(`Error al actualizar el espacio: ${error.error.message || error.message}`, 'Cerrar', {
+              duration: 3000
+            });
+          }
+        );
       } else {
-        this.spaceService.createCommonSpace(spaceData).subscribe(() => {
-          this.router.navigate(['/spaces']);
-        });
+        this.spaceService.createCommonSpace(spaceData).subscribe(
+          () => {
+            this.snackBar.open('Espacio creado correctamente', 'Cerrar', {
+              duration: 3000
+            });
+            this.router.navigate(['/spaces']);
+          },
+          error => {
+            this.snackBar.open(`Error al crear el espacio: ${error.error.message || error.message}`, 'Cerrar', {
+              duration: 3000
+            });
+          }
+        );
       }
     } else {
-      console.log('Formulario no válido');
+      this.snackBar.open('Formulario no válido', 'Cerrar', {
+        duration: 3000
+      });
     }
+  }
+
+  private timeRangeValidator(group: AbstractControl): ValidationErrors | null {
+    const openingHour = group.get('openingHour')?.value;
+    const closingHour = group.get('closingHour')?.value;
+
+    if (openingHour && closingHour && openingHour >= closingHour) {
+      return { endBeforeStart: true };
+    }
+    return null;
   }
 }

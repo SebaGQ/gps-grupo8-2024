@@ -9,9 +9,9 @@ const commonSpaceSchemaJoi = Joi.object({
         "string.base": "El tipo debe ser de tipo string.",
         "any.required": "El tipo es obligatorio.",
     }),
-    capacity: Joi.number().min(0).optional().messages({
+    capacity: Joi.number().min(1).optional().messages({
         "number.base": "La capacidad debe ser de tipo number.",
-        "number.min": "La capacidad no puede ser menor a 0.",
+        "number.min": "La capacidad no puede ser menor a 1.",
     }),
     availability: Joi.boolean().required().default(true).messages({
         "boolean.base": "La disponibilidad debe ser de tipo boolean.",
