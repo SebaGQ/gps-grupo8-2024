@@ -46,6 +46,7 @@
     width: 100%;
     max-width: 200px;
     padding: 10px 20px;
+    margin-bottom: 10px;
   }
   
   .booking-form-container .booking-card {
@@ -81,4 +82,16 @@
     background-color: rgba(10, 63, 10, 0.068);
     border-radius: 10px;
     padding: 10px;
+  }
+
+  .buttonBack {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #ffffff;
+    border: 1px solid #333333;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 10px;
   }
