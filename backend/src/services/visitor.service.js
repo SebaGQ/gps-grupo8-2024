@@ -110,8 +110,8 @@ async function createVisitor(req) {
     if (existingVisitor && existingVisitor.exitDate && new Date(existingVisitor.exitDate) > now) {
       return [null, "El visitante con este RUT ya está registrado y aún no ha salido."];
     }
-
-    //await BinnacleService.createEntryVisitor(req);
+    
+    await BinnacleService.createEntryVisitor(req);
     await newVisitor.save();
 
     // Verificar si es frecuente

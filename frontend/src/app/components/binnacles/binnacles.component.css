@@ -80,3 +80,9 @@ header {
 .btn-modificar:hover {
   background-color: #31b0d5;
 }
+
+.warning-snackbar {
+  background-color: #ff9800; /* Color de fondo */
+  color: #fff; /* Color de texto */
+}
+

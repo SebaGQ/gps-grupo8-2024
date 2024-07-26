@@ -1,7 +1,7 @@
 export interface BinnacleDeliveryDTO{
-    janitorID : string;
+    janitorID ?: string;
     activityType: string;
-    departNumber: number;
+    departmentNumber: number;
     recipientFirstName: string;
     recipientLastName: string;
     deliveryTime: string;
@@ -11,8 +11,8 @@ export interface BinnacleDeliveryDTO{
     withdrawnPersonLastName?: string;
     expectedWithdrawnPersonFirstName?: string;
     expectedWithdrawnPersonLastName?: string;
-    deliveryPersonName?: string;
-    status?: string;
+    deliveryPersonName: string;
+    status: string;
     createdAt?: string;
-    _id: string;
+    _id?: string;
 }

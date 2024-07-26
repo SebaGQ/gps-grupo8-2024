@@ -3,7 +3,7 @@
 import { respondSuccess, respondError } from "../utils/resHandler.js";
 import BinnacleService from "../services/binnacle.service.js";
 import { handleError } from "../utils/errorHandler.js";
-import { validateBinnacleBody, binnacleIdSchema } from '../schema/binnacle.schema.js';
+import { validateVisitaBody, validateDeliveryBody, validateEspacioComunitarioBody, binnacleIdSchema } from '../schema/binnacle.schema.js';
 
 
 
@@ -28,56 +28,51 @@ async function exportToExcel(req, res) {
 }
 /**
  * Generar una entrada en la bitácora
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
  */
 async function createEntryVisitor(req, res) {
     try {
-        const { body } = req.body;
-        const { error: bodyError } = validateBinnacleBody.validate(body);
+        const body = req.body;
+        const { error: bodyError } = validateVisitaBody(body);
+        console.log("bodyerror", bodyError);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
         const [binnacleEntry, binnacleError] = await BinnacleService.createEntryVisitor(req);
+        if (binnacleError) return respondError(req, res, 400, binnacleError);
         respondSuccess(req, res, 201, binnacleEntry);
-        if (visitorError) return respondError(req, res, 400, binnacleError);
-        if (!binnacleEntry) {
-          return respondError(req, res, 400, "No se creó la bitacora Visitor");
-        }
-    
-        respondSuccess(req, res, 201, newVisitor);
-      } catch (error) {
+    } catch (error) {
         handleError(error, "binnacle.controller -> createEntryVisitor");
-        respondError(req, res, 500, "No se creó la bitacora");
-      }
+        respondError(req, res, 500, "No se creó la bitácora");
+    }
 }
 
 async function createEntryBooking(req, res) {
     try {
-        const { body } = req.body;
-        const { error: bodyError } = validateBinnacleBody.validate(body);
+        const body = req.body;
+        const { error: bodyError } = validateEspacioComunitarioBody(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
         const [binnacleEntry, binnacleError] = await BinnacleService.createEntryBooking(req);
-        respondSuccess(req, res, 201, binnacleEntry);
-        if (visitorError) return respondError(req, res, 400, binnacleError);
+        if (binnacleError) return respondError(req, res, 400, binnacleError);
         if (!binnacleEntry) {
-          return respondError(req, res, 400, "No se creó la bitacora Booking");
+            return respondError(req, res, 400, "No se creó la bitacora Booking");
         }
-    
-        respondSuccess(req, res, 201, newVisitor);
-      } catch (error) {
+        respondSuccess(req, res, 201, binnacleEntry);
+    } catch (error) {
         handleError(error, "binnacle.controller -> createEntryBooking");
         respondError(req, res, 500, "No se creó la bitacora");
-      }
+    }
 }
 
 async function createEntryDelivery(req, res) {
     try {
         const body = req.body;
-        const { error: bodyError } = validateBinnacleBody(body);
+        const { error: bodyError } = validateDeliveryBody(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
         const [binnacleEntry, binnacleError] = await BinnacleService.createEntryDelivery(req);
         if (binnacleError) return respondError(req, res, 400, binnacleError);
         if (!binnacleEntry) {
             return respondError(req, res, 400, "No se creó la bitacora Delivery");
         }
-
         respondSuccess(req, res, 201, binnacleEntry);
     } catch (error) {
         handleError(error, "binnacle.controller -> createEntryDelivery");

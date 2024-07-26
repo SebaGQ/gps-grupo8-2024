@@ -8,10 +8,20 @@
       <mat-form-field appearance="fill">
         <mat-label>Tipo de búsqueda</mat-label>
         <mat-select [(ngModel)]="searchType">
+          <mat-option value="all">Buscar todo</mat-option>
           <mat-option value="date">Buscar por fecha</mat-option>
           <mat-option value="janitor">Buscar por conserje</mat-option>
           <mat-option value="activity">Buscar por actividad</mat-option>
-          <mat-option value="all">Buscar todo</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="searchType === 'all'" appearance="fill">
+        <mat-label>Filtrar actividad</mat-label>
+        <mat-select [(ngModel)]="filterActivity">
+          <mat-option value="">Sin filtro</mat-option>
+          <mat-option value="Visita">Visita</mat-option>
+          <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
+          <mat-option value="Delivery">Delivery</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -57,17 +67,19 @@
       <button mat-raised-button color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" (click)="buscarDelivery()">Buscar delivery</button>
       <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="buscarTodo()">Buscar todo</button>
 
-      <mat-form-field *ngIf="searchType === 'all'" appearance="fill">
-        <mat-label>Filtrar actividad</mat-label>
-        <mat-select [(ngModel)]="filterActivity">
-          <mat-option value="">Sin filtro</mat-option>
+      <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="applyFilters()">Aplicar filtro</button>
+    </div>
+    <div class="createForm">
+      <h2>Crear Bitácora</h2>
+      <mat-form-field appearance="fill">
+        <mat-label>Elige una actividad</mat-label>
+        <mat-select [(ngModel)]="selectedActivity">
           <mat-option value="Visita">Visita</mat-option>
           <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
           <mat-option value="Delivery">Delivery</mat-option>
         </mat-select>
       </mat-form-field>
-
-      <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="applyFilters()">Aplicar filtro</button>
+      <button mat-raised-button color="primary" (click)="openForm()">Abrir formulario</button>
     </div>
   </mat-card>
 
@@ -82,7 +94,7 @@
         </div>
         <div class="log-actions" *ngIf="isAdmin">
           <mat-card-actions>
-            <button mat-button color="primary" class="btn-modificar">Modificar</button>
+            <button mat-button color="primary" class="btn-modificar" (click)="modificarBinnacle(binnacle)">Modificar</button>
             <button mat-button color="warn" class="eliminar-btn" (click)="eliminar(binnacle)">Eliminar</button>
           </mat-card-actions>
         </div>
@@ -91,6 +103,3 @@
     <mat-paginator [length]="dataSource.data.length" [pageSize]="5" showFirstLastButtons></mat-paginator>
   </div>
 </div>
-
-
-

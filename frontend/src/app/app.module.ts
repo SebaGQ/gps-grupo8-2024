@@ -9,7 +9,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { BinnaclesComponent } from './components/binnacles/binnacles.component';
+
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -47,6 +47,9 @@ import { SpacesComponent } from './spaces/spaces.component';
 import { SpaceFormComponent } from './space-form/space-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
+import { BinnaclesComponent } from './components/binnacles/binnacles.component';
+import { BinnacleFormDialog } from './components/binnacle-form-dialog/binnacle-form-dialog.component';
+import { ConfirmDialog } from './components/confirm-dialog/confirm-dialog.component';
 
 import { MomentDateAdapter, MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
@@ -78,6 +81,8 @@ export const MY_DATE_FORMATS = {
     VisitorComponent,
     HomeComponent,
     BinnaclesComponent,
+    BinnacleFormDialog,
+    ConfirmDialog,
     NavbarComponent,
     LoginComponent,
     RegisterComponent,
@@ -88,7 +93,7 @@ export const MY_DATE_FORMATS = {
     BookingComponent,
     UserBookingsComponent,
     AdminBookingsComponent,
-    DayTranslatePipe
+    DayTranslatePipe,
   ],
   imports: [
     BrowserModule,

@@ -51,4 +51,16 @@ export class BinnaclesService {
   updateBinnacle(id: string, data: (BinnacleDTO | BinnacleDeliveryDTO | BinnacleSpacesDTO | BinnacleVisitorDTO)[]): Observable<any> {
     return this.HttpService.put<any>(`${this.binnacleUrl}/${id}`, data);
   }
+
+  createEntryVisitor(data: BinnacleVisitorDTO): Observable<any> {
+    return this.HttpService.post<any>(`${this.binnacleUrl}/EntryVisitor`, data);
+  }
+  
+  createEntryBooking(data: BinnacleSpacesDTO): Observable<any> {
+    return this.HttpService.post<any>(`${this.binnacleUrl}/EntryBooking`, data);
+  }
+
+  createEntryDelivery(data: BinnacleDeliveryDTO): Observable<any> {
+    return this.HttpService.post<any>(`${this.binnacleUrl}/EntryDelivery`, data);
+  }
 }

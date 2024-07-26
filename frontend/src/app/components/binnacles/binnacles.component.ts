@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, AfterViewChecked, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, AfterViewChecked, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { BinnaclesService } from '../../services/binnacles.service';
@@ -7,6 +7,12 @@ import { BinnacleDTO } from 'src/app/dto/binnacle.dto';
 import { BinnacleVisitorDTO } from 'src/app/dto/binnacleVisitor.dto';
 import { BinnacleSpacesDTO } from 'src/app/dto/binnacleSpaces.dto';
 import { BinnacleDeliveryDTO } from 'src/app/dto/binnacleDelivery.dto';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { FormGroup} from '@angular/forms';
+import { BinnacleFormDialog } from '../binnacle-form-dialog/binnacle-form-dialog.component';
+import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-binnacles',
@@ -23,13 +29,17 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   isModalOpen: boolean = false; // Controlar la visibilidad del modal
   binnacleSeleccionado: any = {}; // Bitácora seleccionada para modificación
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
+  binnacleForm: FormGroup = new FormGroup({});
+  showForm: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private binnaclesService: BinnaclesService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -42,6 +52,72 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   ngAfterViewChecked() {
     this.cdr.detectChanges();
+  }
+
+  openForm() {
+    console.log('Abriendo formulario');
+    const dialogRef = this.dialog.open(BinnacleFormDialog, {
+      width: '600px',
+      data: { activityType: this.selectedActivity }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        let formattedData;
+        // Aquí puedes añadir la lógica para guardar la bitácora usando tu servicio
+        switch (this.selectedActivity) {
+          case 'Visita':
+            formattedData = this.mapToVisitorDTO(result);
+            console.log('Datos formateados:', formattedData);
+            this.binnaclesService.createEntryVisitor(formattedData).subscribe(
+              response => {
+                this.showNotification('Bitácora creada con éxito', 'Cerrar');
+                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+              },
+              error => {
+                this.showNotification('Error al crear la bitácora', 'Cerrar');
+                console.error('Error creando la bitácora', error);
+              }
+            );
+            break;
+          case 'Espacio Comunitario':
+            formattedData = this.mapToSpacesDTO(result);
+            this.binnaclesService.createEntryBooking(formattedData).subscribe(
+              response => {
+                this.showNotification('Bitácora creada con éxito', 'Cerrar');
+                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+              },
+              error => {
+                this.showNotification('Error al crear la bitácora', 'Cerrar');
+                console.error('Error creando la bitácora', error);
+              }
+            );
+            break;
+          case 'Delivery':
+            this.binnaclesService.createEntryDelivery(result).subscribe(
+              response => {
+                this.showNotification('Bitácora creada con éxito', 'Cerrar');
+                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+              },
+              error => {
+                this.showNotification('Error al crear la bitácora', 'Cerrar');
+                console.error('Error creando la bitácora', error);
+              }
+            );
+            break;
+          default:
+            console.error('Tipo de actividad no soportado');
+        }
+      }
+    });
+  }
+
+  showNotification(message: string, action: string) {
+    const config = new MatSnackBarConfig();
+    config.duration = 10005000; // Duración en milisegundos
+    config.verticalPosition = 'top';
+    config.horizontalPosition = 'right'; 
+    this.snackBar.open(message, action, config);
   }
 
   resetPaginator() {
@@ -58,13 +134,16 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   buscarFecha() {
     if (this.selectedDate) {
-      this.binnaclesService.getBinnaclesByDate(this.selectedDate).subscribe(
+      const formattedDate = moment(this.selectedDate).format('YYYY-MM-DD');
+      console.log('Fecha seleccionada:', formattedDate);
+      this.binnaclesService.getBinnaclesByDate(formattedDate).subscribe(
         (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO)[]) => {
           this.dataSource.data = this.formatBinnacles(data);
           this.resetPaginator();
         },
         (error) => {
-          console.error('Error fetching binnacles', error);
+          const formattedDate = moment(this.selectedDate).format('DD-MM-YYYY');
+          this.showNotification('No se encontraron bitácoras en esta fecha '+formattedDate, 'Cerrar');
         }
       );
     }
@@ -73,7 +152,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   buscarConserje() {
     if (this.janitorName) {
       this.binnaclesService.getBinnacleByJanitor(this.janitorName).subscribe(
-        (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
+        (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO)[]) => {
           this.dataSource.data = this.formatBinnacles(data);
           this.resetPaginator();
         },
@@ -86,7 +165,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
   buscarTodo() {
     this.binnaclesService.getAllBinnacles().subscribe(
-      (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO)[]) => {
+      (data: (BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO)[]) => {
         this.dataSource.data = this.formatBinnacles(data);
         this.resetPaginator();
       },
@@ -133,31 +212,106 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   eliminar(binnacle: any) {
-    this.binnaclesService.deleteBinnacle(binnacle.id).subscribe(() => {
-      this.buscarTodo();
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '500px',
+      data: { message: '¿Estás seguro de que deseas eliminar esta bitácora?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.binnaclesService.deleteBinnacle(binnacle.id).subscribe(
+          response => {
+            this.showNotification('Bitácora eliminada con éxito', 'Cerrar');
+            this.buscarTodo(); // Actualiza la lista de bitácoras después de la eliminación
+          },
+          error => {
+            this.showNotification('Error al eliminar la bitácora', 'Cerrar');
+            console.error('Error eliminando la bitácora', error);
+          }
+        );
+      }
     });
   }
 
-  modificarBinnacle() {
-    console.log('Binnacle seleccionado', this.binnacleSeleccionado._id);
-    delete this.binnacleSeleccionado.description;
-    this.binnaclesService.updateBinnacle(this.binnacleSeleccionado._id, this.binnacleSeleccionado).subscribe(
-      (response) => {
-        console.log('Bitácora modificada con éxito', response);
-        this.buscarTodo();
+  modificarBinnacle(binnacle: any) {
+    console.log('Binnacle seleccionado', binnacle.id);
+    
+    // Recuperar la bitácora completa utilizando el servicio
+    this.binnaclesService.getBinnacleById(binnacle.id).subscribe(
+      (fullBinnacle) => {
+        console.log('Bitácora completa:', fullBinnacle);
+        // Abrir el diálogo con los datos recuperados
+        const dialogRef = this.dialog.open(BinnacleFormDialog, {
+          width: '400px',
+          data: { activityType: fullBinnacle.activityType, binnacle: fullBinnacle }
+        });
+  
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            const id = fullBinnacle._id;
+            console.log('Bitácora modificada:', result);
+            // Aquí puedes añadir la lógica para actualizar la bitácora usando tu servicio
+            this.binnaclesService.updateBinnacle(id ?? '', result).subscribe(
+              response => {
+                this.showNotification('Bitácora modificada con éxito', 'Cerrar');
+                this.buscarTodo(); // Actualiza la lista de bitácoras después de la modificación
+              },
+              error => {
+                this.showNotification('Error al modificar la bitácora', 'Cerrar');
+                console.error('Error modificando la bitácora', error);
+              }
+            );
+          }
+        });
       },
       (error) => {
-        console.error('Error al modificar la bitácora', error);
+        console.error('Error al recuperar la bitácora completa', error);
+        this.showNotification('Error al recuperar la bitácora', 'Cerrar');
       }
     );
   }
+  
+  
 
   applyFilters() {
     if (this.filterActivity) {
       this.dataSource.data = this.dataSource.data.filter(binnacle => binnacle.activityType === this.filterActivity);
-      this.resetPaginator();
+      //this.resetPaginator();
     }
   }
+
+  // Función para mapear los datos del formulario a BinnacleVisitorDTO
+mapToVisitorDTO(data: any): BinnacleVisitorDTO {
+  return {
+    departmentNumber: data.departmentNumber || '',
+    name: data.name || '',
+    lastName: data.lastName || '',
+    rut: data.rut || '',
+    roles: ['6688839bf7e5944d1aea6278']
+  };
+}
+
+// Función para mapear los datos del formulario a BinnacleSpacesDTO
+mapToSpacesDTO(data: any): BinnacleSpacesDTO {
+  return {
+    spaceId: data.spaceId || '',
+    startTime: data.startTime || '',
+    endTime: data.endTime || '',
+  };
+}
+
+// Función para mapear los datos del formulario a BinnacleDeliveryDTO
+mapToDeliveryDTO(data: any): BinnacleDeliveryDTO {
+  return {
+    activityType: data.activityType,
+    departmentNumber: data.departmentNumber || 0,
+    recipientFirstName: data.recipientFirstName || '',
+    recipientLastName: data.recipientLastName || '',
+    deliveryTime: data.deliveryTime || '',
+    deliveryPersonName: data.deliveryPersonName || '',
+    status: data.status || '',
+  };
+}
 
   formatBinnacles(binnacles: any[]): any[] {
     return binnacles.map(binnacle => {
@@ -186,7 +340,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
           janitorID: deliveryBinnacle.janitorID,
           activityType: deliveryBinnacle.activityType,
           createdAt: deliveryBinnacle.createdAt,
-          description: `Departamento: ${deliveryBinnacle.departNumber}, Destinatario: ${deliveryBinnacle.recipientFirstName} ${deliveryBinnacle.recipientLastName}, Entregado por: ${deliveryBinnacle.deliveryPersonName}, Entrega: ${this.formatDate(deliveryBinnacle.deliveryTime)}. Estado: ${deliveryBinnacle.status}`
+          description: `Departamento: ${deliveryBinnacle.departmentNumber}, Destinatario: ${deliveryBinnacle.recipientFirstName} ${deliveryBinnacle.recipientLastName}, Entregado por: ${deliveryBinnacle.deliveryPersonName}, Entrega: ${this.formatDate(deliveryBinnacle.deliveryTime)}. Estado: ${deliveryBinnacle.status}`
         };
       } else {
         return ;

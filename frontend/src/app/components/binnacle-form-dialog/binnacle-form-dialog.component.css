@@ -1,0 +1,22 @@
+.mat-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espacio entre los campos del formulario */
+    width: 100%; /* Ocupa el ancho completo del diálogo */
+  }
+  
+  .mat-form-field {
+    width: 100%; /* Ocupa el ancho completo del contenedor */
+  }
+  
+  .mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  button {
+    margin-top: 10px;
+    width: 150px; /* Ajusta el ancho del botón según tus necesidades */
+  }
+  
