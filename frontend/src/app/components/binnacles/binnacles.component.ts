@@ -54,6 +54,19 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.cdr.detectChanges();
   }
 
+  excel(){
+    this.binnaclesService.getBinnacleExcel().subscribe(
+      (data) => {
+        const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url);
+      },
+      (error) => {
+        console.error('Error fetching excel', error);
+      }
+    );
+  }
+
   openForm() {
     console.log('Abriendo formulario');
     const dialogRef = this.dialog.open(BinnacleFormDialog, {
@@ -75,7 +88,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
                 this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
-                this.showNotification('Error al crear la bitácora', 'Cerrar');
+                this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
                 console.error('Error creando la bitácora', error);
               }
             );
@@ -88,19 +101,21 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
                 this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
-                this.showNotification('Error al crear la bitácora', 'Cerrar');
+                this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
                 console.error('Error creando la bitácora', error);
               }
             );
             break;
           case 'Delivery':
-            this.binnaclesService.createEntryDelivery(result).subscribe(
+            console.log('Datos formateados:', result);
+            formattedData = this.mapToDeliveryDTO(result);
+            this.binnaclesService.createEntryDelivery(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
                 this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
-                this.showNotification('Error al crear la bitácora', 'Cerrar');
+                this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
                 console.error('Error creando la bitácora', error);
               }
             );
@@ -283,11 +298,14 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   // Función para mapear los datos del formulario a BinnacleVisitorDTO
 mapToVisitorDTO(data: any): BinnacleVisitorDTO {
   return {
-    departmentNumber: data.departmentNumber || '',
+    activityType: data.activityType || '',
+    departmentNumber: data.departNumber || '',
     name: data.name || '',
     lastName: data.lastName || '',
     rut: data.rut || '',
-    roles: ['6688839bf7e5944d1aea6278']
+    entryDate: data.entryDate || '',
+    exitDate: data.exitDate || '',
+    roles: [data.roles]
   };
 }
 
@@ -304,7 +322,7 @@ mapToSpacesDTO(data: any): BinnacleSpacesDTO {
 mapToDeliveryDTO(data: any): BinnacleDeliveryDTO {
   return {
     activityType: data.activityType,
-    departmentNumber: data.departmentNumber || 0,
+    departmentNumber: data.departNumber || '',
     recipientFirstName: data.recipientFirstName || '',
     recipientLastName: data.recipientLastName || '',
     deliveryTime: data.deliveryTime || '',

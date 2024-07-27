@@ -44,6 +44,10 @@ export class BinnaclesService {
     return this.HttpService.get<{data: BinnacleDTO | BinnacleVisitorDTO | BinnacleSpacesDTO | BinnacleDeliveryDTO}>(`${this.binnacleUrl}/bi/${id}`).pipe(map(response => response.data));
   }
 
+  getBinnacleExcel(): Observable<Blob> {
+    return this.HttpService.get(`${this.binnacleUrl}/excel`);
+  }
+
   deleteBinnacle(id: string): Observable<any> {
     return this.HttpService.delete<any>(`${this.binnacleUrl}/${id}`);
   }

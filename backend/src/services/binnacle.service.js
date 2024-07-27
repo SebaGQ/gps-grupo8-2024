@@ -63,6 +63,8 @@ async function createEntryVisitor(req) {
             lastName: binnacleData.lastName,
             rut: binnacleData.rut,
             roles: binnacleData.roles,
+            entryDate: binnacleData.entryDate,
+            exitDate: binnacleData.exitDate || new Date("9999-12-31"),
             departmentNumber: binnacleData.departmentNumber,
         });
         console.log("Binnacle: \n", newBinnacleEntry);
@@ -90,7 +92,8 @@ async function createEntryDelivery(req) {
             return [null, "No se reconoce al conserje que está haciendo la solicitud"];
         }
         // Se valida el departamento
-        let department = await Department.findOne({ departmentNumber: binnacleData.departNumber });
+        const department = await Department.findById(binnacleData.departmentNumber);
+        console.log("department ", department);
         if (!department) {
           return [null, "No se encontró el departamento indicado"];
         }
@@ -104,7 +107,6 @@ async function createEntryDelivery(req) {
         handleError(error, "binnacle.service -> createEntryDelivery");
         return [null, "Error en el servidor"];
     }
-
 }
 
 // Función para crear una entrada de Espacios Comunitarios en la bitácora

@@ -43,10 +43,6 @@ const binnacleSchema = new mongoose.Schema({
         default: new Date("9999-12-31")        
     },
     // Si es Delivery
-    departNumber: {
-        type: Number,
-       // required: function() { return this.activityType === 'Delivery'; }
-    },
     recipientFirstName: {
         type: String,
        // required: function() { return this.activityType === 'Delivery'; }
@@ -122,7 +118,7 @@ binnacleSchema.pre('save', function(next) {
         this.exitDate = undefined;
     }
     if(this.activityType !== 'Delivery') {
-        this.departNumber = undefined;
+        this.departmentNumber = undefined;
         this.recipientFirstName = undefined;
         this.recipientLastName = undefined;
         this.deliveryTime = undefined;
