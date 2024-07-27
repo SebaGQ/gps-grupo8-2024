@@ -319,6 +319,7 @@ mapToSpacesDTO(data: any): BinnacleSpacesDTO {
     spaceId: data.spaceId || '',
     startTime: data.startTime || '',
     endTime: data.endTime || '',
+    userId: data.userId || ''
   };
 }
 

@@ -65,8 +65,8 @@
       </mat-form-field>
       <mat-form-field appearance="fill" class="mat-form-field">
         <mat-label>Usuario</mat-label>
-        <mat-select formControlName="User" required>
-          <mat-option *ngFor="let department of departments" [value]="department._id">{{department.departmentNumber}}</mat-option>
+        <mat-select formControlName="userId" required>
+          <mat-option *ngFor="let user of users" [value]="user._id">{{user.firstName}} {{user.lastName}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

@@ -3,6 +3,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DepartmentService } from 'src/app/services/department.service';
 import { DepartmentDTO } from 'src/app/dto/visitor.dto';
+import { UserService } from 'src/app/services/user.service';
+import { UserDTO } from 'src/app/dto/user.dto';
 
 @Component({
   selector: 'app-binnacle-form-dialog',
@@ -13,12 +15,14 @@ export class BinnacleFormDialog {
   binnacleForm: FormGroup = new FormGroup({});
   activities: string[] = ['Visita', 'Espacio Comunitario', 'Delivery'];
   departments: DepartmentDTO[] = [];
+  users: UserDTO[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<BinnacleFormDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+    private userService: UserService
   ) {
 
   }
@@ -27,6 +31,7 @@ export class BinnacleFormDialog {
     console.log("Cargnado departamentos");
     this.loadDepartments();
     console.log("Departamentos cargados");
+    this.loadUsers();
     console.log("Creando formulario");
     this.createForm();
   }
@@ -39,6 +44,11 @@ export class BinnacleFormDialog {
 
   loadUsers(): void {
     console.log("Cargando usuarios");
+    this.userService.getUsers().subscribe(data => {
+      console.log("Usuarios cargados", data);
+      this.users = data;
+    }
+    );
   }
 
   onSubmit(): void {
@@ -63,6 +73,7 @@ export class BinnacleFormDialog {
       roles: [''],
       startTime: [''],
       endTime: [''],
+      userId: [''],
       departNumber: [''],
       spaceId: [''],
       recipientFirstName: [''],
@@ -80,11 +91,12 @@ export class BinnacleFormDialog {
       this.binnacleForm.controls['entryDate'], Validators.required;
       this.binnacleForm.controls['exitDate'], Validators.required;
       this.binnacleForm.controls['roles'], Validators.required;
-      this.removeUnusedControls(['spaceId', 'recipientFirstName', 'recipientLastName', 'deliveryPersonName', 'deliveryTime', 'status', 'startTime', 'endTime']);
+      this.removeUnusedControls(['spaceId', 'recipientFirstName', 'recipientLastName', 'deliveryPersonName', 'deliveryTime', 'status', 'startTime', 'endTime', 'userId']);
     } else if (this.data.activityType === 'Espacio Comunitario') {
       this.binnacleForm.controls['spaceId'], Validators.required;
       this.binnacleForm.controls['startTime'], Validators.required;
       this.binnacleForm.controls['endTime'], Validators.required;
+      this.binnacleForm.controls['userId'], Validators.required;
       this.removeUnusedControls(['recipientFirstName', 'recipientLastName', 'deliveryPersonName', 'deliveryTime', 'status', 'departNumber', 'rut', 'name', 'lastName', 'entryDate', 'exitDate']);
     } else if (this.data.activityType === 'Delivery') {
       this.binnacleForm.controls['departmentNumber'], Validators.required;
@@ -93,7 +105,7 @@ export class BinnacleFormDialog {
       this.binnacleForm.controls['deliveryPersonName'], Validators.required;
       this.binnacleForm.controls['deliveryTime'], Validators.required;
       this.binnacleForm.controls['status'], Validators.required;
-      this.removeUnusedControls(['spaceId', 'startTime', 'endTime', 'name', 'lastName', 'entryDate', 'exitDate', 'rut', 'roles', 'exitDate', 'entryDate']);
+      this.removeUnusedControls(['spaceId', 'startTime', 'endTime', 'name', 'lastName', 'entryDate', 'exitDate', 'rut', 'roles', 'exitDate', 'entryDate', 'userId']);
     }
   }
 
