@@ -42,7 +42,6 @@ export class DepartmentComponent implements OnInit {
   loadResidentName(department: DepartmentDTO): void {
     if (department.residentId && typeof department.residentId === 'object' && '_id' in department.residentId) {
       const residentIdString = (department.residentId as any)._id.toString();
-      console.log(residentIdString);
       
       this.userService.getUserById(residentIdString).subscribe(
         (user: UserDTO) => {
