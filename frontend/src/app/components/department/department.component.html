@@ -15,12 +15,7 @@
         </mat-card-header>
         <mat-card-content>
           <p><strong>Residente:</strong> 
-            <ng-container *ngIf="department.residentId">
-              {{ department.residentId.firstName }} {{ department.residentId.lastName }}
-            </ng-container>
-            <ng-container *ngIf="!department.residentId">
-              No asignado
-            </ng-container>
+            {{ department.residentName }}
           </p>
         </mat-card-content>
         <mat-card-actions class="button-container">

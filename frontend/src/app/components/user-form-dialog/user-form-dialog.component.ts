@@ -69,13 +69,11 @@ export class UserFormDialogComponent implements OnInit {
         });
       } else {
         // Create new user
-        console.log(userDataWithoutDepartmentId)
         this.userService.createUser(userDataWithoutDepartmentId).subscribe((newUser) => {
           this.dialogRef.close(true);
 
           // Update department with the newly created user's ID
           if (departmentId) {
-            console.log(departmentId)
             this.updateDepartmentWithUser(departmentId, newUser._id);
           }
         });
@@ -84,34 +82,24 @@ export class UserFormDialogComponent implements OnInit {
   }
 
   private updateDepartmentWithUser(departmentId: string, userId: string): void {
+    // Obtener el departamento y actualizar el residentId con el ID del usuario
     this.departmentService.getDepartmentById(departmentId).subscribe(department => {
       if (department) {
-        // Suponiendo que userService tiene un método para obtener un usuario por su ID
-        this.userService.getUserById(userId).subscribe(user => {
-          if (user) {
-            const departmentUpdateData: Partial<DepartmentDTO> = {
-              departmentNumber: department.departmentNumber,
-              residentId: user // Aquí se asigna el objeto UserDTO completo
-            };
-  
-             console.log(departmentUpdateData);
-            this.departmentService.updateDepartment(departmentId, departmentUpdateData).subscribe(() => {
-              console.log(`Department ${departmentId} updated with residentId ${userId}`);
-            }, error => {
-              console.error('Error updating department:', error);
-            });
-          }
+        const departmentUpdateData: Partial<DepartmentDTO> = {
+          departmentNumber: department.departmentNumber,
+          residentId: userId, // Enviar solo el ID como string
+        };
+
+        this.departmentService.updateDepartment(departmentId, departmentUpdateData).subscribe(() => {
+          console.log(`Department ${departmentId} updated with residentId ${userId}`);
         }, error => {
-          console.error('Error fetching user:', error);
+          console.error('Error updating department:', error);
         });
       }
     }, error => {
       console.error('Error fetching department:', error);
     });
   }
-  
-  
-  
 
   onNoClick(): void {
     this.dialogRef.close();
