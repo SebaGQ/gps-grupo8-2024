@@ -24,6 +24,7 @@ router.get("/booking", isJanitorOrAdmin,BinnacleController.getBinnaclesBooking);
 router.get("/date/:date", isJanitorOrAdmin,BinnacleController.getBinnacleByDate);
 router.get("/bi/:id", isAdmin,BinnacleController.getBinnacleById);
 router.get("/excel", isJanitorOrAdmin,BinnacleController.exportToExcel);
+router.get("/generate", isAdmin,BinnacleController.generateDailyReport);
 router.delete("/:id", isAdmin,BinnacleController.deleteBinnacleId);
 router.put("/:id", isAdmin, BinnacleController.updateBinnacle);
 

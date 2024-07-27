@@ -4,6 +4,7 @@ import { respondSuccess, respondError } from "../utils/resHandler.js";
 import BinnacleService from "../services/binnacle.service.js";
 import { handleError } from "../utils/errorHandler.js";
 import { validateVisitaBody, validateDeliveryBody, validateEspacioComunitarioBody, binnacleIdSchema } from '../schema/binnacle.schema.js';
+import { generateReport } from '../utils/reportGenerator.js';
 
 
 
@@ -244,6 +245,21 @@ async function getBinnacleById(req, res) {
     }
 }
 
+/**
+ * Genera y almacena el reporte diario de bitácoras
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function generateDailyReport(req, res) {
+    try {
+      const report = await BinnacleService.generateDailyReport();
+      await generateReport(report);
+      respondSuccess(req, res, 200, 'Reporte diario generado y almacenado con éxito.');
+    } catch (error) {
+      respondError(req, res, 500, 'Error al generar el reporte diario.');
+    }
+  }
+
 export default {
     exportToExcel,
     createEntryVisitor,
@@ -257,6 +273,7 @@ export default {
     getBinnaclesVisitor,
     getBinnacleByDate,
     deleteBinnacleId,
-    updateBinnacle
+    updateBinnacle,
+    generateDailyReport,
 };
 

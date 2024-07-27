@@ -16,6 +16,8 @@ import { setupDB } from "./config/configDB.js";
 import { handleFatalError, handleError } from "./utils/errorHandler.js";
 import { createRoles, createUsers, createDepartments } from "./config/initialSetup.js";
 
+import './jobs/cronJob.js';
+
 /**
  * Inicia el servidor web
  */

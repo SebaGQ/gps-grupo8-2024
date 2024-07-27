@@ -743,7 +743,28 @@ async function updateBinnacle(id, updateData) {
         handleError(error, "binnacle.service -> updateBinnacle");
         return [null, "Error en el servidor"];
     }
+
 }
+async function generateDailyReport() {
+    try {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+  
+      const binnacles = await Binnacle.find({
+        createdAt: {
+          $gte: start,
+          $lte: end
+        }
+      }).lean();
+  
+      return binnacles;
+    } catch (error) {
+      console.error('Error al generar el reporte diario:', error);
+      throw error;
+    }
+  }
 
 
 
@@ -760,5 +781,6 @@ export default {
     getBinnacles,
     getBinnacleById,
     deleteBinnacleId,
-    updateBinnacle
+    updateBinnacle,
+    generateDailyReport,
 };
