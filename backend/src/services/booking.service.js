@@ -54,6 +54,7 @@ async function createBooking(req) {
 
         // Verificar si el espacio existe
         const spaceExists = await CommonSpace.findById(spaceId);
+        console.log(spaceExists);
         if (!spaceExists) return [null, "El espacio no existe"];
 
         // Validaciones adicionales
@@ -76,6 +77,18 @@ async function createBooking(req) {
                 { startTime: { $gte: startTime }, endTime: { $lte: endTime } },
             ],
         }).exec();
+
+        // Verificar si la hora de inicio y fin de la reserva está dentro de las horas permitidas
+        const startHour = new Date(startTime).getHours();
+        const endHour = new Date(endTime).getHours();
+
+        const openingHour = parseInt(spaceExists.openingHour.split(":")[0]);
+        const closingHour = parseInt(spaceExists.closingHour.split(":")[0]);
+
+        if (startHour < openingHour || endHour > closingHour) {
+            return [null, "El espacio no está disponible para reservas en este horario"];
+        }
+
 
         if (bookings.length > 0) return [null, "El espacio ya está reservado"];
 
@@ -108,7 +121,7 @@ async function updateBooking(id, req) {
         const nameRole = roles.map((role) => role.name);
         let notEqual = false;
 
-        if (userId._id.toString() != bookingUser.userId.toString() ) {
+        if (userId._id.toString() != bookingUser.userId.toString()) {
             notEqual = true;
             console.log("no son iguales");
         }
@@ -117,7 +130,7 @@ async function updateBooking(id, req) {
             noAdminOrJanitor = true;
             console.log("no es admin ni janitor");
         }
-        if ( notEqual == true || noAdminOrJanitor == true) {
+        if (notEqual == true || noAdminOrJanitor == true) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
 
@@ -176,7 +189,7 @@ async function deleteBooking(id, req) {
         const nameRole = roles.map((role) => role.name);
         const notEqual = false;
 
-        if (userId._id.toString() != bookingUser.userId.toString() ) {
+        if (userId._id.toString() != bookingUser.userId.toString()) {
             notEqual = true;
             console.log("no son iguales");
         }
@@ -185,7 +198,7 @@ async function deleteBooking(id, req) {
             noAdminOrJanitor = true;
             console.log("no es admin ni janitor");
         }
-        if ( notEqual == true || noAdminOrJanitor == true) {
+        if (notEqual == true || noAdminOrJanitor == true) {
             return [null, "El email no coincide con el usuario de la reservación"];
         }
 
