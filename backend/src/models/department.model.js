@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 const departmentSchema = new mongoose.Schema({
     departmentNumber: {
         type: Number,
-        required: true
+        required: false
     },
     residentId: {
         type: mongoose.Schema.Types.ObjectId,

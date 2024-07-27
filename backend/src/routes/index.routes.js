@@ -32,6 +32,8 @@ import visitorRoutes from "./visitor.routes.js";
 
 import departmentRoutes from "./department.routes.js";
 
+import roleRoutes from "./role.routes.js";
+
 
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
@@ -41,6 +43,10 @@ const router = Router();
 
 // Define las rutas para los usuarios /api/usuarios
 router.use("/users", authenticationMiddleware, userRoutes);
+
+// Define las rutas para los roles /api/role
+router.use("/role", authenticationMiddleware, roleRoutes);
+
 // Define las rutas para la autenticación /api/auth
 router.use("/auth", authRoutes);
 

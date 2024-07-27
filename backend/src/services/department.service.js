@@ -70,14 +70,14 @@ async function updateDepartment(id, department) {
     const departmentFound = await Department.findById(id);
     if (!departmentFound) return [null, "El departamento no existe"];
 
-    const { departmentNumber, residentId } = department;
+    // Filtrar solo los campos que están presentes en el objeto department
+    const updateFields = {};
+    if (department.departmentNumber) updateFields.departmentNumber = department.departmentNumber;
+    if (department.residentId) updateFields.residentId = department.residentId;
 
     const departmentUpdated = await Department.findByIdAndUpdate(
       id,
-      {
-        departmentNumber,
-        residentId
-      },
+      { $set: updateFields },
       { new: true }
     );
 

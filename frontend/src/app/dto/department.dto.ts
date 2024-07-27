@@ -4,4 +4,5 @@ export interface DepartmentDTO {
     _id: string;
     departmentNumber: number;
     residentId: UserDTO;
+    residentName: string| null;
 }
