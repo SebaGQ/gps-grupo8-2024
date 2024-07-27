@@ -5,17 +5,10 @@ import Joi from "joi";
  * Esquema de validación para el cuerpo de la solicitud de Booking.
  */
 const bookingSchemaJoi = Joi.object({
-    spaceId: Joi.string().required().messages({
+    spaceId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).required().messages({
         "string.base": "El ID del espacio debe ser de tipo string.",
+        "string.pattern.base": "El ID del espacio debe ser un ObjectId válido de Mongoose.",
         "any.required": "El ID del espacio es obligatorio.",
-    }),
-    userId: Joi.string().required().messages({
-        "string.base": "El ID del usuario debe ser de tipo string.",
-        "any.required": "El ID del usuario es obligatorio.",
-    }),
-    date: Joi.date().required().messages({
-        "date.base": "La fecha debe ser una fecha válida.",
-        "any.required": "La fecha es obligatoria.",
     }),
     startTime: Joi.date().required().messages({
         "date.base": "La hora de inicio debe ser una fecha válida.",
