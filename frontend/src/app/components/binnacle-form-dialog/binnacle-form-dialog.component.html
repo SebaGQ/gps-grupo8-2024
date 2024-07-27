@@ -52,7 +52,7 @@
       <mat-form-field appearance="fill" class="mat-form-field">
         <mat-label>Espacio</mat-label>
         <mat-select matInput formControlName="spaceId" required>
-          <mat-option value="66899b7b15132babf6a4e479">Barbecue</mat-option>
+          <mat-option *ngFor="let space of spaces" [value]="space._id">{{space.location}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill" class="mat-form-field">

@@ -5,6 +5,8 @@ import { DepartmentService } from 'src/app/services/department.service';
 import { DepartmentDTO } from 'src/app/dto/visitor.dto';
 import { UserService } from 'src/app/services/user.service';
 import { UserDTO } from 'src/app/dto/user.dto';
+import { SpaceService } from 'src/app/services/space.service';
+import { CommonSpaceDto } from 'src/app/dto/space.dto';
 
 @Component({
   selector: 'app-binnacle-form-dialog',
@@ -16,28 +18,37 @@ export class BinnacleFormDialog {
   activities: string[] = ['Visita', 'Espacio Comunitario', 'Delivery'];
   departments: DepartmentDTO[] = [];
   users: UserDTO[] = [];
+  spaces: CommonSpaceDto[] = []; 
 
   constructor(
     public dialogRef: MatDialogRef<BinnacleFormDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
     private departmentService: DepartmentService,
-    private userService: UserService
+    private userService: UserService,
+    private spaceService: SpaceService
   ) {
 
   }
 
   ngOnInit(): void {
     console.log("Cargnado departamentos");
+    console.log("Cargando usuarios");
+    console.log("Cargando espacios");
     this.loadDepartments();
     console.log("Departamentos cargados");
     this.loadUsers();
+    console.log("Usuarios cargados");
+    this.loadSpaces();
+    console.log("Espacios cargados");
     console.log("Creando formulario");
     this.createForm();
   }
 
   loadDepartments(): void {
+    console.log("Cargando departamentos");
     this.departmentService.getDepartments().subscribe(data => {
+      console.log("Departamentos cargados");
       this.departments = data;
     });
   }
@@ -45,8 +56,17 @@ export class BinnacleFormDialog {
   loadUsers(): void {
     console.log("Cargando usuarios");
     this.userService.getUsers().subscribe(data => {
-      console.log("Usuarios cargados", data);
+      console.log("Usuarios cargados");
       this.users = data;
+    }
+    );
+  }
+
+  loadSpaces(): void {
+    console.log("Cargando espacios");
+    this.spaceService.getCommonSpaces().subscribe(data => {
+      console.log("Espacios cargados");
+      this.spaces = data;
     }
     );
   }
