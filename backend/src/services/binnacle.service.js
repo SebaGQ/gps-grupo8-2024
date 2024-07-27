@@ -1,8 +1,4 @@
 "use strict";
-
-import Order from "../models/order.model.js";
-import Visitor from "../models/visitor.model.js";
-import Booking from "../models/booking.model.js";
 import Binnacle from "../models/binnacle.model.js";
 import xlsx from "xlsx";
 import path from "path";
@@ -12,167 +8,41 @@ import Department from "../models/department.model.js";
 import { handleError } from "../utils/errorHandler.js";
 import ORDER_STATUSES from "../constants/orderstatus.constants.js";
 
-async function exportDataToExcel(req, res) {
+async function exportToExcel() {
     try {
-        // Orders
-        const orders = await Order.find().populate("janitorId").populate("departmentNumber").lean();
-        const formattedOrders = orders.map(order => ({
-            ...order,
-            janitorId: `${order.janitorId.firstName} ${order.janitorId.lastName}`,
-            departmentNumber: order.departmentNumber.departmentNumber
+        const binnacles = await Binnacle.find().lean();
+        
+        const janitorIds = [...new Set(binnacles.map(b => b.janitorID))];
+        const janitors = await Users.find({ _id: { $in: janitorIds } }).select('firstName lastName').lean();
+        const janitorDict = {};
+        janitors.forEach(janitor => {
+            janitorDict[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
+        });
+
+        const departmentIds = [...new Set(binnacles.map(b => b.departmentNumber))];
+        const departments = await Department.find({ _id: { $in: departmentIds } }).select('departmentNumber').lean();
+        const departmentDict = {};
+        departments.forEach(dept => {
+            departmentDict[dept._id] = dept.departmentNumber;
+        });
+
+        const formattedBinnacles = binnacles.map(b => ({
+            ...b,
+            janitorName: janitorDict[b.janitorID] || 'Desconocido',
+            departmentNumber: departmentDict[b.departmentNumber] || 'N/A'
         }));
 
-        // Visitors
-        const visitors = await Visitor.find().populate("departmentNumber").lean();
-        const formattedVisitors = visitors.map(visitor => ({
-            ...visitor,
-            departmentNumber: visitor.departmentNumber.departmentNumber
-        }));
+        const worksheet = xlsx.utils.json_to_sheet(formattedBinnacles);
+        const workbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'Bitacoras');
 
-        // Bookings
-        const bookings = await Booking.find().populate("userId").populate("spaceId").lean();
-        const formattedBookings = bookings.map(booking => ({
-            ...booking,
-            userId: `${booking.userId.firstName} ${booking.userId.lastName}`,
-            spaceId: `${booking.spaceId.type} - ${booking.spaceId.location}`
-        }));
+        const filePath = path.resolve('bitacoras.xlsx');
+        xlsx.writeFile(workbook, filePath);
 
-        // Binnacles - Visita
-        const binnaclesVisitor = await Binnacle.find({ activityType: "Visita" })
-            .select('janitorID activityType name lastName rut departmentNumber createdAt')
-            .lean();
-        
-        const janitorIdsVisitor = binnaclesVisitor.map(binnacle => binnacle.janitorID);
-        const janitorsVisitor = await Users.find({ _id: { $in: janitorIdsVisitor } })
-            .select('firstName lastName')
-            .lean();
-        
-        const janitorDictVisitor = {};
-        janitorsVisitor.forEach(janitor => {
-            janitorDictVisitor[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
-        });
-
-        const departmentIdsVisitor = [...new Set(binnaclesVisitor.map(binnacle => binnacle.departmentNumber))];
-        const departmentsVisitor = await Department.find({ _id: { $in: departmentIdsVisitor } })
-            .select('_id departmentNumber')
-            .lean();
-
-        const departmentDictVisitor = {};
-        departmentsVisitor.forEach(department => {
-            departmentDictVisitor[department._id] = department.departmentNumber;
-        });
-
-        const formattedBinnaclesVisitor = binnaclesVisitor.map(entry => ({
-            janitorID: janitorDictVisitor[entry.janitorID],
-            activityType: entry.activityType,
-            name: entry.name,
-            lastName: entry.lastName,
-            rut: entry.rut,
-            departmentNumber: departmentDictVisitor[entry.departmentNumber],
-            createdAt: entry.createdAt
-        }));
-
-        // Binnacles - Delivery
-        const binnaclesDelivery = await Binnacle.find({ activityType: "Delivery" })
-            .select('janitorID activityType departmentNumber recipientFirstName recipientLastName deliveryTime withdrawnTime deliveryPersonName status createdAt')
-            .lean();
-        
-        const janitorIdsDelivery = binnaclesDelivery.map(binnacle => binnacle.janitorID);
-        const janitorsDelivery = await Users.find({ _id: { $in: janitorIdsDelivery } })
-            .select('firstName lastName')
-            .lean();
-        
-        const janitorDictDelivery = {};
-        janitorsDelivery.forEach(janitor => {
-            janitorDictDelivery[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
-        });
-
-        const departmentIdsDelivery = [...new Set(binnaclesDelivery.map(binnacle => binnacle.departmentNumber))];
-        const departmentsDelivery = await Department.find({ _id: { $in: departmentIdsDelivery } })
-            .select('_id departmentNumber')
-            .lean();
-
-        const departmentDictDelivery = {};
-        departmentsDelivery.forEach(department => {
-            departmentDictDelivery[department._id] = department.departmentNumber;
-        });
-
-        const formattedBinnaclesDelivery = binnaclesDelivery.map(entry => ({
-            janitorID: janitorDictDelivery[entry.janitorID],
-            activityType: entry.activityType,
-            departmentNumber: departmentDictDelivery[entry.departmentNumber],
-            recipientFirstName: entry.recipientFirstName,
-            recipientLastName: entry.recipientLastName,
-            deliveryTime: entry.deliveryTime,
-            withdrawnTime: entry.withdrawnTime,
-            deliveryPersonName: entry.deliveryPersonName,
-            status: entry.status,
-            createdAt: entry.createdAt
-        }));
-
-        // Binnacles - Espacio Comunitario
-        const binnaclesBooking = await Binnacle.find({ activityType: "Espacio Comunitario" })
-            .select('janitorID activityType spaceId startTime endTime createdAt')
-            .lean();
-        
-        const janitorIdsBooking = binnaclesBooking.map(binnacle => binnacle.janitorID);
-        const janitorsBooking = await Users.find({ _id: { $in: janitorIdsBooking } })
-            .select('firstName lastName')
-            .lean();
-        
-        const janitorDictBooking = {};
-        janitorsBooking.forEach(janitor => {
-            janitorDictBooking[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
-        });
-
-        const spaceIdsBooking = [...new Set(binnaclesBooking.map(binnacle => binnacle.spaceId))];
-        const spacesBooking = await CommonSpace.find({ _id: { $in: spaceIdsBooking } })
-            .select('type location')
-            .lean();
-
-        const spaceDictBooking = {};
-        spacesBooking.forEach(space => {
-            spaceDictBooking[space._id] = `${space.type} - ${space.location}`;
-        });
-
-        const formattedBinnaclesBooking = binnaclesBooking.map(entry => ({
-            janitorID: janitorDictBooking[entry.janitorID],
-            activityType: entry.activityType,
-            spaceId: spaceDictBooking[entry.spaceId],
-            startTime: entry.startTime,
-            endTime: entry.endTime,
-            createdAt: entry.createdAt
-        }));
-
-        // Crear el archivo Excel
-        const data = [
-            { sheetName: "Orders", data: formattedOrders },
-            { sheetName: "Visitors", data: formattedVisitors },
-            { sheetName: "Bookings", data: formattedBookings },
-            { sheetName: "Binnacles Delivery", data: formattedBinnaclesDelivery },
-            { sheetName: "Binnacles Booking", data: formattedBinnaclesBooking },
-            { sheetName: "Binnacles Visitor", data: formattedBinnaclesVisitor } // Añadir los binnacles de visita
-        ];
-
-        const wb = xlsx.utils.book_new();
-
-        data.forEach(item => {
-            const ws = xlsx.utils.json_to_sheet(item.data);
-            xlsx.utils.book_append_sheet(wb, ws, item.sheetName);
-        });
-
-        const filePath = path.resolve("Bitacoras.xlsx");
-        xlsx.writeFile(wb, filePath);
-
-        res.download(filePath, (err) => {
-            if (err) {
-                handleError(err, "binnacle.service -> exportDataToExcel");
-                res.status(500).send("Error al descargar el archivo");
-            }
-        });
+        return filePath;
     } catch (error) {
-        handleError(error, "binnacle.service -> exportDataToExcel");
-        res.status(500).send("Error en el servidor");
+        console.error('Error al exportar bitácoras a Excel:', error);
+        throw new Error('No se pudo exportar las bitácoras a Excel');
     }
 }
 
@@ -266,7 +136,9 @@ async function createEntryBooking(req) {
             activityType: "Espacio Comunitario", 
             spaceId: spaceId, 
             startTime: startTime, 
-            endTime: endTime });
+            endTime: endTime,
+            userId: userId
+         });
         await newBinnacleEntry.save();
         return [newBinnacleEntry, null];
     }catch(error){
@@ -341,6 +213,8 @@ async function getBinnaclesBooking() {
         const binnacles = await Binnacle.find({ activityType: "Espacio Comunitario" })
             .select('janitorID activityType spaceId startTime endTime createdAt')
             .lean();
+
+        console.log("BINNACLES", binnacles);
         
         // Paso 2: Extraer los janitorID
         const janitorIds = binnacles.map(binnacle => binnacle.janitorID);
@@ -373,7 +247,24 @@ async function getBinnaclesBooking() {
         });
         console.log("SPACE DICT", spaceDict);
 
-        // Paso 6: Combinar los resultados
+        //paso 6: Extraer los userId únicos
+        const userIds = [...new Set(binnacles.map(binnacle => binnacle.userId))];
+        console.log("USER IDS", userIds);
+
+        // Paso 7: Obtener los detalles de los usuarios usando _id
+        const users = await Users.find({ _id: { $in: userIds } })
+            .select('firstName lastName')
+            .lean();
+        console.log("USERS", users);
+
+        // Crear un diccionario de usuarios para acceso rápido
+        const userDict = {};
+        users.forEach(user => {
+            userDict[user._id] = `${user.firstName} ${user.lastName}`;
+        });
+        console.log("USER DICT", userDict);
+
+        // Paso 8: Combinar los resultados
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 janitorID: janitorDict[entry.janitorID],
@@ -381,6 +272,7 @@ async function getBinnaclesBooking() {
                 spaceId: spaceDict[entry.spaceId],
                 startTime: entry.startTime,
                 endTime: entry.endTime,
+                userId: userDict[entry.userId],
                 createdAt: entry.createdAt
             };
         });
@@ -398,7 +290,7 @@ async function getBinnaclesDelivery() {
     try {
         // Paso 1: Obtener los registros de Binnacle con activityType "Delivery"
         const binnacles = await Binnacle.find({ activityType: "Delivery" })
-            .select('janitorID activityType departNumber recipientFirstName recipientLastName deliveryTime withdrawnTime deliveryPersonName status createdAt')
+            .select('janitorID activityType departmentNumber recipientFirstName recipientLastName deliveryTime withdrawnTime deliveryPersonName status createdAt')
             .lean();
         
         // Paso 2: Extraer los janitorID
@@ -415,12 +307,26 @@ async function getBinnaclesDelivery() {
             janitorDict[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
         });
 
+        // Paso 4: Extraer los departmentNumbers únicos
+        const departmentIds = [...new Set(binnacles.map(binnacle => binnacle.departmentNumber))];
+
+        // Paso 5: Obtener los detalles de los departamentos usando _id
+        const departments = await Department.find({ _id: { $in: departmentIds } })
+            .select('_id departmentNumber')
+            .lean();
+
+        // Crear un diccionario de departamentos para acceso rápido
+        const departmentDict = {};
+        departments.forEach(department => {
+            departmentDict[department._id] = department.departmentNumber;
+        });
+
         // Paso 6: Combinar los resultados
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 janitorID: janitorDict[entry.janitorID],
                 activityType: entry.activityType,
-                departNumber: entry.departNumber,
+                departNumber: departmentDict[entry.departmentNumber],
                 recipientFirstName: entry.recipientFirstName,
                 recipientLastName: entry.recipientLastName,
                 deliveryTime: entry.deliveryTime,
@@ -769,7 +675,7 @@ async function generateDailyReport() {
 
 
 export default {
-    exportDataToExcel,
+    exportToExcel,
     createEntryVisitor,
     createEntryBooking,
     createEntryDelivery,

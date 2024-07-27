@@ -13,18 +13,16 @@ import { generateReport } from '../utils/reportGenerator.js';
  */
 async function exportToExcel(req, res) {
     try {
-        const [filePath, error] = await BinnacleService.exportDataToExcel();
-        if (error) return respondError(req, res, 500, error);
-
-        res.download(filePath, "data_export.xlsx", (err) => {
+        const filePath = await BinnacleService.exportToExcel();
+        res.download(filePath, 'bitacoras.xlsx', (err) => {
             if (err) {
-                handleError(err, "excelExport.controller -> exportToExcel");
-                respondError(req, res, 500, "No se pudo descargar el archivo");
+                console.error('Error al descargar el archivo:', err);
+                respondError(req, res, 500, 'No se pudo descargar el archivo');
             }
         });
     } catch (error) {
-        handleError(error, "excelExport.controller -> exportToExcel");
-        respondError(req, res, 500, "No se pudo exportar los datos a Excel");
+        console.error('Error en exportToExcel:', error);
+        respondError(req, res, 500, 'No se pudo exportar las bitácoras a Excel');
     }
 }
 /**

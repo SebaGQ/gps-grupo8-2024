@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DepartmentService } from 'src/app/services/department.service';
@@ -13,7 +13,7 @@ import { CommonSpaceDto } from 'src/app/dto/space.dto';
   templateUrl: './binnacle-form-dialog.component.html',
   styleUrls: ['./binnacle-form-dialog.component.css']
 })
-export class BinnacleFormDialog {
+export class BinnacleFormDialog implements OnInit {
   binnacleForm: FormGroup = new FormGroup({});
   activities: string[] = ['Visita', 'Espacio Comunitario', 'Delivery'];
   departments: DepartmentDTO[] = [];
@@ -27,12 +27,10 @@ export class BinnacleFormDialog {
     private departmentService: DepartmentService,
     private userService: UserService,
     private spaceService: SpaceService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
-    console.log("Cargnado departamentos");
+    console.log("Cargando departamentos");
     console.log("Cargando usuarios");
     console.log("Cargando espacios");
     this.loadDepartments();
@@ -43,32 +41,33 @@ export class BinnacleFormDialog {
     console.log("Espacios cargados");
     console.log("Creando formulario");
     this.createForm();
+
+    if (this.data.binnacle) {
+      this.loadBinnacleData(this.data.binnacle);
+    }
+
+    // Suscripción al cambio de valor de activityType
+    this.binnacleForm.get('activityType')?.valueChanges.subscribe(value => {
+      this.updateFormValidations();
+    });
   }
 
   loadDepartments(): void {
-    console.log("Cargando departamentos");
     this.departmentService.getDepartments().subscribe(data => {
-      console.log("Departamentos cargados");
       this.departments = data;
     });
   }
 
   loadUsers(): void {
-    console.log("Cargando usuarios");
     this.userService.getUsers().subscribe(data => {
-      console.log("Usuarios cargados");
       this.users = data;
-    }
-    );
+    });
   }
 
   loadSpaces(): void {
-    console.log("Cargando espacios");
     this.spaceService.getCommonSpaces().subscribe(data => {
-      console.log("Espacios cargados");
       this.spaces = data;
-    }
-    );
+    });
   }
 
   onSubmit(): void {
@@ -102,37 +101,82 @@ export class BinnacleFormDialog {
       deliveryTime: [''],
       status: ['']
     });
+
+    // Inicializar validaciones basadas en el tipo de actividad
+    this.updateFormValidations();
     console.log('Formulario creado:', this.binnacleForm);
-    if (this.data.activityType === 'Visita') {
-      this.binnacleForm.controls['name'], Validators.required;
-      this.binnacleForm.controls['lastName'], Validators.required;
-      this.binnacleForm.controls['rut'], Validators.required;
-      this.binnacleForm.controls['departNumber'], Validators.required;
-      this.binnacleForm.controls['entryDate'], Validators.required;
-      this.binnacleForm.controls['exitDate'], Validators.required;
-      this.binnacleForm.controls['roles'], Validators.required;
+  }
+
+  updateFormValidations() {
+    const activityType = this.binnacleForm.get('activityType')?.value;
+    if (activityType === 'Visita') {
+      this.binnacleForm.controls['name'].setValidators([Validators.required]);
+      this.binnacleForm.controls['lastName'].setValidators([Validators.required]);
+      this.binnacleForm.controls['rut'].setValidators([Validators.required]);
+      this.binnacleForm.controls['entryDate'].setValidators([Validators.required]);
+      this.binnacleForm.controls['exitDate'].setValidators([Validators.required]);
+      this.binnacleForm.controls['roles'].setValidators([Validators.required]);
+      this.binnacleForm.controls['departNumber'].setValidators([Validators.required]);
       this.removeUnusedControls(['spaceId', 'recipientFirstName', 'recipientLastName', 'deliveryPersonName', 'deliveryTime', 'status', 'startTime', 'endTime', 'userId']);
-    } else if (this.data.activityType === 'Espacio Comunitario') {
-      this.binnacleForm.controls['spaceId'], Validators.required;
-      this.binnacleForm.controls['startTime'], Validators.required;
-      this.binnacleForm.controls['endTime'], Validators.required;
-      this.binnacleForm.controls['userId'], Validators.required;
+    } else if (activityType === 'Espacio Comunitario') {
+      this.binnacleForm.controls['spaceId'].setValidators([Validators.required]);
+      this.binnacleForm.controls['startTime'].setValidators([Validators.required]);
+      this.binnacleForm.controls['endTime'].setValidators([Validators.required]);
+      this.binnacleForm.controls['userId'].setValidators([Validators.required]);
       this.removeUnusedControls(['recipientFirstName', 'recipientLastName', 'deliveryPersonName', 'deliveryTime', 'status', 'departNumber', 'rut', 'name', 'lastName', 'entryDate', 'exitDate']);
-    } else if (this.data.activityType === 'Delivery') {
-      this.binnacleForm.controls['departmentNumber'], Validators.required;
-      this.binnacleForm.controls['recipientFirstName'], Validators.required;
-      this.binnacleForm.controls['recipientLastName'], Validators.required;
-      this.binnacleForm.controls['deliveryPersonName'], Validators.required;
-      this.binnacleForm.controls['deliveryTime'], Validators.required;
-      this.binnacleForm.controls['status'], Validators.required;
-      this.removeUnusedControls(['spaceId', 'startTime', 'endTime', 'name', 'lastName', 'entryDate', 'exitDate', 'rut', 'roles', 'exitDate', 'entryDate', 'userId']);
+    } else if (activityType === 'Delivery') {
+      this.binnacleForm.controls['departNumber'].setValidators([Validators.required]);
+      this.binnacleForm.controls['recipientFirstName'].setValidators([Validators.required]);
+      this.binnacleForm.controls['recipientLastName'].setValidators([Validators.required]);
+      this.binnacleForm.controls['deliveryPersonName'].setValidators([Validators.required]);
+      this.binnacleForm.controls['deliveryTime'].setValidators([Validators.required]);
+      this.binnacleForm.controls['status'].setValidators([Validators.required]);
+      this.removeUnusedControls(['spaceId', 'startTime', 'endTime', 'name', 'lastName', 'entryDate', 'exitDate', 'rut', 'roles', 'userId']);
     }
+    // Actualizar el estado de los controles para aplicar las validaciones
+    this.binnacleForm.updateValueAndValidity();
   }
 
   private removeUnusedControls(controls: string[]) {
     controls.forEach(control => {
-      this.binnacleForm.removeControl(control);
+      if (this.binnacleForm.contains(control)) {
+        this.binnacleForm.removeControl(control);
+      }
     });
   }
-}
 
+  loadBinnacleData(binnacle: any): void {
+    const activityType = binnacle.activityType;
+    this.binnacleForm.patchValue({
+      activityType: activityType
+    });
+
+    if (activityType === 'Visita') {
+      this.binnacleForm.patchValue({
+        name: binnacle.name,
+        lastName: binnacle.lastName,
+        rut: binnacle.rut,
+        entryDate: binnacle.entryDate,
+        exitDate: binnacle.exitDate,
+        roles: binnacle.roles,
+        departNumber: binnacle.departmentNumber
+      });
+    } else if (activityType === 'Espacio Comunitario') {
+      this.binnacleForm.patchValue({
+        spaceId: binnacle.spaceId,
+        startTime: binnacle.startTime,
+        endTime: binnacle.endTime,
+        userId: binnacle.userId
+      });
+    } else if (activityType === 'Delivery') {
+      this.binnacleForm.patchValue({
+        departNumber: binnacle.departmentNumber,
+        recipientFirstName: binnacle.recipientFirstName,
+        recipientLastName: binnacle.recipientLastName,
+        deliveryPersonName: binnacle.deliveryPersonName,
+        deliveryTime: binnacle.deliveryTime,
+        status: binnacle.status
+      });
+    }
+  }
+}

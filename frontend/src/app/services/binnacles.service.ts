@@ -45,7 +45,7 @@ export class BinnaclesService {
   }
 
   getBinnacleExcel(): Observable<Blob> {
-    return this.HttpService.get(`${this.binnacleUrl}/excel`);
+    return this.HttpService.get<Blob>(`${this.binnacleUrl}/excel`);
   }
 
   deleteBinnacle(id: string): Observable<any> {

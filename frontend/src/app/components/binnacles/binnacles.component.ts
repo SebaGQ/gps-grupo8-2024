@@ -31,6 +31,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
   binnacleForm: FormGroup = new FormGroup({});
   showForm: boolean = false;
+  binnacles: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -54,13 +55,13 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.cdr.detectChanges();
   }
 
-  excel() {
+  exportToExcel() {
     this.binnaclesService.getBinnacleExcel().subscribe(
       (data: Blob) => {
         const downloadURL = window.URL.createObjectURL(data);
         const link = document.createElement('a');
         link.href = downloadURL;
-        link.download = 'Bitacoras.xlsx';
+        link.download = 'bitacoras.xlsx';
         link.click();
         this.showNotification('Archivo Excel descargado con éxito', 'Cerrar');
       },
@@ -98,7 +99,9 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             );
             break;
           case 'Espacio Comunitario':
+            console.log('Datos formateados:', result);
             formattedData = this.mapToSpacesDTO(result);
+            console.log('Datos formateados:', formattedData);
             this.binnaclesService.createEntryBooking(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
@@ -195,6 +198,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   buscarVisita() {
+    console.log('Buscando visitas');
     this.binnaclesService.getBinnaclesByVisitor().subscribe(
       (data: BinnacleVisitorDTO[]) => {
         this.dataSource.data = this.formatBinnacles(data);
@@ -231,6 +235,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   }
 
   eliminar(binnacle: any) {
+    console.log('Binnacle seleccionado para borrar', binnacle);
     const dialogRef = this.dialog.open(ConfirmDialog, {
       width: '500px',
       data: { message: '¿Estás seguro de que deseas eliminar esta bitácora?' }
@@ -290,15 +295,6 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
     );
   }
   
-  
-
-  applyFilters() {
-    if (this.filterActivity) {
-      this.dataSource.data = this.dataSource.data.filter(binnacle => binnacle.activityType === this.filterActivity);
-      //this.resetPaginator();
-    }
-  }
-
   // Función para mapear los datos del formulario a BinnacleVisitorDTO
 mapToVisitorDTO(data: any): BinnacleVisitorDTO {
   return {
@@ -354,7 +350,7 @@ mapToDeliveryDTO(data: any): BinnacleDeliveryDTO {
           janitorID: spacesBinnacle.janitorID,
           activityType: spacesBinnacle.activityType,
           createdAt: spacesBinnacle.createdAt,
-          description: `Espacio: ${spacesBinnacle.spaceId}, Inicio: ${this.formatDate(spacesBinnacle.startTime)}, Fin: ${this.formatDate(spacesBinnacle.endTime)}`
+          description: `Espacio: ${spacesBinnacle.spaceId}, Inicio: ${this.formatDate(spacesBinnacle.startTime)}, Fin: ${this.formatDate(spacesBinnacle.endTime)}, Usuario: ${spacesBinnacle.userId}`
         };
       } else if (binnacle.activityType === 'Delivery') {
         const deliveryBinnacle = binnacle as BinnacleDeliveryDTO;

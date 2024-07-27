@@ -15,16 +15,6 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field *ngIf="searchType === 'all'" appearance="fill">
-        <mat-label>Filtrar actividad</mat-label>
-        <mat-select [(ngModel)]="filterActivity">
-          <mat-option value="">Sin filtro</mat-option>
-          <mat-option value="Visita">Visita</mat-option>
-          <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
-          <mat-option value="Delivery">Delivery</mat-option>
-        </mat-select>
-      </mat-form-field>
-
       <mat-form-field *ngIf="searchType === 'date'" appearance="fill">
         <mat-label>Fecha</mat-label>
         <input matInput [matDatepicker]="picker" placeholder="dd/mm/aaaa" [(ngModel)]="selectedDate">
@@ -34,18 +24,6 @@
 
       <button mat-raised-button color="primary" *ngIf="searchType === 'date'" (click)="buscarFecha()">Buscar</button>
 
-      <mat-form-field *ngIf="searchType === 'date'" appearance="fill">
-        <mat-label>Filtrar actividad</mat-label>
-        <mat-select [(ngModel)]="filterActivity">
-          <mat-option value="">Sin filtro</mat-option>
-          <mat-option value="Visita">Visita</mat-option>
-          <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
-          <mat-option value="Delivery">Delivery</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <button mat-raised-button color="primary" *ngIf="searchType === 'date'" (click)="applyFilters()">Aplicar filtro</button>
-
       <mat-form-field *ngIf="searchType === 'janitor'" appearance="fill">
         <mat-label>Nombre del conserje</mat-label>
         <input matInput type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
@@ -53,12 +31,13 @@
 
       <button mat-raised-button color="primary" *ngIf="searchType === 'janitor'" (click)="buscarConserje()">Buscar</button>
 
+      <!-- Nuevo bloque para seleccionar actividad -->
       <mat-form-field *ngIf="searchType === 'activity'" appearance="fill">
-        <mat-label>Elige una actividad</mat-label>
+        <mat-label>Actividad</mat-label>
         <mat-select [(ngModel)]="selectedActivity">
           <mat-option value="Visita">Visita</mat-option>
-          <mat-option value="Espacio">Reserva de espacios</mat-option>
           <mat-option value="Delivery">Delivery</mat-option>
+          <mat-option value="Espacio">Espacios comunes</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -67,23 +46,22 @@
       <button mat-raised-button color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" (click)="buscarDelivery()">Buscar delivery</button>
       <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="buscarTodo()">Buscar todo</button>
 
-      <button mat-raised-button color="primary" *ngIf="searchType === 'all'" (click)="applyFilters()">Aplicar filtro</button>
     </div>
     <div class="createForm">
       <h2>Crear Bitácora</h2>
-      <mat-form-field appearance="fill">
+      <!-- <mat-form-field appearance="fill">
         <mat-label>Elige una actividad</mat-label>
         <mat-select [(ngModel)]="selectedActivity">
           <mat-option value="Visita">Visita</mat-option>
           <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
           <mat-option value="Delivery">Delivery</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
       <button mat-raised-button color="primary" (click)="openForm()">Abrir formulario</button>
     </div>
     <div>
       <h2>Exportar excel </h2>
-      <button mat-raised-button color="primary" (click)="excel()">Exportar a Excel</button>
+      <button mat-raised-button color="primary" (click)="exportToExcel()">Exportar a Excel</button>
     </div>
   </mat-card>
 
