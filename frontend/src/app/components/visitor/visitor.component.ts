@@ -1,10 +1,10 @@
 // visitor-list.component.ts
 import { Component, OnInit } from '@angular/core';
-import { VisitorService } from '../services/visitor.service';
-import { VisitorDTO } from '../dto/visitor.dto';
-import { VisitorFormDialogComponent } from './visitor-form-dialog/visitor-form-dialog.component';
+import { VisitorService } from '../../services/visitor.service';
+import { VisitorDTO } from '../../dto/visitor.dto';
+import { VisitorFormDialogComponent } from '../visitor-form-dialog/visitor-form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-visitor',
