@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 export class SpacesComponent implements OnInit {
   spaces$: Observable<any[]> | undefined;
   isAdminOrJanitor: boolean = false;
+  isAdmin: boolean = false; // Nueva variable para identificar si es administrador
 
   constructor(
     private spaceService: SpaceService,
@@ -22,6 +23,7 @@ export class SpacesComponent implements OnInit {
   ngOnInit(): void {
     this.spaces$ = this.spaceService.getCommonSpaces();
     this.isAdminOrJanitor = this.authService.isAdminOrJanitor();
+    this.isAdmin = this.authService.isAdmin(); // Verifica si el usuario es administrador
   }
 
   loadSpaces(): void {

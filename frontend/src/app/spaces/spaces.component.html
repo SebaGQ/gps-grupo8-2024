@@ -28,9 +28,9 @@
             <h4>Días disponibles:</h4> <p> <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-button extended  class="buttonCard" color="accent" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
+            <button mat-button extended class="buttonCard" color="accent" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
             <button *ngIf="isAdminOrJanitor" class="buttonCard" mat-button color="primary" (click)="updateSpace(space._id)">Actualizar</button>
-            <button *ngIf="isAdminOrJanitor" class="buttonCard" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button>
+            <button *ngIf="isAdmin" class="buttonCard" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button> <!-- Solo visible para administradores -->
           </mat-card-actions>
         </mat-card>
       </div>

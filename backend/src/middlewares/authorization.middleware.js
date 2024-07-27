@@ -129,7 +129,6 @@ async function isJanitorOrAdmin(req, res, next) {
       );
     }
     const roles = await Role.find({ _id: { $in: user.roles } });
-    console.log("Roles:", roles);
 
     // Verificar si el usuario tiene alguno de los roles requeridos
     const requiredRoles = ["admin", "janitor"];

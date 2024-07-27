@@ -7,6 +7,7 @@ import { CommonSpaceDto } from '../dto/space.dto';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-space-form',
@@ -27,6 +28,7 @@ export class SpaceFormComponent implements OnInit {
   selectedFile: File | null = null;
   base64Image: string | null = null;
   spaceId: string | null = null;
+  isJanitor: boolean = false; // Nueva variable para identificar si es conserje
 
   constructor(
     private spaceService: SpaceService,
@@ -34,7 +36,8 @@ export class SpaceFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService // Inyecta el servicio de autenticación
   ) {
     this.spaceForm = this.fb.group({
       availability: [true, Validators.required],
@@ -49,6 +52,8 @@ export class SpaceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isJanitor = this.authService.isJanitor(); // Verifica si el usuario es conserje
+
     this.spaceId = this.route.snapshot.paramMap.get('id');
     if (this.spaceId) {
       this.spaceService.getCommonSpaceById(this.spaceId).subscribe(space => {
@@ -65,6 +70,11 @@ export class SpaceFormComponent implements OnInit {
           this.base64Image = space.image;
         }
       });
+    }
+
+    if (this.isJanitor) {
+      this.spaceForm.disable(); // Deshabilita todo el formulario para el conserje
+      this.spaceForm.get('availability')?.enable(); // Habilita solo la disponibilidad
     }
   }
 
