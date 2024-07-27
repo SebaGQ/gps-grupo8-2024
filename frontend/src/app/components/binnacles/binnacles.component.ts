@@ -54,15 +54,19 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.cdr.detectChanges();
   }
 
-  excel(){
+  excel() {
     this.binnaclesService.getBinnacleExcel().subscribe(
-      (data) => {
-        const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = window.URL.createObjectURL(blob);
-        window.open(url);
+      (data: Blob) => {
+        const downloadURL = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = 'Bitacoras.xlsx';
+        link.click();
+        this.showNotification('Archivo Excel descargado con éxito', 'Cerrar');
       },
       (error) => {
-        console.error('Error fetching excel', error);
+        this.showNotification('Error al descargar el archivo Excel', 'Cerrar');
+        console.error('Error al descargar el archivo Excel', error);
       }
     );
   }

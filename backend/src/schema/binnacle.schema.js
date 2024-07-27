@@ -69,8 +69,8 @@ const visitaBodySchema = Joi.object({
 const deliverySchema = Joi.object({
     ...commonFields,
     departmentNumber: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).required().messages({
-        "number.base": "El número de departamento debe ser un número.",
-        "any.required": "El número de departamento es requerido para la entrega."
+        "string.empty": "El número de departamento no puede estar vacío.",
+        "any.required": "El número de departamento es requerido para la visita."
     }),
     recipientFirstName: Joi.string().pattern(/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+$/).required().messages({
         "string.empty": "El nombre del destinatario no puede estar vacío.",
@@ -106,6 +106,10 @@ const espacioComunitarioSchema = Joi.object({
     spaceId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).required().messages({
         "string.empty": "El id del espacio comunitario no puede estar vacío.",
         "any.required": "El id del espacio comunitario es requerido."
+    }),
+    userId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).required().messages({
+        "string.base": "El ID del usuario debe ser de tipo string.",
+        "any.required": "El ID del usuario es obligatorio.",
     }),
     startTime: Joi.date().required().messages({
         "date.base": "El tiempo de inicio debe ser una fecha válida.",

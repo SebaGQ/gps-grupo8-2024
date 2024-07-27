@@ -37,6 +37,10 @@ export class BinnacleFormDialog {
     });
   }
 
+  loadUsers(): void {
+    console.log("Cargando usuarios");
+  }
+
   onSubmit(): void {
     if (this.binnacleForm.valid) {
       const formData = this.binnacleForm.value;

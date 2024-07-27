@@ -94,11 +94,11 @@ const binnacleSchema = new mongoose.Schema({
     ref: "CommonSpace",
     required: function() { return this.activityType === 'Espacio Comunitario'; }
     },
-    // userId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "User",
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     //     required: function() { return this.activityType === 'Espacio Comunitario'; }
-    // },
+    },
     startTime: {
         type: Date,
         //required: function() { return this.activityType === 'Espacio Comunitario'; }
@@ -114,11 +114,12 @@ const binnacleSchema = new mongoose.Schema({
 // Si la actividad no es una visita, se eliminan los campos relacionados a la visita
 binnacleSchema.pre('save', function(next) {
     if (this.activityType !== 'Visita') {
+        this.name = undefined;
+        this.lastName = undefined;
+        this.rut = undefined;
         this.roles = undefined;
-        this.exitDate = undefined;
     }
-    if(this.activityType !== 'Delivery') {
-        this.departmentNumber = undefined;
+    if (this.activityType !== 'Delivery') {
         this.recipientFirstName = undefined;
         this.recipientLastName = undefined;
         this.deliveryTime = undefined;
@@ -130,8 +131,12 @@ binnacleSchema.pre('save', function(next) {
         this.expectedWithdrawnPersonLastName = undefined;
         this.deliveryPersonName = undefined;
         this.status = undefined;
+        // Solo elimina departmentNumber si activityType no es Visita ni Delivery
+        if (this.activityType !== 'Visita') {
+            this.departmentNumber = undefined;
+        }
     }
-    if(this.activityType !== 'Espacio Comunitario') {
+    if (this.activityType !== 'Espacio Comunitario') {
         this.spaceId = undefined;
         this.startTime = undefined;
         this.endTime = undefined;
