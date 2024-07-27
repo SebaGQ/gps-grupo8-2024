@@ -5,8 +5,9 @@ import Joi from "joi";
  * Esquema de validación para el cuerpo de la solicitud de CommonSpace.
  */
 const commonSpaceSchemaJoi = Joi.object({
-    type: Joi.string().required().messages({
+    type: Joi.string().pattern(/^[A-Za-z\s]+$/).required().messages({
         "string.base": "El tipo debe ser de tipo string.",
+        "string.pattern.base": "El tipo solo puede contener letras y espacios.",
         "any.required": "El tipo es obligatorio.",
     }),
     capacity: Joi.number().min(1).optional().messages({
@@ -17,8 +18,9 @@ const commonSpaceSchemaJoi = Joi.object({
         "boolean.base": "La disponibilidad debe ser de tipo boolean.",
         "any.required": "La disponibilidad es obligatoria.",
     }),
-    location: Joi.string().required().messages({
+    location: Joi.string().pattern(/^[A-Za-z\s]+$/).required().messages({
         "string.base": "La ubicación debe ser de tipo string.",
+        "string.pattern.base": "La ubicación solo puede contener letras y espacios.",
         "any.required": "La ubicación es obligatoria.",
     }),
     openingHour: Joi.string().pattern(/^([01]\d|2[0-3]):?([0-5]\d)$/).required().messages({
