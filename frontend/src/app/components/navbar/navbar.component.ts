@@ -60,6 +60,20 @@ export class NavbarComponent {
         this.router.navigate(['/login']);
       }
     }
+    if (destination === "user") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/user']);
+      }else{
+        this.router.navigate(['/login']);
+      }
+    }
+    if (destination === "department") {
+      if (this.isAuthenticated) {
+        this.router.navigate(['/department']);
+      }else{
+        this.router.navigate(['/login']);
+      }
+    }
   }
   logout() {
     this.authService.logout();
