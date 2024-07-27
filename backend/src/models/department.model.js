@@ -6,12 +6,13 @@ import mongoose from "mongoose";
 const departmentSchema = new mongoose.Schema({
     departmentNumber: {
         type: Number,
-        required: true
+        required: false
     },
-    residentId: [{
+    residentId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: false  //El departamento puede no tener usuario asociado al momento de registrarse
-    }]
+    }
 }, {
     versionKey: false // Para deshabilitar la propiedad __v en los documentos.
 });

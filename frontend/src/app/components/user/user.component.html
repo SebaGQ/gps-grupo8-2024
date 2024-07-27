@@ -1,0 +1,29 @@
+<div class="mat-container">
+    <div class="mat-toolbar">
+      <h1>Lista de Usuarios</h1>
+    </div>
+  
+    <div class="button-container">
+        <button mat-raised-button color="primary" (click)="openDialog()">Agregar Usuario</button>
+      </div>
+    
+    <div class="mat-row">
+      <div *ngFor="let user of users" class="mat-col-4 mat-mb-4">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>RUT:</strong> {{ user.rut }}</p>
+            <p><strong>Roles:</strong> {{ user.roleNames }}</p>
+          </mat-card-content>
+          <mat-card-actions class="button-container">
+            <button mat-raised-button color="primary" (click)="openDialog(user)">Modificar</button>
+            <button mat-raised-button color="warn" (click)="deleteUser(user._id)">Eliminar</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  

@@ -2,7 +2,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { VisitorComponent } from './visitor/visitor.component';
+import { VisitorComponent } from './components/visitor/visitor.component';
 import { HomeComponent } from './home/home.component';
 import { BinnaclesComponent } from './components/binnacles/binnacles.component';
 import { LoginComponent } from './components/login/login.component';
@@ -13,6 +13,9 @@ import { SpaceFormComponent } from './space-form/space-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
 import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
+import { DepartmentComponent } from './components/department/department.component';
+import { UserComponent } from './components/user/user.component'; 
+
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'binnacles', component: BinnaclesComponent, },
@@ -29,8 +32,10 @@ const routes: Routes = [
   { path: 'booking/:id', component: BookingComponent },
   { path: 'booking/:id/:bookingId', component: BookingComponent },
   { path: 'admin-bookings', component: AdminBookingsComponent },
-  { path: '**', redirectTo: '/login', pathMatch: 'full'},
   { path: '', component: HomeComponent },
+  { path: 'user', component: UserComponent },
+  { path: 'department', component: DepartmentComponent },
+  { path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
 
 @NgModule({

@@ -1,0 +1,66 @@
+<div class="dialog-container">
+  <h2>{{data ? 'Modificar' : 'Agregar'}} Usuario</h2>
+  <form [formGroup]="userForm" (ngSubmit)="onSave()">
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="firstName" autocomplete="off" placeholder="Ingrese el nombre">
+      <mat-error *ngIf="userForm.controls['firstName'].hasError('required')">
+        El nombre es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Apellido</mat-label>
+      <input matInput formControlName="lastName" autocomplete="off" placeholder="Ingrese el apellido">
+      <mat-error *ngIf="userForm.controls['lastName'].hasError('required')">
+        El apellido es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" autocomplete="off" placeholder="Ingrese el email">
+      <mat-error *ngIf="userForm.controls['email'].hasError('required')">
+        El email es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput formControlName="password" type="password" autocomplete="new-password" placeholder="Ingrese la contraseña">
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>RUT</mat-label>
+      <input matInput formControlName="rut" autocomplete="off" placeholder="Ingrese el RUT">
+      <mat-error *ngIf="userForm.controls['rut'].hasError('required')">
+        El RUT es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Roles</mat-label>
+      <mat-select formControlName="roles" multiple>
+        <mat-option *ngFor="let role of roles" [value]="role">{{ role }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="userForm.controls['roles'].hasError('required')">
+        Al menos un rol es <strong>obligatorio</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Departamento</mat-label>
+      <mat-select formControlName="departmentId">
+        <mat-option *ngFor="let department of departments" [value]="department._id">
+          {{ department.departmentNumber }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="dialog-actions">
+      <button mat-button type="button" (click)="onNoClick()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Guardar</button>
+    </div>
+  </form>
+</div>

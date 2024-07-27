@@ -11,12 +11,11 @@ const departmentBodySchema = Joi.object({
     "number.base": "El número de departamento debe ser de tipo número.",
     "any.required": "El número de departamento es obligatorio.",
   }),
-  residentId: Joi.array().items(Joi.string().pattern(/^(?:[0-9a-fA-F]{24}|[0-9a-fA-F]{12})$/)).messages({
-    "array.base": "El ID del residente debe ser de tipo array.",
+  residentId: Joi.string().pattern(/^(?:[0-9a-fA-F]{24}|[0-9a-fA-F]{12})$/).messages({
     "string.pattern.base": "El ID del residente proporcionado no es un ObjectId válido.",
   })
 }).messages({
-  "object.unknown": "No se permiten propiedades adicionales.",
+  "object.unknown": "No se permiten propiedades adicionales para departamento.",
 });
 
 /**
