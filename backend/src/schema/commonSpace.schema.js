@@ -41,6 +41,9 @@ const commonSpaceSchemaJoi = Joi.object({
         "array.base": "Los días permitidos deben ser un arreglo de strings.",
         "any.required": "Los días permitidos son obligatorios para el tipo 'barbecue'.",
     }),
+    image: Joi.string().optional().messages({
+        "string.base": "La imagen debe ser de tipo string.",
+    }),
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales.",
 });
