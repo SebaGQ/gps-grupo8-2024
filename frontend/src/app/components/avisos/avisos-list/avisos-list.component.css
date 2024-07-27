@@ -33,6 +33,25 @@ html {
     margin-top: 10px;
 }
 
+.create-button {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.create-button button {
+    background-color: #194e30;
+    color: #dcdcdc;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.create-button button:hover {
+    background-color: #292929;
+}
+
 .posts-list {
     display: flex;
     flex-direction: column;
@@ -84,6 +103,31 @@ html {
     background-color: #292929;
 }
 
+.post-rating {
+    display: flex;
+    align-items: center;
+    cursor: default;
+}
+
+.post-rating:not(:last-child) {
+    margin-right: 12px;
+}
+
+.post-rating-selected>.post-rating-button,
+.post-rating-selected>.post-rating-count {
+    color: #1d3026;
+}
+
+.post-rating-button {
+    margin-right: 6px;
+    cursor: pointer;
+    color: #555555;
+}
+
+.post-rating:not(.post-rating-selected)>.post-rating-button:hover {
+    color: #000000;
+}
+
 .post-footer i {
     margin-right: 5px;
 }
@@ -97,6 +141,11 @@ html {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Para centrar verticalmente */
 }
 
 .comment p {
@@ -107,10 +156,12 @@ html {
     background-color: #194e30;
     color: #dcdcdc;
     border: none;
-    padding: 8px 16px;
+    padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    font-size: 14px;
+    margin-left: 10px;
+
 }
 
 .comment button:hover {
@@ -121,12 +172,10 @@ input[type="text"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 900px;
     width: calc(100% - 32px);
-    /* Adjusting for padding */
 }
 
-/* Styling for the "Crear un nuevo aviso" button */
 button {
     background-color: #194e30;
     color: #dcdcdc;
@@ -135,7 +184,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    margin-top: 20px;
+    margin: 10px;
 }
 
 button:hover {

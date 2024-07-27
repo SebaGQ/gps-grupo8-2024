@@ -95,70 +95,56 @@ export const deleteAviso = async (req, res) => {
 };
 
 /**
- * Manejar Like en un aviso
+ * Manejar Like y Dislike en un aviso
  */
-export const likeAviso = async (req, res) => {
+export const reactToAviso = async (req, res) => {
     try {
         const { avisoId } = req.params;
-        const { userId } = req.body;
+        const { reactionType } = req.body;
+        const userId = req.user._id;
 
         const aviso = await Aviso.findById(avisoId);
         if (!aviso) {
-            return res.status(404).json({ message: 'Aviso not found' });
+            return respondError(req, res, 404, 'Aviso no encontrado');
         }
 
-        if (aviso.reactions.likedBy.includes(userId)) {
-            aviso.reactions.likes += 1;
-            aviso.reactions.likedBy = aviso.reactions.likedBy.filter(id => id !== userId);
+        if (!aviso.reactions) {
+            aviso.reactions = { likes: 0, dislikes: 0, likedBy: [], dislikedBy: [] };
+        }
+
+        const oppositeReaction = reactionType === 'like' ? 'dislike' : 'like';
+        const reactionField = `${reactionType}s`;
+        const oppositeField = `${oppositeReaction}s`;
+        const reactionByField = `${reactionType}dBy`;
+        const oppositeByField = `${oppositeReaction}dBy`;
+
+        if (aviso.reactions[reactionByField].includes(userId)) {
+            // Eliminar la reacción si ya existe
+            aviso.reactions[reactionField] -= 1;
+            aviso.reactions[reactionByField] = aviso.reactions[reactionByField].filter(id => id.toString() !== userId.toString());
         } else {
-            if (aviso.reactions.dislikedBy.includes(userId)) {
-                aviso.reactions.dislikes -= 1;
-                aviso.reactions.dislikedBy = aviso.reactions.dislikedBy.filter(id => id !== userId);
+            // Agregar la nueva reacción
+            aviso.reactions[reactionField] += 1;
+            aviso.reactions[reactionByField].push(userId);
+
+            // Eliminar la reacción opuesta si existe
+            if (aviso.reactions[oppositeByField].includes(userId)) {
+                aviso.reactions[oppositeField] -= 1;
+                aviso.reactions[oppositeByField] = aviso.reactions[oppositeByField].filter(id => id.toString() !== userId.toString());
             }
-            aviso.reactions.likes += 1;
-            aviso.reactions.likedBy.push(userId);
         }
 
         await aviso.save();
-        res.status(200).json(aviso);
+
+        // Populate all necessary fields
+        const populatedAviso = await Aviso.findById(avisoId)
+            .populate('author')
+            .populate('comments')
+            .lean(); // Using lean() for better performance
+
+        respondSuccess(req, res, 200, populatedAviso);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        handleError(error, "reactToAviso");
+        respondError(req, res, 500, error.message);
     }
 };
-
-
-/**
- * Manejar Dislike en un aviso
- */
-export const dislikeAviso = async (req, res) => {
-    try {
-        const { avisoId } = req.params;
-        const { userId } = req.body;
-
-        const aviso = await Aviso.findById(avisoId);
-        if (!aviso) {
-            return res.status(404).json({ message: 'Aviso not found' });
-        }
-
-        if (aviso.reactions.dislikedBy.includes(userId)) {
-            aviso.reactions.dislikes += 1;
-            aviso.reactions.dislikedBy = aviso.reactions.dislikedBy.filter(id => id !== userId);
-        } else {
-            if (aviso.reactions.likedBy.includes(userId)) {
-                aviso.reactions.likes -= 1;
-                aviso.reactions.likedBy = aviso.reactions.likedBy.filter(id => id !== userId);
-            }
-            aviso.reactions.dislikes += 1;
-            aviso.reactions.dislikedBy.push(userId);
-        }
-
-        await aviso.save();
-        res.status(200).json(aviso);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-
-
-

@@ -6,7 +6,7 @@ export interface Aviso {
     description: string;
     author: string;
     comments?: Comment[];
-    reactions?: {
+    reactions: {
         likes: number;
         dislikes: number;
         likedBy: string[];

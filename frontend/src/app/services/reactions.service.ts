@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Aviso } from '../models/avisos.models';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,11 @@ export class ReactionsService {
 
   constructor(private http: HttpClient) { }
 
-  likePost(avisoId: string, token: string, userId: string): Observable<any> {
+  reactToAviso(avisoId: string, reactionType: 'like' | 'dislike', token: string): Observable<Aviso> {
+    const url = `${this.apiUrl}/${avisoId}/react`;
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post(`${this.apiUrl}/${avisoId}/like`, { userId }, { headers });
-  }
+    const body = { reactionType };
 
-  dislikePost(avisoId: string, token: string, userId: string): Observable<any> {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post(`${this.apiUrl}/${avisoId}/dislike`, { userId }, { headers });
+    return this.http.post<Aviso>(url, body, { headers });
   }
 }

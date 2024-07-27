@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AvisosService } from 'src/app/services/avisos.service';
 import { CommentsService } from 'src/app/services/comment.service';
 import { ReactionsService } from 'src/app/services/reactions.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Aviso } from 'src/app/models/avisos.models';
 import { Router } from '@angular/router';
+import { Comment } from 'src/app/models/comments.models';
 
 @Component({
   selector: 'app-avisos-list',
   templateUrl: './avisos-list.component.html',
-  styleUrls: ['./avisos-list.component.css']
+  styleUrls: ['./avisos-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class AvisosListComponent implements OnInit {
   avisos: Aviso[] = [];
@@ -17,18 +19,25 @@ export class AvisosListComponent implements OnInit {
   showComments: { [key: string]: boolean } = {};
   userRole: string | null = null;
   userId: string = '';
+  currentUserId: string = '';
+  isProcessing: { [key: string]: boolean } = {};
+  editingComment: { [key: string]: boolean } = {};
+  commentBeingEdited: Comment | null = null;
+  editingCommentId: string | null = null;
 
   constructor(
     private avisosService: AvisosService,
     private commentsService: CommentsService,
     private reactionsService: ReactionsService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.userRole = this.authService.getUserRole();
     this.userId = this.authService.getUserId() || '';
+    this.currentUserId = this.authService.getUserId() || '';
     this.loadAvisos();
   }
 
@@ -43,6 +52,7 @@ export class AvisosListComponent implements OnInit {
         }
         return aviso;
       });
+      this.cdr.markForCheck(); // Marca para la detección de cambios
     }, error => {
       console.error('Error fetching avisos', error);
     });
@@ -55,7 +65,11 @@ export class AvisosListComponent implements OnInit {
       this.commentsService.createComment(avisoId, { content }, token).subscribe(comment => {
         const aviso = this.avisos.find(a => a._id === avisoId);
         if (aviso && aviso.comments) {
-          aviso.comments.push(comment);
+          aviso.comments.push({
+            ...comment,
+            content: comment.content || content // Asegúrate de que el contenido esté presente
+          });
+          this.cdr.markForCheck(); // Marca para la detección de cambios
         }
         this.newComments[avisoId] = '';
       }, error => {
@@ -74,6 +88,7 @@ export class AvisosListComponent implements OnInit {
         if (aviso && aviso.comments) {
           aviso.comments = aviso.comments.filter(comment => comment._id !== commentId);
         }
+        this.cdr.markForCheck(); // Marca para la detección de cambios
       }, error => {
         console.error('Error deleting comment', error);
       });
@@ -82,40 +97,75 @@ export class AvisosListComponent implements OnInit {
     }
   }
 
-  likeAviso(avisoId: string): void {
+  toggleReaction(avisoId: string, reactionType: 'like' | 'dislike'): void {
+
+
     const token = this.authService.getToken();
     if (token && this.userId) {
-      this.reactionsService.likePost(avisoId, token, this.userId).subscribe((response) => {
-        this.updateAvisoReactions(response);
-      }, error => {
-        console.error('Error liking post', error);
-      });
+      // Actualización optimista
+      const index = this.avisos.findIndex(a => a._id === avisoId);
+      if (index !== -1) {
+        const aviso = { ...this.avisos[index] }; // Copia superficial
+
+        if (!aviso.reactions) {
+          aviso.reactions = { likes: 0, dislikes: 0, likedBy: [], dislikedBy: [] };
+        }
+
+        const currentReaction = reactionType === 'like' ? 'likedBy' : 'dislikedBy';
+        const oppositeReaction = reactionType === 'like' ? 'dislikedBy' : 'likedBy';
+
+        if (aviso.reactions[currentReaction].includes(this.userId)) {
+          aviso.reactions[reactionType === 'like' ? 'likes' : 'dislikes'] -= 1;
+          aviso.reactions[currentReaction] = aviso.reactions[currentReaction].filter((id: string) => id !== this.userId);
+        } else {
+          aviso.reactions[reactionType === 'like' ? 'likes' : 'dislikes'] += 1;
+          aviso.reactions[currentReaction].push(this.userId);
+          if (aviso.reactions[oppositeReaction].includes(this.userId)) {
+            aviso.reactions[reactionType === 'like' ? 'dislikes' : 'likes'] -= 1;
+            aviso.reactions[oppositeReaction] = aviso.reactions[oppositeReaction].filter((id: string) => id !== this.userId);
+          }
+        }
+
+        this.avisos[index] = aviso;
+        this.cdr.markForCheck(); // Marca para detección de cambios
+      }
+
+      // Llamada al servidor
+      this.reactionsService.reactToAviso(avisoId, reactionType, token).subscribe(
+        (updatedAviso) => {
+          const index = this.avisos.findIndex(a => a._id === avisoId);
+          if (index !== -1) {
+            this.avisos[index] = {
+              ...this.avisos[index],
+              reactions: {
+                likes: updatedAviso.reactions.likes,
+                dislikes: updatedAviso.reactions.dislikes,
+                likedBy: updatedAviso.reactions.likedBy,
+                dislikedBy: updatedAviso.reactions.dislikedBy
+              }
+            };
+            this.cdr.markForCheck(); // Marca para detección de cambios
+          }
+          this.isProcessing[avisoId] = false;
+        },
+        (error) => {
+          console.error(`Error reacting to aviso`, error);
+          // Revertir la actualización optimista en caso de error
+          this.loadAvisos();
+          this.isProcessing[avisoId] = false;
+          this.cdr.markForCheck(); // Marca para detección de cambios
+        }
+      );
     } else {
-      console.error('No token found or userId is null. Please log in.');
+      console.error('No token found or user ID is missing. Please log in.');
+      this.isProcessing[avisoId] = false;
+      this.cdr.markForCheck(); // Marca para detección de cambios
     }
   }
 
-  dislikeAviso(avisoId: string): void {
-    const token = this.authService.getToken();
-    if (token && this.userId) {
-      this.reactionsService.dislikePost(avisoId, token, this.userId).subscribe((response) => {
-        this.updateAvisoReactions(response);
-      }, error => {
-        console.error('Error disliking post', error);
-      });
-    } else {
-      console.error('No token found or userId is null. Please log in.');
-    }
+  editAviso(aviso: Aviso): void {
+    this.router.navigate(['/avisos/edit', aviso._id]);
   }
-
-  private updateAvisoReactions(updatedAviso: Aviso): void {
-    const index = this.avisos.findIndex(aviso => aviso._id === updatedAviso._id);
-    if (index !== -1) {
-      this.avisos[index] = updatedAviso;
-    }
-  }
-
-
 
   deleteAviso(id?: string): void {
     if (id) {
@@ -141,7 +191,43 @@ export class AvisosListComponent implements OnInit {
     return this.userRole === 'admin' || this.userRole === 'janitor';
   }
 
+  canEdit(aviso: Aviso): boolean {
+    return this.currentUserId === aviso.author || this.userRole === 'admin';
+  }
+
   toggleComments(avisoId: string): void {
     this.showComments[avisoId] = !this.showComments[avisoId];
+  }
+
+
+  canEditComment(comment: Comment): boolean {
+    return this.currentUserId === comment.author || this.userRole === 'admin';
+  }
+
+  canDeleteComment(comment: Comment): boolean {
+    return this.currentUserId === comment.author || this.userRole === 'admin';
+  }
+
+
+  updateComment(avisoId: string, commentId: string, newContent: string): void {
+    const token = this.authService.getToken();
+    if (token) {
+      this.commentsService.updateComment(avisoId, commentId, newContent, token).subscribe(
+        updatedComment => {
+          const avisoIndex = this.avisos.findIndex(a => a._id === avisoId);
+          if (avisoIndex !== -1) {
+            const commentIndex = this.avisos[avisoIndex].comments?.findIndex(c => c._id === commentId);
+            if (commentIndex !== -1 && commentIndex !== undefined) {
+              this.avisos[avisoIndex].comments![commentIndex] = updatedComment;
+            }
+          }
+          this.editingComment[commentId] = false;
+          this.cdr.markForCheck();
+        },
+        error => {
+          console.error('Error updating comment', error);
+        }
+      );
+    }
   }
 }
