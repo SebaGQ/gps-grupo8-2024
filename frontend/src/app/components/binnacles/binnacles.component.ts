@@ -189,7 +189,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.resetPaginator();
       },
       (error) => {
-        console.error('Error fetching all binnacles', error);
+        console.error(`Error ${error.error.message || error.message}`, error);
       }
     );
   }
@@ -201,7 +201,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.resetPaginator();
       },
       (error) => {
-        console.error('Error fetching binnacles', error);
+        console.error(`Error ${error.error.message || error.message}`, error);
       }
     );
   }
@@ -213,7 +213,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.resetPaginator();
       },
       (error) => {
-        console.error('Error fetching binnacles', error);
+        console.error(`Error ${error.error.message || error.message}`, error);
       }
     );
   }
@@ -225,7 +225,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
         this.resetPaginator();
       },
       (error) => {
-        console.error('Error fetching binnacles', error);
+        console.error(`Error ${error.error.message || error.message}`, error);
       }
     );
   }
@@ -245,7 +245,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
           },
           error => {
             this.showNotification('Error al eliminar la bitácora', 'Cerrar');
-            console.error('Error eliminando la bitácora', error);
+            console.error(`Error eliminando la bitácora ${error.error.message || error.message}`, error);
           }
         );
       }
@@ -276,7 +276,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
                 this.buscarTodo(); // Actualiza la lista de bitácoras después de la modificación
               },
               error => {
-                this.showNotification('Error al modificar la bitácora', 'Cerrar');
+                this.showNotification(`Error al modificar la bitácora ${error.error.message || error.message}`, 'Cerrar');
                 console.error('Error modificando la bitácora', error);
               }
             );
@@ -285,7 +285,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
       },
       (error) => {
         console.error('Error al recuperar la bitácora completa', error);
-        this.showNotification('Error al recuperar la bitácora', 'Cerrar');
+        this.showNotification(`Error al recuperar la bitácora Error ${error.error.message || error.message}`, 'Cerrar');
       }
     );
   }
