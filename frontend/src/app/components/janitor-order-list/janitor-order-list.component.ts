@@ -71,7 +71,7 @@ export class JanitorOrderListComponent implements OnInit {
         (!filters.recipientLastName || order.recipientLastName?.toLowerCase().includes(filters.recipientLastName.toLowerCase())) &&
         (!filters.departmentNumber || order.departmentNumber?.toString().includes(filters.departmentNumber)) &&
         (!filters.status || order.status === filters.status) &&
-        (!filters.deliveryTime || this.compareDates(order.deliveryTime, filters.deliveryTime))
+        (!filters.deliveryTime || this.compareDates(order.timestamp, filters.deliveryTime))
       );
     });
 
@@ -80,11 +80,29 @@ export class JanitorOrderListComponent implements OnInit {
     this.updatePage();
   }
 
-  compareDates(orderDate: Date | undefined, filterDate: string): boolean {
-    if (!orderDate) return false;
-    const orderDateString = new Date(orderDate).toLocaleDateString();
-    const filterDateString = new Date(filterDate).toLocaleDateString();
-    return orderDateString === filterDateString;
+  compareDates(orderTimestamp: Date | undefined, filterDate: string): boolean {
+    if (!orderTimestamp) return false;
+    const orderDate = new Date(orderTimestamp);
+    const filterDateObj = new Date(filterDate);
+
+    // Ajustar la fecha del filtro para evitar problemas de zona horaria
+    filterDateObj.setMinutes(filterDateObj.getMinutes() + filterDateObj.getTimezoneOffset());
+
+    // Logs para ver las comparaciones
+    console.log('Comparando fechas:');
+    console.log('Fecha de la orden:', orderDate);
+    console.log('Fecha del filtro ajustada:', filterDateObj);
+
+    // Compara solo la fecha, sin la hora
+    const sameDate = (
+      orderDate.getFullYear() === filterDateObj.getFullYear() &&
+      orderDate.getMonth() === filterDateObj.getMonth() &&
+      orderDate.getDate() === filterDateObj.getDate()
+    );
+
+    console.log('¿Las fechas son iguales?:', sameDate);
+
+    return sameDate;
   }
 
   updatePage() {

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderService } from '../../services/order.service';
 import { OrderDTO } from '../../dto/order.dto';
 import { UserService } from '../../services/user.service';
@@ -10,24 +11,34 @@ import { UserDTO } from '../../dto/user.dto';
   styleUrls: ['./order-list.component.css']
 })
 export class OrderListComponent implements OnInit {
-  displayedColumns: string[] = ['recipientFirstName', 'recipientLastName', 'status', 'deliveryTime', 'action'];
+  displayedColumns: string[] = ['recipientFirstName', 'recipientLastName', 'status', 'timestamp', 'action'];
   dataSource: OrderDTO[] = [];
+  filteredOrders: OrderDTO[] = [];
+  paginatedData: OrderDTO[] = [];
+  residents: UserDTO[] =[];
   showModal: boolean = false;
   currentOrder: OrderDTO | null = null;
-  withdrawMethod: string = 'self';
-  withdrawData: any = {};
-  residents: UserDTO[] = [];
-  filters = { recipientFirstName: '', recipientLastName: '', status: '', deliveryTime: '' };
-  paginatedData: OrderDTO[] = [];
+  filtersForm: FormGroup;
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 5; // Paginación por defecto de 5 elementos
   totalPages: number = 0;
+  pageSizeOptions: number[] = [5, 10, 20, 50];
 
-  constructor(private orderService: OrderService, private userService: UserService) {}
+  constructor(private orderService: OrderService, private userService: UserService, private fb: FormBuilder) {
+    this.filtersForm = this.fb.group({
+      recipientFirstName: [''],
+      recipientLastName: [''],
+      status: [''],
+      deliveryTime: ['']
+    });
+  }
 
   ngOnInit() {
     this.fetchOrders();
     this.fetchResidents();
+    this.filtersForm.valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
   }
 
   fetchOrders() {
@@ -44,17 +55,53 @@ export class OrderListComponent implements OnInit {
   }
 
   applyFilters() {
-    const filteredOrders = this.dataSource.filter(order => {
+    const filters = this.filtersForm.value;
+    const filtered = this.dataSource.filter(order => {
       return (
-        (this.filters.recipientFirstName ? order.recipientFirstName?.toLowerCase().includes(this.filters.recipientFirstName.toLowerCase()) : true) &&
-        (this.filters.recipientLastName ? order.recipientLastName?.toLowerCase().includes(this.filters.recipientLastName.toLowerCase()) : true) &&
-        (this.filters.status ? order.status === this.filters.status : true) &&
-        (this.filters.deliveryTime ? new Date(order.deliveryTime ?? '').toLocaleDateString().includes(this.filters.deliveryTime) : true)
+        (!filters.recipientFirstName || order.recipientFirstName?.toLowerCase().includes(filters.recipientFirstName.toLowerCase())) &&
+        (!filters.recipientLastName || order.recipientLastName?.toLowerCase().includes(filters.recipientLastName.toLowerCase())) &&
+        (!filters.status || order.status === filters.status) &&
+        (!filters.deliveryTime || this.compareDates(order.timestamp, filters.deliveryTime))
       );
     });
+  
+    this.filteredOrders = filtered;
+    this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
+    this.updatePage();
+  }
+  
+  compareDates(orderTimestamp: Date | undefined, filterDate: string): boolean {
+    if (!orderTimestamp) return false;
+    const orderDate = new Date(orderTimestamp);
+    const filterDateObj = new Date(filterDate);
+  
+    // Ajustar la fecha del filtro para evitar problemas de zona horaria
+    filterDateObj.setMinutes(filterDateObj.getMinutes() + filterDateObj.getTimezoneOffset());
+  
+    // Compara solo la fecha, sin la hora
+    const sameDate = (
+      orderDate.getFullYear() === filterDateObj.getFullYear() &&
+      orderDate.getMonth() === filterDateObj.getMonth() &&
+      orderDate.getDate() === filterDateObj.getDate()
+    );
 
-    this.totalPages = Math.ceil(filteredOrders.length / this.itemsPerPage);
-    this.paginatedData = filteredOrders.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
+  
+    return sameDate;
+  }
+  
+  
+
+  updatePage() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedData = this.filteredOrders.slice(startIndex, endIndex);
+  }
+
+  changeItemsPerPage(count: string) {
+    this.itemsPerPage = Number(count);
+    this.currentPage = 1;
+    this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
+    this.updatePage();
   }
 
   openWithdrawOrderDialog(order: OrderDTO) {
@@ -70,14 +117,40 @@ export class OrderListComponent implements OnInit {
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.applyFilters();
+      this.updatePage();
     }
   }
 
   previousPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.applyFilters();
+      this.updatePage();
+    }
+  }
+
+  getStatusChipClass(status: string | undefined): string {
+    switch (status) {
+      case 'PENDING':
+        return 'chip chip-pending';
+      case 'READY':
+        return 'chip chip-ready';
+      case 'DELIVERED':
+        return 'chip chip-delivered';
+      default:
+        return 'chip';
+    }
+  }
+
+  getStatusLabel(status: string | undefined): string {
+    switch (status) {
+      case 'PENDING':
+        return 'Pendiente';
+      case 'READY':
+        return 'Listo para Retirar';
+      case 'DELIVERED':
+        return 'Retirado';
+      default:
+        return status ?? '';
     }
   }
 }
