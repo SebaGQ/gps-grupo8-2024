@@ -71,7 +71,7 @@ export class JanitorOrderListComponent implements OnInit {
         (!filters.recipientLastName || order.recipientLastName?.toLowerCase().includes(filters.recipientLastName.toLowerCase())) &&
         (!filters.departmentNumber || order.departmentNumber?.toString().includes(filters.departmentNumber)) &&
         (!filters.status || order.status === filters.status) &&
-        (!filters.deliveryTime || this.compareDates(order.deliveryTime, filters.deliveryTime))
+        (!filters.deliveryTime || this.compareDates(order.timestamp, filters.deliveryTime))
       );
     });
 
@@ -80,11 +80,22 @@ export class JanitorOrderListComponent implements OnInit {
     this.updatePage();
   }
 
-  compareDates(orderDate: Date | undefined, filterDate: string): boolean {
-    if (!orderDate) return false;
-    const orderDateString = new Date(orderDate).toLocaleDateString();
-    const filterDateString = new Date(filterDate).toLocaleDateString();
-    return orderDateString === filterDateString;
+  compareDates(orderTimestamp: Date | undefined, filterDate: string): boolean {
+    if (!orderTimestamp) return false;
+    const orderDate = new Date(orderTimestamp);
+    const filterDateObj = new Date(filterDate);
+
+    // Ajustar la fecha del filtro para evitar problemas de zona horaria
+    filterDateObj.setMinutes(filterDateObj.getMinutes() + filterDateObj.getTimezoneOffset());
+
+    // Compara solo la fecha, sin la hora
+    const sameDate = (
+      orderDate.getFullYear() === filterDateObj.getFullYear() &&
+      orderDate.getMonth() === filterDateObj.getMonth() &&
+      orderDate.getDate() === filterDateObj.getDate()
+    );
+
+    return sameDate;
   }
 
   updatePage() {
@@ -125,6 +136,22 @@ export class JanitorOrderListComponent implements OnInit {
     console.log('Marcar como listo para retirar:', this.currentOrder);
     this.closeModal();
   }
+
+  deleteOrder(orderId: string | undefined) {
+  if (!orderId) {
+    console.error('Order ID is undefined');
+    return;
+  }
+  if (confirm('¿Estás seguro de que deseas eliminar este pedido?')) {
+    this.orderService.deleteOrder(orderId).subscribe(
+      () => {
+        this.fetchOrders(); // Vuelve a cargar la lista de pedidos
+      },
+      error => console.error('Error deleting order', error)
+    );
+  }
+}
+
 
   nextPage() {
     if (this.currentPage < this.totalPages) {

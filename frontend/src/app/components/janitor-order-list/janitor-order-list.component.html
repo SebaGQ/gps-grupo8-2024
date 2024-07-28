@@ -66,6 +66,7 @@
             </td>
             <td>{{ order.deliveryTime | date: 'short' }}</td>
             <td>
+              <button class="btn btn-danger" (click)="deleteOrder(order._id)">Eliminar</button>
               <button class="btn btn-primary" *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>
               <button class="btn btn-secondary" *ngIf="order.status === 'READY'" (click)="openWithdrawOrderModal(order)">Registrar Retiro</button>
             </td>

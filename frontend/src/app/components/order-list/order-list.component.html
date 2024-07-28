@@ -1,58 +1,79 @@
 <div class="order-list-container">
   <h1>Lista de Pedidos Recibidos</h1>
-  <!-- Filtros -->
-  <div class="filters">
-    <h3>Filtrar</h3>
-    <div>
-      <label>Nombre del Destinatario</label>
-      <input type="text" placeholder="Nombre del Destinatario" [(ngModel)]="filters.recipientFirstName" (ngModelChange)="applyFilters()">
+  
+  <div class="content">
+    <!-- Filtros -->
+    <div class="filters">
+      <h3>Filtrar</h3>
+      <form [formGroup]="filtersForm">
+        <div class="form-group">
+          <label for="recipientFirstName">Nombre del Destinatario</label>
+          <input type="text" class="form-control" id="recipientFirstName" placeholder="Nombre del Destinatario" formControlName="recipientFirstName">
+        </div>
+        <div class="form-group">
+          <label for="recipientLastName">Apellido del Destinatario</label>
+          <input type="text" class="form-control" id="recipientLastName" placeholder="Apellido del Destinatario" formControlName="recipientLastName">
+        </div>
+        <div class="form-group">
+          <label for="status">Estado</label>
+          <select class="form-control" id="status" formControlName="status">
+            <option value="">Todos los estados</option>
+            <option value="PENDING">Pendiente</option>
+            <option value="READY">Listo para Retirar</option>
+            <option value="DELIVERED">Retirado</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="deliveryTime">Fecha de Entrega</label>
+          <input type="date" class="form-control" id="deliveryTime" placeholder="Fecha de Entrega" formControlName="deliveryTime">
+        </div>
+      </form>
     </div>
-    <div>
-      <label>Apellido del Destinatario</label>
-      <input type="text" placeholder="Apellido del Destinatario" [(ngModel)]="filters.recipientLastName" (ngModelChange)="applyFilters()">
-    </div>
-    <div>
-      <label>Estado</label>
-      <select [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
-        <option value="">Todos los estados</option>
-        <option value="PENDING">Pendiente</option>
-        <option value="READY">Listo para Retirar</option>
-        <option value="WITHDRAWN">Retirado</option>
-      </select>
-    </div>
-    <div>
-      <label>Fecha de Entrega</label>
-      <input type="date" placeholder="Fecha de Entrega" [(ngModel)]="filters.deliveryTime" (ngModelChange)="applyFilters()">
-    </div>
-  </div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Nombre del Destinatario</th>
-        <th>Apellido del Destinatario</th>
-        <th>Estado</th>
-        <th>Fecha de Entrega</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let order of paginatedData">
-        <td>{{ order.recipientFirstName }}</td>
-        <td>{{ order.recipientLastName }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.deliveryTime | date: 'short' }}</td>
-        <td>
-          <button *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="pagination">
-    <button (click)="previousPage()" [disabled]="currentPage === 1">Anterior</button>
-    <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
-  </div>
-</div>
 
-<!-- Modal para seleccionar retirante -->
-<app-select-withdrawer *ngIf="showModal" [orderId]="currentOrder?._id ?? ''" (closeModal)="closeModal()"></app-select-withdrawer>
+    <!-- Tabla de pedidos -->
+    <div class="table-container">
+      <div class="pagination-controls">
+        <label for="itemsPerPage">Elementos por página:</label>
+        <select id="itemsPerPage" #itemsPerPageSelect (change)="changeItemsPerPage(itemsPerPageSelect.value)" [value]="itemsPerPage">
+          <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nombre del Destinatario</th>
+            <th>Apellido del Destinatario</th>
+            <th>Estado</th>
+            <th>Fecha de Entrega</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of paginatedData">
+            <td>{{ order.recipientFirstName }}</td>
+            <td>{{ order.recipientLastName }}</td>
+            <td>
+              <span [ngClass]="getStatusChipClass(order.status)">
+                {{ getStatusLabel(order.status) }}
+              </span>
+            </td>
+            <td>{{ order.timestamp | date: 'short' }}</td>
+            <td>
+              <button class="btn btn-primary" *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-controls">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">Anterior</button>
+        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para seleccionar retirante -->
+  <app-select-withdrawer *ngIf="showModal" [orderId]="currentOrder?._id ?? ''" (closeModal)="closeModal()"></app-select-withdrawer>
+</div>

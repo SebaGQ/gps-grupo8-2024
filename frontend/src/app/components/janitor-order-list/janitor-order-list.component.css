@@ -96,6 +96,7 @@ h1 {
 }
 
 .table .btn {
+  margin-right: 3px;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -119,6 +120,15 @@ h1 {
 
 .table .btn-secondary:hover {
   background-color: #5a6268;
+}
+
+.table .btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.table .btn-danger:hover {
+  background-color: #c82333;
 }
 
 .pagination-controls {
@@ -154,6 +164,7 @@ h1 {
   border-radius: 16px;
   color: white;
 }
+
 
 .chip-pending {
   background-color: #ffc107;
