@@ -27,6 +27,7 @@ import { CommentsService } from './services/comment.service';
 import { CreateOrderComponent } from './components/create-order/create-order.component';
 import { JanitorOrderListComponent } from './components/janitor-order-list/janitor-order-list.component';
 import { WithdrawOrderComponent } from './components/withdraw-order/withdraw-order.component';
+import { SelectWithdrawerComponent } from './components/select-withdrawer/select-withdrawer.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -43,6 +44,7 @@ export function tokenGetter() {
     RegisterComponent,
     OrderListComponent,
     JanitorOrderListComponent,
+    SelectWithdrawerComponent,
     WithdrawOrderComponent,
     BinnaclesComponent,
     VisitorFormDialogComponent,

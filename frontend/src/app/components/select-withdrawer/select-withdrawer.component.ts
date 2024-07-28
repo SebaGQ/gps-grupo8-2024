@@ -1,11 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 import { UserDTO } from '../../dto/user.dto';
-
-export interface DialogData {
-  orderId: string;
-}
 
 @Component({
   selector: 'app-select-withdrawer',
@@ -13,17 +10,22 @@ export interface DialogData {
   styleUrls: ['./select-withdrawer.component.css']
 })
 export class SelectWithdrawerComponent implements OnInit {
+  @Input() orderId: string = ''; // Declarar orderId como input
+  @Output() closeModal = new EventEmitter<void>();
   withdrawData: any = {};
-  residents: UserDTO[] = [];
   withdrawMethod: string = 'self'; // Default to 'self'
+  residents: UserDTO[] = [];
+  userRole: string | null = null;
 
   constructor(
     private orderService: OrderService,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.fetchResidents();
+    this.userRole = this.authService.getUserRole();
   }
 
   fetchResidents() {
@@ -36,29 +38,26 @@ export class SelectWithdrawerComponent implements OnInit {
   }
 
   markAsReadyToWithdraw() {
-    const orderId = this.withdrawData.orderId;
-    if (this.withdrawMethod === 'self') {
-      this.withdrawData.withdrawnResidentId = null;
-      this.withdrawData.expectedWithdrawnPersonFirstName = null;
-      this.withdrawData.expectedWithdrawnPersonLastName = null;
-    } else if (this.withdrawMethod === 'resident') {
-      this.withdrawData.expectedWithdrawnPersonFirstName = null;
-      this.withdrawData.expectedWithdrawnPersonLastName = null;
-    } else if (this.withdrawMethod === 'other') {
-      this.withdrawData.withdrawnResidentId = null;
+    if (!this.orderId) {
+      console.error('Order ID is missing');
+      return;
     }
-    this.orderService.markOrderAsReadyToWithdraw(orderId, this.withdrawData).subscribe(
+
+    const withdrawData = {
+      method: this.withdrawMethod,
+      ...this.withdrawMethod === 'resident' ? { residentId: this.withdrawData.withdrawnResidentId } : this.withdrawData
+    };
+
+    this.orderService.markOrderAsReadyToWithdraw(this.orderId, withdrawData).subscribe(
       () => {
         console.log('Order marked as ready to withdraw');
-        // Lógica para cerrar el modal sin NgbActiveModal
-        document.getElementById('selectWithdrawerModal')?.remove();
+        this.closeModal.emit(); // Emitir evento para cerrar el modal
       },
       error => console.error('Error marking order as ready to withdraw', error)
     );
   }
 
   onNoClick(): void {
-    // Lógica para cerrar el modal sin NgbActiveModal
-    document.getElementById('selectWithdrawerModal')?.remove();
+    this.closeModal.emit(); // Emitir evento para cerrar el modal
   }
 }

@@ -1,122 +1,85 @@
 <div class="janitor-order-list-container">
   <h1>Lista de Todos los Pedidos</h1>
-
-  <!-- Filtros -->
-  <div class="filters">
+  
+  <div class="content">
+    <!-- Filtros -->
+    <div class="filters">
       <h3>Filtrar</h3>
-      <div class="form-group">
+      <form [formGroup]="filtersForm">
+        <div class="form-group">
           <label for="recipientFirstName">Nombre del Destinatario</label>
-          <input type="text" class="form-control" id="recipientFirstName" placeholder="Nombre del Destinatario" [(ngModel)]="filters.recipientFirstName" (ngModelChange)="applyFilters()">
-      </div>
-      <div class="form-group">
+          <input type="text" class="form-control" id="recipientFirstName" placeholder="Nombre del Destinatario" formControlName="recipientFirstName">
+        </div>
+        <div class="form-group">
           <label for="recipientLastName">Apellido del Destinatario</label>
-          <input type="text" class="form-control" id="recipientLastName" placeholder="Apellido del Destinatario" [(ngModel)]="filters.recipientLastName" (ngModelChange)="applyFilters()">
-      </div>
-      <div class="form-group">
+          <input type="text" class="form-control" id="recipientLastName" placeholder="Apellido del Destinatario" formControlName="recipientLastName">
+        </div>
+        <div class="form-group">
           <label for="departmentNumber">Número de Departamento</label>
-          <input type="number" class="form-control" id="departmentNumber" placeholder="Número de Departamento" [(ngModel)]="filters.departmentNumber" (ngModelChange)="applyFilters()">
-      </div>
-      <div class="form-group">
+          <input type="number" class="form-control" id="departmentNumber" placeholder="Número de Departamento" formControlName="departmentNumber">
+        </div>
+        <div class="form-group">
           <label for="status">Estado</label>
-          <select class="form-control" id="status" [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
-              <option value="">Todos los estados</option>
-              <option value="PENDING">Pendiente</option>
-              <option value="READY">Listo para Retirar</option>
-              <option value="WITHDRAWN">Retirado</option>
+          <select class="form-control" id="status" formControlName="status">
+            <option value="">Todos los estados</option>
+            <option value="PENDING">Pendiente</option>
+            <option value="READY">Listo para Retirar</option>
+            <option value="WITHDRAWN">Retirado</option>
           </select>
-      </div>
-      <div class="form-group">
+        </div>
+        <div class="form-group">
           <label for="deliveryTime">Fecha de Entrega</label>
-          <input type="date" class="form-control" id="deliveryTime" placeholder="Fecha de Entrega" [(ngModel)]="filters.deliveryTime" (ngModelChange)="applyFilters()">
-      </div>
-  </div>
-
-  <table class="table table-striped">
-      <thead>
-          <tr>
-              <th>Seleccionar</th>
-              <th>Nombre del Destinatario</th>
-              <th>Apellido del Destinatario</th>
-              <th>Número de Departamento</th>
-              <th>Estado</th>
-              <th>Fecha de Entrega</th>
-              <th>Acción</th>
-          </tr>
-      </thead>
-      <tbody>
-          <tr *ngFor="let order of dataSource">
-              <td><input type="checkbox" (change)="toggleOrderSelection(order._id)" [checked]="order._id ? selectedOrderIds.includes(order._id) : false"></td>
-              <td>{{ order.recipientFirstName }}</td>
-              <td>{{ order.recipientLastName }}</td>
-              <td>{{ order.departmentNumber }}</td>
-              <td>{{ order.status }}</td>
-              <td>{{ order.deliveryTime | date: 'short' }}</td>
-              <td>
-                  <button class="btn btn-primary" *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>
-                  <button class="btn btn-secondary" *ngIf="order.status === 'READY'" (click)="openWithdrawOrderModal(order)">Registrar Retiro</button>
-              </td>
-          </tr>
-      </tbody>
-  </table>
-
-  <div class="d-flex justify-content-center">
-      <nav aria-label="Page navigation">
-          <ul class="pagination">
-              <li class="page-item"><a class="page-link" href="#" (click)="previousPage()">Previous</a></li>
-              <li class="page-item"><a class="page-link" href="#" (click)="nextPage()">Next</a></li>
-          </ul>
-      </nav>
-  </div>
-</div>
-
-<!-- Modal para registrar retiro -->
-<div *ngIf="showWithdrawModal" class="modal">
-  <div class="modal-content">
-      <app-withdraw-order [orderIds]="selectedOrderIds" [departmentNumber]="departmentNumber" (close)="closeWithdrawModal()"></app-withdraw-order>
-  </div>
-</div>
-
-<!-- Modal para seleccionar retirante -->
-<div *ngIf="showModal" class="modal">
-  <div class="modal-content">
-      <span class="close" (click)="closeModal()">&times;</span>
-      <h2>Seleccionar Retirante</h2>
-      <form (ngSubmit)="markAsReadyToWithdraw()">
-          <div>
-              <label>
-                  <input type="radio" [(ngModel)]="withdrawMethod" name="withdrawMethod" value="self">
-                  Yo
-              </label>
-              <label>
-                  <input type="radio" [(ngModel)]="withdrawMethod" name="withdrawMethod" value="resident">
-                  Otro Residente De Mi Depto
-              </label>
-              <label>
-                  <input type="radio" [(ngModel)]="withdrawMethod" name="withdrawMethod" value="other">
-                  Otra Persona
-              </label>
-          </div>
-
-          <div *ngIf="withdrawMethod === 'resident'">
-              <label for="withdrawnResidentId">Seleccionar Residente</label>
-              <select class="form-control" [(ngModel)]="withdrawData.withdrawnResidentId" name="withdrawnResidentId" id="withdrawnResidentId">
-                  <option *ngFor="let resident of residents" [value]="resident._id">
-                      {{ resident.firstName }} {{ resident.lastName }}
-                  </option>
-              </select>
-          </div>
-
-          <div *ngIf="withdrawMethod === 'other'">
-              <label for="expectedWithdrawnPersonFirstName">Nombre del Retirante</label>
-              <input class="form-control" id="expectedWithdrawnPersonFirstName" [(ngModel)]="withdrawData.expectedWithdrawnPersonFirstName" name="expectedWithdrawnPersonFirstName">
-              <label for="expectedWithdrawnPersonLastName">Apellido del Retirante</label>
-              <input class="form-control" id="expectedWithdrawnPersonLastName" [(ngModel)]="withdrawData.expectedWithdrawnPersonLastName" name="expectedWithdrawnPersonLastName">
-          </div>
-
-          <div class="button-group">
-              <button class="btn btn-primary" type="submit">Marcar Como Listo para Retirar</button>
-              <button class="btn btn-secondary" type="button" (click)="closeModal()">Cancelar</button>
-          </div>
+          <input type="date" class="form-control" id="deliveryTime" placeholder="Fecha de Entrega" formControlName="deliveryTime">
+        </div>
       </form>
+    </div>
+
+    <!-- Tabla de pedidos -->
+    <div class="table-container">
+      <div class="pagination-controls">
+        <label for="itemsPerPage">Elementos por página:</label>
+        <select id="itemsPerPage" #itemsPerPageSelect (change)="changeItemsPerPage(+itemsPerPageSelect.value)" [value]="itemsPerPage">
+          <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+        </select>
+      </div>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nombre del Destinatario</th>
+            <th>Apellido del Destinatario</th>
+            <th>Número de Departamento</th>
+            <th>Estado</th>
+            <th>Fecha de Entrega</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of paginatedOrders">
+            <td>{{ order.recipientFirstName }}</td>
+            <td>{{ order.recipientLastName }}</td>
+            <td>{{ order.departmentNumber }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.deliveryTime | date: 'short' }}</td>
+            <td>
+              <button class="btn btn-primary" *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>
+              <button class="btn btn-secondary" *ngIf="order.status === 'READY'" (click)="openWithdrawOrderModal(order)">Registrar Retiro</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-controls">
+        <button class="btn btn-outline-secondary" (click)="previousPage()" [disabled]="currentPage === 1">Anterior</button>
+        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <button class="btn btn-outline-secondary" (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+      </div>
+    </div>
   </div>
+
+  <!-- Modal para registrar retiro -->
+  <app-withdraw-order *ngIf="showWithdrawModal" [orderIds]="[currentOrder?._id ?? '']" [departmentNumber]="departmentNumber" (closeModal)="closeWithdrawModal()"></app-withdraw-order>
+
+  <!-- Modal para seleccionar retirante -->
+  <app-select-withdrawer *ngIf="showModal" [orderId]="currentOrder?._id ?? ''" (closeModal)="closeModal()"></app-select-withdrawer>
 </div>

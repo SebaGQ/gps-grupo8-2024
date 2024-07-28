@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 import { UserDTO } from '../../dto/user.dto';
 
 @Component({
@@ -11,17 +12,21 @@ import { UserDTO } from '../../dto/user.dto';
 export class WithdrawOrderComponent implements OnInit {
   @Input() orderIds: string[] = [];
   @Input() departmentNumber: number = 0; // Recibe el número de departamento como input
+  @Output() closeModal = new EventEmitter<void>(); // Emitir evento para cerrar el modal
   withdrawData: any = {};
   selectedWithdrawerType: string = ''; // Variable para controlar el tipo de retirante
   residents: UserDTO[] = []; // Variable para almacenar los residentes
+  userRole: string | null = null;
 
   constructor(
     private orderService: OrderService,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     this.fetchResidents();
+    this.userRole = this.authService.getUserRole();
   }
 
   fetchResidents() {
@@ -41,8 +46,7 @@ export class WithdrawOrderComponent implements OnInit {
       this.orderService.withdrawOrders(this.orderIds, this.withdrawData).subscribe(
         () => {
           console.log('Orders withdrawn successfully');
-          // Lógica para cerrar el modal sin NgbActiveModal
-          document.getElementById('withdrawOrderModal')?.remove();
+          this.closeModal.emit(); // Emitir evento para cerrar el modal
         },
         error => console.error('Error withdrawing orders', error)
       );
@@ -50,7 +54,6 @@ export class WithdrawOrderComponent implements OnInit {
   }
 
   dismissModal() {
-    // Lógica para cerrar el modal sin NgbActiveModal
-    document.getElementById('withdrawOrderModal')?.remove();
+    this.closeModal.emit(); // Emitir evento para cerrar el modal
   }
 }

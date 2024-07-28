@@ -1,40 +1,43 @@
-<div id="withdrawOrderModal" class="withdraw-order-container">
-  <h2>Seleccionar Retirante</h2>
-  <form (ngSubmit)="withdrawOrders()">
-    <div class="form-group">
-      <label>
-        <input type="radio" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" value="self">
-        Yo
-      </label>
-      <label>
-        <input type="radio" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" value="resident">
-        Otro Residente De Mi Depto
-      </label>
-      <label>
-        <input type="radio" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" value="other">
-        Otra Persona
-      </label>
-    </div>
+<div class="modal-overlay" (click)="dismissModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close" (click)="dismissModal()">&times;</span>
+    <h2>¿Quién está retirando?</h2>
+    <form (ngSubmit)="withdrawOrders()">
+      <div class="form-group">
+        <label *ngIf="userRole !== 'admin' && userRole !== 'janitor'">
+          <input type="radio" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" value="self">
+          Yo
+        </label>
+        <label>
+          <input type="radio" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" value="resident">
+          Residente Del Departamento
+        </label>
+        <label>
+          <input type="radio" [(ngModel)]="selectedWithdrawerType" name="withdrawerType" value="other">
+          Otra Persona
+        </label>
+      </div>
 
-    <div *ngIf="selectedWithdrawerType === 'resident'" class="form-group">
-      <label for="selectedResidentId">Seleccionar Residente</label>
-      <select class="form-control" [(ngModel)]="withdrawData.selectedResidentId" name="selectedResidentId" id="selectedResidentId">
-        <option *ngFor="let resident of residents" [value]="resident._id">
-          {{ resident.firstName }} {{ resident.lastName }}
-        </option>
-      </select>
-    </div>
+      <div *ngIf="selectedWithdrawerType === 'resident'" class="form-group">
+        <label for="selectedResidentId">Seleccionar Residente</label>
+        <select class="form-control" [(ngModel)]="withdrawData.selectedResidentId" name="selectedResidentId" id="selectedResidentId">
+          <option *ngFor="let resident of residents" [value]="resident._id">
+            {{ resident.firstName }} {{ resident.lastName }}
+          </option>
+        </select>
+      </div>
 
-    <div *ngIf="selectedWithdrawerType === 'other'" class="form-group">
-      <label for="expectedWithdrawnPersonFirstName">Nombre del Retirante</label>
-      <input class="form-control" id="expectedWithdrawnPersonFirstName" [(ngModel)]="withdrawData.expectedWithdrawnPersonFirstName" name="expectedWithdrawnPersonFirstName">
-      <label for="expectedWithdrawnPersonLastName">Apellido del Retirante</label>
-      <input class="form-control" id="expectedWithdrawnPersonLastName" [(ngModel)]="withdrawData.expectedWithdrawnPersonLastName" name="expectedWithdrawnPersonLastName">
-    </div>
+      <div *ngIf="selectedWithdrawerType === 'other'" class="form-group">
+        <label for="expectedWithdrawnPersonFirstName">Nombre de la persona que retira</label>
+        <input class="form-control" id="expectedWithdrawnPersonFirstName" [(ngModel)]="withdrawData.expectedWithdrawnPersonFirstName" name="expectedWithdrawnPersonFirstName">
+        <label for="expectedWithdrawnPersonLastName">Apellido de la persona que retira</label>
+        <input class="form-control" id="expectedWithdrawnPersonLastName" [(ngModel)]="withdrawData.expectedWithdrawnPersonLastName" name="expectedWithdrawnPersonLastName">
+      </div>
 
-    <div class="button-group">
-      <button class="btn btn-primary" type="submit">Retirar Pedidos</button>
-      <button class="btn btn-secondary" type="button" (click)="dismissModal()">Cancelar</button>
-    </div>
-  </form>
+      <div class="button-group">
+        <button class="btn btn-primary" type="submit">Retirar Pedido</button>
+        <button class="btn btn-secondary" type="button" (click)="dismissModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
 </div>
