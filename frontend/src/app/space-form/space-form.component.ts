@@ -5,6 +5,9 @@ import { ImageService } from '../services/image.service';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { CommonSpaceDto } from '../dto/space.dto';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-space-form',
@@ -25,27 +28,32 @@ export class SpaceFormComponent implements OnInit {
   selectedFile: File | null = null;
   base64Image: string | null = null;
   spaceId: string | null = null;
+  isJanitor: boolean = false; // Nueva variable para identificar si es conserje
 
   constructor(
     private spaceService: SpaceService,
     private imageService: ImageService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar,
+    private authService: AuthService // Inyecta el servicio de autenticación
   ) {
     this.spaceForm = this.fb.group({
       availability: [true, Validators.required],
       location: ['', Validators.required],
-      capacity: [0, Validators.required],
+      capacity: [0, [Validators.required, Validators.min(0)]],
       allowedDays: this.fb.array([], Validators.required),
       openingHour: ['', Validators.required],
       closingHour: ['', Validators.required],
       type: ['', Validators.required],
       image: [null]
-    });
+    }, { validators: this.timeRangeValidator });
   }
 
   ngOnInit(): void {
+    this.isJanitor = this.authService.isJanitor(); // Verifica si el usuario es conserje
+
     this.spaceId = this.route.snapshot.paramMap.get('id');
     if (this.spaceId) {
       this.spaceService.getCommonSpaceById(this.spaceId).subscribe(space => {
@@ -62,6 +70,11 @@ export class SpaceFormComponent implements OnInit {
           this.base64Image = space.image;
         }
       });
+    }
+
+    if (this.isJanitor) {
+      this.spaceForm.disable(); // Deshabilita todo el formulario para el conserje
+      this.spaceForm.get('availability')?.enable(); // Habilita solo la disponibilidad
     }
   }
 
@@ -120,21 +133,55 @@ export class SpaceFormComponent implements OnInit {
           const imageId = await this.uploadImage();
           spaceData.image = imageId;
         } catch (error) {
-          console.error('Error al subir la imagen:', error);
+          this.snackBar.open(`Error al subir la imagen: ${error}`, 'Cerrar', {
+            duration: 3000
+          });
           return;
         }
       }
       if (this.spaceId) {
-        this.spaceService.updateCommonSpace(this.spaceId, spaceData).subscribe(() => {
-          this.router.navigate(['/spaces']);
-        });
+        this.spaceService.updateCommonSpace(this.spaceId, spaceData).subscribe(
+          () => {
+            this.snackBar.open('Espacio actualizado correctamente', 'Cerrar', {
+              duration: 3000
+            });
+            this.router.navigate(['/spaces']);
+          },
+          error => {
+            this.snackBar.open(`Error al actualizar el espacio: ${error.error.message || error.message}`, 'Cerrar', {
+              duration: 3000
+            });
+          }
+        );
       } else {
-        this.spaceService.createCommonSpace(spaceData).subscribe(() => {
-          this.router.navigate(['/spaces']);
-        });
+        this.spaceService.createCommonSpace(spaceData).subscribe(
+          () => {
+            this.snackBar.open('Espacio creado correctamente', 'Cerrar', {
+              duration: 3000
+            });
+            this.router.navigate(['/spaces']);
+          },
+          error => {
+            this.snackBar.open(`Error al crear el espacio: ${error.error.message || error.message}`, 'Cerrar', {
+              duration: 3000
+            });
+          }
+        );
       }
     } else {
-      console.log('Formulario no válido');
+      this.snackBar.open('Formulario no válido', 'Cerrar', {
+        duration: 3000
+      });
     }
+  }
+
+  private timeRangeValidator(group: AbstractControl): ValidationErrors | null {
+    const openingHour = group.get('openingHour')?.value;
+    const closingHour = group.get('closingHour')?.value;
+
+    if (openingHour && closingHour && openingHour >= closingHour) {
+      return { endBeforeStart: true };
+    }
+    return null;
   }
 }

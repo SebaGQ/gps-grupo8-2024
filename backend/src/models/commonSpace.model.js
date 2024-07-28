@@ -6,7 +6,6 @@ const commonSpaceSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: CommonSpaceConstants,
     },
     capacity: {
         type: Number,

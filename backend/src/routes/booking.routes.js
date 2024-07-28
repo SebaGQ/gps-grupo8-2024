@@ -1,5 +1,6 @@
 import express from "express";
 import BookingController from "../controllers/booking.controller.js";
+import { validateBookingBody } from "../middlewares/valid.booking.middleware.js";
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.get("/my-bookings", BookingController.getMyBookings);
 router.get("/:id", BookingController.getBookingById);
 
 // Crear una nueva reservación
-router.post("/", BookingController.createBooking);
+router.post("/", validateBookingBody, BookingController.createBooking);
 
 // Actualizar una reservación existente
 router.put("/:id", BookingController.updateBooking);

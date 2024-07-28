@@ -1,0 +1,99 @@
+@use '@angular/material' as mat;
+
+// Asegúrate de incluir 'mat-core' solo una vez sin parámetros
+@include mat.core();
+
+// Definir colores personalizados
+$custom-primary: mat.define-palette((
+  50: #f5e5f7,
+  100: #ebc1ea,
+  200: #e098dd,
+  300: #d56dd0,
+  400: #ca4bc5,
+  500: #bf2ab9,
+  600: #b025b1,
+  700: #9d2097,
+  800: #8a1b7e,
+  900: #3c1642,  // Color principal
+  A100: #f5e5f7,
+  A200: #ebc1ea,
+  A400: #ca4bc5,
+  A700: #9d2097,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: rgba(0, 0, 0, 0.87),
+    A700: white,
+  )
+));
+
+$custom-accent: mat.define-palette((
+  50: #F1FCF4,
+  100: #DEFAE9,
+  200: #BFF3D3,
+  300: #8EE7B1,
+  400: #55D388,
+  500: #2EB966,
+  600: #1F934E,
+  700: #1D7842,
+  800: #1C5F37,
+  900: #082B18,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: rgba(0, 0, 0, 0.87),
+    A700: white,
+  )
+));
+
+// Definir la paleta de advertencia
+$custom-warn: mat.define-palette(mat.$red-palette);
+
+// Definir el tema personalizado
+$custom-theme: mat.define-light-theme((
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn,
+  )
+));
+
+// Incluir los estilos de Angular Material
+@include mat.all-component-themes($custom-theme);
+
+// Definir la tipografía
+$fontConfig: (
+  display-4: mat.define-typography-level(112px, 112px, 300, 'Roboto', -0.0134em),
+  display-3: mat.define-typography-level(56px, 56px, 400, 'Roboto', -0.0089em),
+  display-2: mat.define-typography-level(45px, 48px, 400, 'Roboto', 0.0000em),
+  display-1: mat.define-typography-level(34px, 40px, 400, 'Roboto', 0.0074em),
+  headline: mat.define-typography-level(24px, 32px, 400, 'Roboto', 0.0000em),
+  title: mat.define-typography-level(20px, 32px, 500, 'Roboto', 0.0075em),
+  subheading-2: mat.define-typography-level(16px, 28px, 400, 'Roboto', 0.0094em),
+  subheading-1: mat.define-typography-level(15px, 24px, 500, 'Roboto', 0.0067em),
+  body-2: mat.define-typography-level(14px, 24px, 500, 'Roboto', 0.0179em),
+  body-1: mat.define-typography-level(14px, 20px, 400, 'Roboto', 0.0179em),
+  button: mat.define-typography-level(14px, 14px, 500, 'Roboto', 0.0893em),
+  caption: mat.define-typography-level(12px, 20px, 400, 'Roboto', 0.0333em),
+  input: mat.define-typography-level(inherit, 1.125, 400, 'Roboto', 1.5px)
+);

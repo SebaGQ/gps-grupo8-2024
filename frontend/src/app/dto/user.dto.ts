@@ -1,3 +1,5 @@
+import { RoleDTO } from "./role.dto";
+
 export interface UserDTO {
     _id : string;
     firstName: string;
@@ -6,6 +8,7 @@ export interface UserDTO {
     rut: string;
     password: string;
     email: string;
-    roles?: string[];
+    roles?: RoleDTO[];
+    roleNames?: string;
   }
   

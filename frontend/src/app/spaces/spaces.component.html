@@ -1,8 +1,10 @@
 <div class="spaces-container">
-  <h2 class="title">Espacios Disponibles</h2>
+  <mat-toolbar>
+    <h1>Espacios Disponibles</h1>
+  </mat-toolbar>
   <!-- Botón para crear espacio común visible solo para Administrador o Janitor -->
   <div class="buttonAdmin" *ngIf="isAdminOrJanitor">
-    <button mat-fab extended color="primary" [routerLink]="['/create-space']">Crear Espacio Común</button>
+    <button mat-fab extended color="accent" [routerLink]="['/create-space']">Crear Espacio Común</button>
   </div>
   <div *ngIf="spaces$ | async as spaces; else loading">
     <div *ngIf="spaces.length > 0; else noSpaces" class="spaces-list">
@@ -14,23 +16,24 @@
           <mat-card-content class="mat-card-content">
             <div class="image-container">
               <img *ngIf="space.image && space.image.imageData" [src]="'data:image/jpeg;base64,' + space.image.imageData"
-              alt="{{ space.name }} Image" class="space-image">
+                alt="{{ space.name }} Image" class="space-image">
             </div>
             <h5>
-              Disponible: 
-              <mat-icon *ngIf="space.availability"> check_circle</mat-icon>
-              <mat-icon *ngIf="!space.availability"> cancel</mat-icon>
+              Disponible:
+              <mat-icon *ngIf="space.availability">check_circle</mat-icon>
+              <mat-icon *ngIf="!space.availability">cancel</mat-icon>
             </h5>
             <h5>Capacidad: {{ space.capacity }} personas</h5>
             <h5>Tipo: {{ space.type }}</h5>
             <h5>Horario Apertura: {{ space.openingHour }}</h5>
             <h5>Horario Cierre: {{ space.closingHour }}</h5>
-            <h4>Días disponibles:</h4> <p> <span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
+            <h4>Días disponibles:</h4>
+            <p><span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-button color="primary" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
-            <button *ngIf="isAdminOrJanitor" mat-button color="accent" (click)="updateSpace(space._id)">Actualizar</button>
-            <button *ngIf="isAdminOrJanitor" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button>
+            <button mat-button extended class="buttonCard" color="accent" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
+            <button *ngIf="isAdminOrJanitor" class="buttonCard" mat-button color="primary" (click)="updateSpace(space._id)">Actualizar</button>
+            <button *ngIf="isAdmin" class="buttonCard" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button> <!-- Solo visible para administradores -->
           </mat-card-actions>
         </mat-card>
       </div>

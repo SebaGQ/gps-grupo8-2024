@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../services/booking.service';
-import { AuthService } from '../services/auth.service';
 import { SpaceService } from '../services/space.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { BookingDto } from '../dto/booking.dto';
 import { CommonSpaceDto } from '../dto/space.dto';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,15 +15,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class BookingComponent implements OnInit {
   bookingForm: FormGroup;
   bookings: BookingDto[] = [];
+  filteredBookings: BookingDto[] = [];
   space: CommonSpaceDto | null = null;
   spaceId: string | null = null;
   userId: string | null = null;
   isEditMode: boolean = false;
   bookingId: string | null = null;
+  displayedColumns: string[] = ['startTime', 'endTime'];
 
   constructor(
     private bookingService: BookingService,
-    private authService: AuthService,
     private spaceService: SpaceService,
     private router: Router,
     private route: ActivatedRoute,
@@ -36,7 +36,7 @@ export class BookingComponent implements OnInit {
       startTime: ['', Validators.required],
       endDate: ['', Validators.required],
       endTime: ['', Validators.required]
-    });
+    }, { validators: this.timeRangeValidator });
   }
 
   ngOnInit(): void {
@@ -49,7 +49,9 @@ export class BookingComponent implements OnInit {
       });
 
       this.bookingService.getBookingsBySpace(this.spaceId).subscribe(bookings => {
+        const now = new Date();
         this.bookings = bookings;
+        this.filteredBookings = this.bookings.filter(booking => new Date(booking.startTime) >= now);
       });
     }
 
@@ -105,7 +107,7 @@ export class BookingComponent implements OnInit {
             this.router.navigate(['/my-bookings']);
           },
           error => {
-            this.snackBar.open('Error al actualizar la reserva', 'Cerrar', {
+            this.snackBar.open(`Error al actualizar la reserva: ${error.error.message || error.message}`, 'Cerrar', {
               duration: 3000
             });
           }
@@ -119,14 +121,52 @@ export class BookingComponent implements OnInit {
             this.router.navigate(['/my-bookings']);
           },
           error => {
-            this.snackBar.open('Error al realizar la reserva', 'Cerrar', {
+            this.snackBar.open(`Error al realizar la reserva: ${error.error.message || error.message}`, 'Cerrar', {
               duration: 3000
             });
           }
         );
       }
     } else {
-      console.log('Formulario no válido');
+      this.snackBar.open('Formulario no válido', 'Cerrar', {
+        duration: 3000
+      });
     }
+  }
+
+  private timeRangeValidator(group: AbstractControl): ValidationErrors | null {
+    const startDate = group.get('startDate')?.value;
+    const startTime = group.get('startTime')?.value;
+    const endDate = group.get('endDate')?.value;
+    const endTime = group.get('endTime')?.value;
+
+    if (startDate && startTime && endDate && endTime) {
+      const startDateTime = new Date(startDate);
+      startDateTime.setHours(parseInt(startTime.split(':')[0], 10), parseInt(startTime.split(':')[1], 10));
+      const endDateTime = new Date(endDate);
+      endDateTime.setHours(parseInt(endTime.split(':')[0], 10), parseInt(endTime.split(':')[1], 10));
+
+      if (endDateTime <= startDateTime) {
+        return { endBeforeStart: true };
+      }
+    }
+    return null;
+  }
+
+  filterDates = (date: Date | null): boolean => {
+    if (!date) {
+      return false;
+    }
+
+    const day = date.getDay();
+    const allowedDays = this.space?.allowedDays.map(day => this.getDayIndex(day)) || [];
+    const now = new Date();
+
+    return allowedDays.includes(day) && date >= now;
+  }
+
+  getDayIndex(day: string): number {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    return days.indexOf(day.toLowerCase());
   }
 }

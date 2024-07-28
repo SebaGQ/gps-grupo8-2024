@@ -53,7 +53,7 @@ const userBodySchema = Joi.object({
     "string.min": "La contraseña debe tener al menos 5 caracteres.",
   }),
 }).messages({
-  "object.unknown": "No se permiten propiedades adicionales.",
+  "object.unknown": "No se permiten propiedades adicionales para usuario.",
 });
 
 /**

@@ -2,7 +2,7 @@
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { VisitorComponent } from './visitor/visitor.component';
+import { VisitorComponent } from './components/visitor/visitor.component';
 import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import { FormsModule,  ReactiveFormsModule  } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -20,7 +20,7 @@ import { OrderListComponent } from './components/order-list/order-list.component
 import { VisitorService } from './services/visitor.service';
 import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { VisitorFormDialogComponent } from './visitor/visitor-form-dialog/visitor-form-dialog.component';
+import { VisitorFormDialogComponent } from './components/visitor-form-dialog/visitor-form-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,6 +32,13 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatGridListModule} from '@angular/material/grid-list';
+import { MY_FORMATS } from './My-format';
+import { DepartmentComponent } from './components/department/department.component';
+import { UserComponent } from './components/user/user.component';
+import { DepartmentFormDialogComponent } from './components/department-form-dialog/department-form-dialog.component';
+import { DepartmentService } from './services/department.service';
+import { UserFormDialogComponent } from './components/user-form-dialog/user-form-dialog.component';
+
 
 import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
@@ -94,6 +101,10 @@ export const MY_DATE_FORMATS = {
     UserBookingsComponent,
     AdminBookingsComponent,
     DayTranslatePipe,
+    DepartmentComponent,
+    UserComponent,
+    DepartmentFormDialogComponent,
+    UserFormDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -128,12 +139,17 @@ export const MY_DATE_FORMATS = {
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService, HttpService, VisitorService, 
+  // providers: [AuthService, OrderService, HttpService, VisitorService, 
+  //   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  //   { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+  //   { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
+  //   { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
+//],
+  providers: [AuthService, OrderService,VisitorService, DepartmentService, HttpService, 
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
-  ],
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
+    
   bootstrap: [AppComponent]
 })
 export class AppModule { }

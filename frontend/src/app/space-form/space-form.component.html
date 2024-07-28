@@ -1,49 +1,65 @@
 <div class="space-form-container">
-  <h2>Agregar Nuevo Espacio</h2>
+  <h2>{{ spaceId ? 'Actualizar Espacio' : 'Agregar Nuevo Espacio' }}</h2>
   <div class="container-buttonBack">
     <button class="buttonBack" mat-stroked-button color="secondary" [routerLink]="['/spaces']">Volver a Espacios</button>
   </div>
   <form [formGroup]="spaceForm" (ngSubmit)="saveSpace()">
     <mat-form-field>
       <mat-label>Ubicación</mat-label>
-      <input matInput formControlName="location" required>
+      <input matInput formControlName="location" [readonly]="isJanitor" required>
+      <mat-error *ngIf="spaceForm.get('location')?.hasError('required')">
+        La ubicación es requerida.
+      </mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Capacidad</mat-label>
-      <input matInput formControlName="capacity" type="number" required>
+      <input matInput formControlName="capacity" type="number" [readonly]="isJanitor" required>
+      <mat-error *ngIf="spaceForm.get('capacity')?.hasError('min')">
+        La capacidad debe ser mayor o igual a 0.
+      </mat-error>
     </mat-form-field>
     <div class="days-checkbox">
       <label>Días Permitidos:</label>
       <div *ngFor="let day of daysOfWeek">
         <mat-checkbox [value]="day.value" (change)="onCheckboxChange($event)"
-          [checked]="spaceForm.get('allowedDays')?.value.includes(day.value)">
+          [checked]="spaceForm.get('allowedDays')?.value.includes(day.value)"
+          [disabled]="isJanitor">
           {{ day.name }}
         </mat-checkbox>
       </div>
     </div>
     <mat-form-field>
       <mat-label>Horario de Apertura</mat-label>
-      <input matInput formControlName="openingHour" type="time" required>
+      <input matInput formControlName="openingHour" type="time" [readonly]="isJanitor" required>
+      <mat-error *ngIf="spaceForm.get('openingHour')?.hasError('required')">
+        El horario de apertura es requerido.
+      </mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Horario de Cierre</mat-label>
-      <input matInput formControlName="closingHour" type="time" required>
+      <input matInput formControlName="closingHour" type="time" [readonly]="isJanitor" required>
+      <mat-error *ngIf="spaceForm.hasError('endBeforeStart', 'closingHour')">
+        El horario de cierre debe ser posterior al horario de apertura.
+      </mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Tipo</mat-label>
-      <input matInput formControlName="type" required>
+      <input matInput formControlName="type" [readonly]="isJanitor" required>
+      <mat-error *ngIf="spaceForm.get('type')?.hasError('required')">
+        El tipo de espacio es requerido.
+      </mat-error>
     </mat-form-field>
     <mat-checkbox formControlName="availability">Disponible</mat-checkbox>
     
-    <mat-form-field>
+    <mat-form-field *ngIf="!isJanitor">
       <mat-label>Imagen</mat-label>
       <input matInput [value]="selectedFile?.name" readonly>
-      <button mat-button matSuffix (click)="fileInput.click()">Seleccionar Archivo</button>
+      <button mat-button matSuffix type="button" (click)="fileInput.click()">Seleccionar Archivo</button>
       <input type="file" #fileInput (change)="onFileSelected($event)" accept=".jpg, .jpeg, .png" style="display: none;">
     </mat-form-field>
     
     <img *ngIf="base64Image" [src]="'data:image/png;base64,' + base64Image" alt="Imagen del espacio" class="image-preview">
 
-    <button mat-raised-button color="primary" type="submit">Guardar Espacio</button>
+    <button mat-raised-button color="accent" type="submit">Guardar Espacio</button>
   </form>
 </div>

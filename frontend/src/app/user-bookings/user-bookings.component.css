@@ -1,41 +1,63 @@
 .user-bookings-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .user-bookings-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .user-bookings-container .mat-form-field {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
-  .user-bookings-container table {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
-  .user-bookings-container button {
-    margin-right: 8px;
-  }
-  
-  .no-bookings {
-    text-align: center;
-    color: #999;
-    margin-top: 20px;
-  }
-  
-  @media (max-width: 600px) {
-    .user-bookings-container {
-      padding: 10px;
-    }
-  }
-  
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Toolbar */
+.mat-toolbar {
+  display: flex;
+  justify-content: center; /* Centra el título */
+  align-items: center;
+  background-color: #1C5F37; /* Color verde oscuro */
+  color: white;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.mat-toolbar h1 {
+  font-size: 32px; /* Ajusta el tamaño del título */
+  margin: 0;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.no-bookings {
+  text-align: center;
+  color: #ff5722;
+}
+
+/* Tabla */
+.mat-elevation-z8 {
+  margin-top: 20px;
+}
+
+.mat-header-cell {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.mat-cell {
+  font-size: 1em;
+}
+
+mat-paginator {
+  margin-top: 20px;
+}
+
+/* Botones */
+.mat-toolbar button, 
+.button-container button, 
+.mat-card-actions button {
+  background-color: #1C5F37 !important; /* Verde oscuro */
+  color: white !important; /* Texto blanco */
+  border-radius: 5px;
+  margin-right: 5px;
+  margin-left: 10px;
+}
