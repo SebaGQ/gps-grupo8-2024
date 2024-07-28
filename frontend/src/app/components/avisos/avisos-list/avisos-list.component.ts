@@ -1,4 +1,5 @@
-// Importaciones necesarias
+// avisos-list.component.ts
+
 import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AvisosService } from 'src/app/services/avisos.service';
 import { CommentsService } from 'src/app/services/comment.service';
@@ -7,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Aviso } from 'src/app/models/avisos.models';
 import { Router } from '@angular/router';
 import { Comment } from 'src/app/models/comments.models';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-avisos-list',
@@ -32,7 +34,8 @@ export class AvisosListComponent implements OnInit {
     private reactionsService: ReactionsService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -53,29 +56,47 @@ export class AvisosListComponent implements OnInit {
         }
         return aviso;
       });
-      this.cdr.markForCheck(); // Marca para la detección de cambios
+      this.cdr.detectChanges(); // Forzar detección de cambios
     }, error => {
       console.error('Error fetching avisos', error);
+      this.toastr.error('Error al cargar avisos', 'Error');
     });
   }
 
   addComment(avisoId: string): void {
     const content = this.newComments[avisoId];
     const token = this.authService.getToken();
+
     if (token && content) {
-      this.commentsService.createComment(avisoId, { content }, token).subscribe(comment => {
-        const aviso = this.avisos.find(a => a._id === avisoId);
-        if (aviso && aviso.comments) {
-          aviso.comments.push(comment); // Actualiza el comentario con todos los datos
-          this.cdr.markForCheck(); // Marca para la detección de cambios
-        }
-        this.newComments[avisoId] = '';
+      this.commentsService.createComment(avisoId, { content }, token).subscribe(response => {
+        const comment = response; // Acceder al comentario dentro de la propiedad 'data'
+        console.log('Nuevo comentario:', comment); // Verifica la estructura del comentario en la consola
+        this.newComments[avisoId] = ''; // Limpiar el campo de entrada
+
+        // Recargar los avisos para actualizar los comentarios
+        this.loadAvisos();
+        this.toastr.success('Comentario agregado con éxito', 'Éxito');
       }, error => {
         console.error('Error adding comment', error);
+        this.toastr.error('Error al agregar comentario', 'Error');
       });
     } else {
       console.error('No token found or comment content is empty. Please log in and enter a comment.');
+      this.toastr.warning('Debes iniciar sesión y escribir un comentario', 'Advertencia');
     }
+  }
+
+  fetchComments(avisoId: string): void {
+    this.commentsService.getCommentsByAvisoId(avisoId).subscribe(comments => {
+      const aviso = this.avisos.find(a => a._id === avisoId);
+      if (aviso) {
+        aviso.comments = comments || []; // Asegurarse de que comments sea siempre un array
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      }
+    }, error => {
+      console.error('Error fetching comments', error);
+      this.toastr.error('Error al cargar comentarios', 'Error');
+    });
   }
 
   deleteComment(avisoId: string, commentId: string): void {
@@ -83,15 +104,18 @@ export class AvisosListComponent implements OnInit {
     if (token) {
       this.commentsService.deleteComment(avisoId, commentId, token).subscribe(() => {
         const aviso = this.avisos.find(a => a._id === avisoId);
-        if (aviso && aviso.comments) {
+        if (aviso) {
           aviso.comments = aviso.comments.filter(comment => comment._id !== commentId);
+          this.cdr.detectChanges(); // Forzar detección de cambios
         }
-        this.cdr.markForCheck(); // Marca para la detección de cambios
+        this.toastr.success('Comentario eliminado con éxito', 'Éxito');
       }, error => {
         console.error('Error deleting comment', error);
+        this.toastr.error('Error al eliminar comentario', 'Error');
       });
     } else {
       console.error('No token found. Please log in.');
+      this.toastr.warning('Debes iniciar sesión para eliminar comentarios', 'Advertencia');
     }
   }
 
@@ -123,7 +147,7 @@ export class AvisosListComponent implements OnInit {
         }
 
         this.avisos[index] = aviso;
-        this.cdr.markForCheck(); // Marca para detección de cambios
+        this.cdr.detectChanges(); // Forzar detección de cambios
       }
 
       // Llamada al servidor
@@ -140,43 +164,51 @@ export class AvisosListComponent implements OnInit {
                 dislikedBy: updatedAviso.reactions.dislikedBy
               }
             };
-            this.cdr.markForCheck(); // Marca para detección de cambios
+            this.cdr.detectChanges(); // Forzar detección de cambios
+            this.toastr.success('Reacción registrada con éxito', 'Éxito');
           }
           this.isProcessing[avisoId] = false;
         },
         (error) => {
-          console.error(`Error reacting to aviso`, error);
+          console.error('Error reacting to aviso', error);
           // Revertir la actualización optimista en caso de error
           this.loadAvisos();
           this.isProcessing[avisoId] = false;
-          this.cdr.markForCheck(); // Marca para detección de cambios
+          this.cdr.detectChanges(); // Forzar detección de cambios
+          this.toastr.error('Error al registrar reacción', 'Error');
         }
       );
     } else {
       console.error('No token found or user ID is missing. Please log in.');
       this.isProcessing[avisoId] = false;
-      this.cdr.markForCheck(); // Marca para detección de cambios
+      this.cdr.detectChanges(); // Forzar detección de cambios
+      this.toastr.warning('Debes iniciar sesión para reaccionar', 'Advertencia');
     }
   }
 
   editAviso(aviso: Aviso): void {
     this.router.navigate(['/avisos/edit', aviso._id]);
+    this.toastr.info('Editando aviso', 'Información');
   }
 
   deleteAviso(id?: string): void {
     if (id) {
       this.avisosService.deleteAviso(id).subscribe(() => {
         this.loadAvisos();
+        this.toastr.success('Aviso eliminado con éxito', 'Éxito');
       }, error => {
         console.error('Error deleting aviso', error);
+        this.toastr.error('Error al eliminar aviso', 'Error');
       });
     } else {
       console.error('Aviso ID is undefined');
+      this.toastr.warning('ID del aviso no definido', 'Advertencia');
     }
   }
 
   navigateToCreateAviso(): void {
     this.router.navigate(['/avisos/new']);
+    this.toastr.info('Navegando a la creación de un nuevo aviso', 'Información');
   }
 
   canDelete(): boolean {
@@ -193,6 +225,7 @@ export class AvisosListComponent implements OnInit {
 
   toggleComments(avisoId: string): void {
     this.showComments[avisoId] = !this.showComments[avisoId];
+    this.cdr.detectChanges(); // Forzar detección de cambios
   }
 
   canEditComment(comment: Comment): boolean {
@@ -201,27 +234,5 @@ export class AvisosListComponent implements OnInit {
 
   canDeleteComment(comment: Comment): boolean {
     return this.currentUserId === comment.author._id || this.userRole === 'admin';
-  }
-
-  updateComment(avisoId: string, commentId: string, newContent: string): void {
-    const token = this.authService.getToken();
-    if (token) {
-      this.commentsService.updateComment(avisoId, commentId, newContent, token).subscribe(
-        updatedComment => {
-          const avisoIndex = this.avisos.findIndex(a => a._id === avisoId);
-          if (avisoIndex !== -1) {
-            const commentIndex = this.avisos[avisoIndex].comments?.findIndex(c => c._id === commentId);
-            if (commentIndex !== -1 && commentIndex !== undefined) {
-              this.avisos[avisoIndex].comments![commentIndex] = updatedComment;
-            }
-          }
-          this.editingComment[commentId] = false;
-          this.cdr.markForCheck();
-        },
-        error => {
-          console.error('Error updating comment', error);
-        }
-      );
-    }
   }
 }

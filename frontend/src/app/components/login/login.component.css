@@ -75,8 +75,7 @@ body {
 
 .btn-login {
   padding: 10px;
-  background: linear-gradient(to right, #41a941, #41a941);
-  /* Green color from image */
+  background: #1C5F37;
   color: white;
   border: none;
   border-radius: 5px;
@@ -85,8 +84,7 @@ body {
 }
 
 .btn-login:hover {
-  background: linear-gradient(to right, #388e3c, #388e3c);
-  /* Darker green on hover */
+  background: #388e3c;
 }
 
 .sign-up {

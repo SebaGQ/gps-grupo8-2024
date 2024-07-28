@@ -16,7 +16,11 @@ export const createComment = async (req, res) => {
 
         // Agregar comentario al aviso
         await Aviso.findByIdAndUpdate(req.params.avisoId, { $push: { comments: comment._id } });
-        respondSuccess(req, res, 201, comment);
+
+        // Realizar populate del autor
+        const populatedComment = await comment.populate('author', 'firstName lastName email roles');
+
+        respondSuccess(req, res, 201, populatedComment);
     } catch (error) {
         handleError(error, "createComment");
         respondError(req, res, 500, error.message);
@@ -26,7 +30,8 @@ export const createComment = async (req, res) => {
 // Obtener todos los comentarios de un aviso
 export const getCommentsByAvisoId = async (req, res) => {
     try {
-        const comments = await Comment.find({ aviso: req.params.avisoId }).populate('author', 'name');
+        const comments = await Comment.find({ aviso: req.params.avisoId })
+            .populate('author', 'firstName lastName email roles');
         respondSuccess(req, res, 200, comments);
     } catch (error) {
         handleError(error, "getCommentsByAvisoId");
@@ -53,7 +58,7 @@ export const updateComment = async (req, res) => {
     try {
         const updatedComment = await Comment.findOneAndUpdate({ _id: req.params.commentId, aviso: req.params.avisoId }, req.body, {
             new: true
-        });
+        }).populate('author', 'firstName lastName email roles');
         if (!updatedComment) {
             return respondError(req, res, 404, 'Comentario no encontrado');
         }

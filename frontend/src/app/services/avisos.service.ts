@@ -19,8 +19,10 @@ export class AvisosService {
     );
   }
 
-  getAvisoById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getAvisoById(id: string): Observable<Aviso> {
+    return this.http.get<{ data: Aviso }>(`${this.apiUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
   createAviso(aviso: Partial<Aviso>, token: string): Observable<Aviso> {

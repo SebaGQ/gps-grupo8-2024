@@ -18,7 +18,7 @@ html {
 }
 
 .forum-header {
-    background-color: #194e30;
+    background-color: #1C5F37;
     color: #dcdcdc;
     padding: 20px;
     border-radius: 10px;
@@ -39,7 +39,7 @@ html {
 }
 
 .create-button button {
-    background-color: #194e30;
+    background-color: #1C5F37;
     color: #dcdcdc;
     border: none;
     padding: 10px 20px;
@@ -88,7 +88,7 @@ html {
 }
 
 .post-footer button {
-    background-color: #194e30;
+    background-color: #1C5F37;
     color: #dcdcdc;
     border: none;
     padding: 8px 16px;
@@ -153,7 +153,7 @@ html {
 }
 
 .comment button {
-    background-color: #194e30;
+    background-color: #1C5F37;
     color: #dcdcdc;
     border: none;
     padding: 5px 10px;
@@ -177,7 +177,7 @@ input[type="text"] {
 }
 
 button {
-    background-color: #194e30;
+    background-color: #1C5F37;
     color: #dcdcdc;
     border: none;
     padding: 10px 20px;

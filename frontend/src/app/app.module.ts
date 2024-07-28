@@ -27,6 +27,7 @@ import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list
 import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
 import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
 import { CommentsService } from './services/comment.service';
+import { ToastrModule } from 'ngx-toastr';
 
 
 
@@ -63,6 +64,10 @@ export function tokenGetter() {
         allowedDomains: ['localhost:80'], // Cambia esto a tu dominio permitido
         disallowedRoutes: ['http://localhost:80/auth/login'] // Cambia esto si es necesario
       }
+    }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
     }),
     BrowserAnimationsModule
   ],
