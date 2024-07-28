@@ -42,7 +42,7 @@ export class UserBookingsComponent implements OnInit, AfterViewInit {
 
   loadBookingsAndSpaces(): void {
     this.bookingService.getMyBookings().subscribe(bookings => {
-      this.bookings = bookings;
+      this.bookings = bookings.filter(booking => new Date(booking.startTime) >= new Date());
       this.dataSource.data = this.bookings;
     });
 
