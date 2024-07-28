@@ -1,19 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { OrderService } from '../../services/order.service';
 import { OrderDTO } from '../../dto/order.dto';
 import { WithdrawOrderComponent } from '../withdraw-order/withdraw-order.component';
 
 @Component({
   selector: 'app-janitor-order-list',
-  templateUrl: './janitor-order-list.component.html'
+  templateUrl: './janitor-order-list.component.html',
+  styleUrls: ['./janitor-order-list.component.css']
 })
 export class JanitorOrderListComponent implements OnInit {
   displayedColumns: string[] = ['select', 'firstName', 'lastName', 'departmentNumber', 'status', 'deliveryTime', 'action'];
-  dataSource: MatTableDataSource<OrderDTO> = new MatTableDataSource();
+  dataSource: OrderDTO[] = [];
   selectedOrderIds: string[] = [];
 
   filters = {
@@ -24,10 +21,7 @@ export class JanitorOrderListComponent implements OnInit {
     deliveryTime: ''
   };
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  constructor(private orderService: OrderService, public dialog: MatDialog) {}
+  constructor(private orderService: OrderService) {}
 
   ngOnInit() {
     this.fetchOrders();
@@ -36,9 +30,7 @@ export class JanitorOrderListComponent implements OnInit {
   fetchOrders() {
     this.orderService.getOrders().subscribe(
       (data: OrderDTO[]) => {
-        this.dataSource.data = data;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        this.dataSource = data;
         this.applyFilters();
       },
       error => console.error('Error fetching orders', error)
@@ -46,25 +38,15 @@ export class JanitorOrderListComponent implements OnInit {
   }
 
   applyFilters() {
-    this.dataSource.filterPredicate = (order: OrderDTO, filters: string) => {
-      const matchFilter = [];
-      const filterArray = filters.split('$');
-      const columns = Object.keys(this.filters) as (keyof OrderDTO)[];
-
-      // Añadir las condiciones de filtro
-      const customFilter = (column: any, filter: string) => {
-        if (!filter) return true;
-        return column?.toString().toLowerCase().includes(filter.toLowerCase());
-      };
-
-      for (let i = 0; i < filterArray.length; i++) {
-        matchFilter.push(customFilter(order[columns[i]], filterArray[i]));
-      }
-      return matchFilter.every(Boolean);
-    };
-
-    const filterString = Object.values(this.filters).join('$');
-    this.dataSource.filter = filterString.trim().toLowerCase();
+    this.dataSource = this.dataSource.filter(order => {
+      return (
+        (this.filters.recipientFirstName ? order.recipientFirstName?.toLowerCase().includes(this.filters.recipientFirstName.toLowerCase()) : true) &&
+        (this.filters.recipientLastName ? order.recipientLastName?.toLowerCase().includes(this.filters.recipientLastName.toLowerCase()) : true) &&
+        (this.filters.departmentNumber ? order.departmentNumber === this.filters.departmentNumber : true) &&
+        (this.filters.status ? order.status === this.filters.status : true) &&
+        (this.filters.deliveryTime ? new Date(order.deliveryTime ?? '').toLocaleDateString().includes(this.filters.deliveryTime) : true)
+      );
+    });
   }
 
   toggleOrderSelection(orderId: string | undefined) {
@@ -81,13 +63,8 @@ export class JanitorOrderListComponent implements OnInit {
   }
 
   openWithdrawOrderDialog(order: OrderDTO) {
-    const dialogRef = this.dialog.open(WithdrawOrderComponent, {
-      width: '400px',
-      data: { orderIds: [order._id], departmentNumber: order.departmentNumber }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      this.fetchOrders(); // Actualiza la lista de pedidos después de cerrar el diálogo
-    });
+    // Implement your custom dialog or modal logic here
+    console.log('Open dialog for order:', order);
+    // Logic for opening a dialog or modal goes here
   }
 }

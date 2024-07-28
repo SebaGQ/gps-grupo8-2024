@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
@@ -11,19 +10,15 @@ import { UserDTO } from '../../dto/user.dto';
 })
 export class WithdrawOrderComponent implements OnInit {
   @Input() orderIds: string[] = [];
+  @Input() departmentNumber: number = 0; // Recibe el número de departamento como input
   withdrawData: any = {};
   selectedWithdrawerType: string = ''; // Variable para controlar el tipo de retirante
   residents: UserDTO[] = []; // Variable para almacenar los residentes
-  departmentNumber: number;
 
   constructor(
     private orderService: OrderService,
-    private userService: UserService,
-    public dialogRef: MatDialogRef<WithdrawOrderComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.orderIds = data.orderIds;
-    this.departmentNumber = data.departmentNumber; // Asegúrate de pasar el número de departamento
-  }
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.fetchResidents();
@@ -46,10 +41,16 @@ export class WithdrawOrderComponent implements OnInit {
       this.orderService.withdrawOrders(this.orderIds, this.withdrawData).subscribe(
         () => {
           console.log('Orders withdrawn successfully');
-          this.dialogRef.close();
+          // Lógica para cerrar el modal sin NgbActiveModal
+          document.getElementById('withdrawOrderModal')?.remove();
         },
         error => console.error('Error withdrawing orders', error)
       );
     }
+  }
+
+  dismissModal() {
+    // Lógica para cerrar el modal sin NgbActiveModal
+    document.getElementById('withdrawOrderModal')?.remove();
   }
 }

@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { OrderService } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
@@ -19,8 +18,6 @@ export class SelectWithdrawerComponent implements OnInit {
   withdrawMethod: string = 'self'; // Default to 'self'
 
   constructor(
-    public dialogRef: MatDialogRef<SelectWithdrawerComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private orderService: OrderService,
     private userService: UserService
   ) {}
@@ -39,30 +36,29 @@ export class SelectWithdrawerComponent implements OnInit {
   }
 
   markAsReadyToWithdraw() {
-    const orderId = this.data.orderId;
+    const orderId = this.withdrawData.orderId;
     if (this.withdrawMethod === 'self') {
-      // If 'self' is selected, clear all other withdraw data
       this.withdrawData.withdrawnResidentId = null;
       this.withdrawData.expectedWithdrawnPersonFirstName = null;
       this.withdrawData.expectedWithdrawnPersonLastName = null;
     } else if (this.withdrawMethod === 'resident') {
-      // If resident is selected, clear other withdraw data
       this.withdrawData.expectedWithdrawnPersonFirstName = null;
       this.withdrawData.expectedWithdrawnPersonLastName = null;
     } else if (this.withdrawMethod === 'other') {
-      // If other is selected, clear resident withdraw data
       this.withdrawData.withdrawnResidentId = null;
     }
     this.orderService.markOrderAsReadyToWithdraw(orderId, this.withdrawData).subscribe(
       () => {
         console.log('Order marked as ready to withdraw');
-        this.dialogRef.close();
+        // Lógica para cerrar el modal sin NgbActiveModal
+        document.getElementById('selectWithdrawerModal')?.remove();
       },
       error => console.error('Error marking order as ready to withdraw', error)
     );
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    // Lógica para cerrar el modal sin NgbActiveModal
+    document.getElementById('selectWithdrawerModal')?.remove();
   }
 }

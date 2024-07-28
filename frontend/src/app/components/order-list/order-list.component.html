@@ -4,62 +4,51 @@
   <!-- Filtros -->
   <div class="filters">
     <h3>Filtrar</h3>
-    <mat-form-field appearance="fill">
-      <mat-label>Nombre del Destinatario</mat-label>
-      <input matInput placeholder="Nombre del Destinatario" [(ngModel)]="filters.recipientFirstName" (ngModelChange)="applyFilters()">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Apellido del Destinatario</mat-label>
-      <input matInput placeholder="Apellido del Destinatario" [(ngModel)]="filters.recipientLastName" (ngModelChange)="applyFilters()">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Estado</mat-label>
-      <mat-select [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
-        <mat-option value="">Todos los estados</mat-option>
-        <mat-option value="PENDING">Pendiente</mat-option>
-        <mat-option value="READY_TO_WITHDRAW">Listo para Retirar</mat-option>
-        <mat-option value="WITHDRAWN">Retirado</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Fecha de Entrega</mat-label>
-      <input matInput type="date" placeholder="Fecha de Entrega" [(ngModel)]="filters.deliveryTime" (ngModelChange)="applyFilters()">
-    </mat-form-field>
+    <div>
+      <label>Nombre del Destinatario</label>
+      <input type="text" placeholder="Nombre del Destinatario" [(ngModel)]="filters.recipientFirstName" (ngModelChange)="applyFilters()">
+    </div>
+    <div>
+      <label>Apellido del Destinatario</label>
+      <input type="text" placeholder="Apellido del Destinatario" [(ngModel)]="filters.recipientLastName" (ngModelChange)="applyFilters()">
+    </div>
+    <div>
+      <label>Estado</label>
+      <select [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
+        <option value="">Todos los estados</option>
+        <option value="PENDING">Pendiente</option>
+        <option value="READY_TO_WITHDRAW">Listo para Retirar</option>
+        <option value="WITHDRAWN">Retirado</option>
+      </select>
+    </div>
+    <div>
+      <label>Fecha de Entrega</label>
+      <input type="date" placeholder="Fecha de Entrega" [(ngModel)]="filters.deliveryTime" (ngModelChange)="applyFilters()">
+    </div>
   </div>
 
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-    <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef> Seleccionar </th>
-      <td mat-cell *matCellDef="let order">
-        <mat-checkbox (change)="toggleOrderSelection(order._id)" [checked]="order._id ? selectedOrderIds.includes(order._id) : false"></mat-checkbox>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="recipientFirstName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre del Destinatario </th>
-      <td mat-cell *matCellDef="let order"> {{order.recipientFirstName}} </td>
-    </ng-container>
-    <ng-container matColumnDef="recipientLastName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido del Destinatario </th>
-      <td mat-cell *matCellDef="let order"> {{order.recipientLastName}} </td>
-    </ng-container>
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
-      <td mat-cell *matCellDef="let order"> {{order.status}} </td>
-    </ng-container>
-    <ng-container matColumnDef="deliveryTime">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de Entrega </th>
-      <td mat-cell *matCellDef="let order"> {{order.deliveryTime | date: 'short'}} </td>
-    </ng-container>
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef> Acción </th>
-      <td mat-cell *matCellDef="let order">
-        <button mat-raised-button color="primary" *ngIf="order.status === 'PENDING'" (click)="order._id && openSelectWithdrawerDialog(order._id)">Seleccionar Retirante</button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <table>
+    <thead>
+      <tr>
+        <th>Seleccionar</th>
+        <th>Nombre del Destinatario</th>
+        <th>Apellido del Destinatario</th>
+        <th>Estado</th>
+        <th>Fecha de Entrega</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of dataSource">
+        <td><input type="checkbox" (change)="toggleOrderSelection(order._id)" [checked]="order._id ? selectedOrderIds.includes(order._id) : false"></td>
+        <td>{{ order.recipientFirstName }}</td>
+        <td>{{ order.recipientLastName }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.deliveryTime | date: 'short' }}</td>
+        <td>
+          <button *ngIf="order.status === 'PENDING'" (click)="order._id && openSelectWithdrawerDialog(order._id)">Seleccionar Retirante</button>
+        </td>
+      </tr>
+    </tbody>
   </table>
-
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of orders"></mat-paginator>
 </div>

@@ -1,11 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { Component, OnInit } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { OrderDTO } from '../../dto/order.dto';
-import { SelectWithdrawerComponent } from '../select-withdrawer/select-withdrawer.component';
 
 @Component({
   selector: 'app-order-list',
@@ -14,7 +9,7 @@ import { SelectWithdrawerComponent } from '../select-withdrawer/select-withdrawe
 })
 export class OrderListComponent implements OnInit {
   displayedColumns: string[] = ['select', 'recipientFirstName', 'recipientLastName', 'status', 'deliveryTime', 'action'];
-  dataSource: MatTableDataSource<OrderDTO> = new MatTableDataSource();
+  dataSource: OrderDTO[] = [];
   selectedOrderIds: string[] = [];
 
   filters = {
@@ -24,10 +19,7 @@ export class OrderListComponent implements OnInit {
     deliveryTime: ''
   };
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
-  constructor(private orderService: OrderService, private dialog: MatDialog) {}
+  constructor(private orderService: OrderService) {}
 
   ngOnInit() {
     this.fetchOrders();
@@ -36,9 +28,7 @@ export class OrderListComponent implements OnInit {
   fetchOrders() {
     this.orderService.getOwnedOrders().subscribe(
       (data: OrderDTO[]) => {
-        this.dataSource.data = data;
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        this.dataSource = data;
         this.applyFilters();
       },
       error => console.error('Error fetching orders', error)
@@ -59,34 +49,18 @@ export class OrderListComponent implements OnInit {
   }
 
   applyFilters() {
-    this.dataSource.filterPredicate = (order: OrderDTO, filters: string) => {
-      const matchFilter = [];
-      const filterArray = filters.split('$');
-      const columns = Object.keys(this.filters) as (keyof OrderDTO)[];
-
-      const customFilter = (column: any, filter: string) => {
-        if (!filter) return true;
-        return column?.toString().toLowerCase().includes(filter.toLowerCase());
-      };
-
-      for (let i = 0; i < filterArray.length; i++) {
-        matchFilter.push(customFilter(order[columns[i]], filterArray[i]));
-      }
-      return matchFilter.every(Boolean);
-    };
-
-    const filterString = Object.values(this.filters).join('$');
-    this.dataSource.filter = filterString.trim().toLowerCase();
+    this.dataSource = this.dataSource.filter(order => {
+      return (
+        (this.filters.recipientFirstName ? order.recipientFirstName?.toLowerCase().includes(this.filters.recipientFirstName.toLowerCase()) : true) &&
+        (this.filters.recipientLastName ? order.recipientLastName?.toLowerCase().includes(this.filters.recipientLastName.toLowerCase()) : true) &&
+        (this.filters.status ? order.status === this.filters.status : true) &&
+        (this.filters.deliveryTime ? new Date(order.deliveryTime ?? '').toLocaleDateString().includes(this.filters.deliveryTime) : true)
+      );
+    });
   }
 
   openSelectWithdrawerDialog(orderId: string) {
-    const dialogRef = this.dialog.open(SelectWithdrawerComponent, {
-      width: '400px',
-      data: { orderId: orderId }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+    // Implement your custom dialog or modal logic here
+    console.log('Open dialog for order ID:', orderId);
   }
 }
