@@ -1,40 +1,32 @@
 .create-order-container {
-  margin: 20px;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.create-order-container h2 {
+.form-group {
   margin-bottom: 15px;
 }
 
-.create-order-container form {
-  display: flex;
-  flex-direction: column;
-}
-
-.create-order-container label {
+.form-group label {
+  display: block;
   margin-bottom: 5px;
-  font-weight: bold;
 }
 
-.create-order-container input {
-  margin-bottom: 10px;
+.form-group input {
+  width: 100%;
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  box-sizing: border-box;
 }
 
-.create-order-container button {
-  padding: 10px;
+button {
+  padding: 10px 15px;
   background-color: #007bff;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
 }
 
-.create-order-container button:hover {
+button:hover {
   background-color: #0056b3;
 }

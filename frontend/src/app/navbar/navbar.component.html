@@ -6,6 +6,14 @@
     <li><a href="#">Bitácoras</a></li>
     <li><a href="/visitor">Visitantes</a></li>
     <li><a href="/avisos">Foro avisos</a></li>
+    <li><a href="/create-order">Registrar entrega</a></li>
+
+    <li>
+      <a [href]="authService.getUserRole() === 'janitor' || authService.getUserRole() === 'admin' ? '/janitor-order-list' : '/order-list'">
+        Historial de Entregas
+      </a>
+    </li>
+    
     <li><a href="#" class="logout">Logout</a></li>
   </ul>
 </div>

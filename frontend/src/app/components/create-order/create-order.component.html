@@ -1,26 +1,26 @@
 <div class="create-order-container">
   <h2>Registrar Nuevo Pedido</h2>
   <form (ngSubmit)="createOrder()">
-    <mat-form-field appearance="outline">
-      <mat-label>Número de Departamento</mat-label>
-      <input matInput type="number" id="departmentNumber" [(ngModel)]="order.departmentNumber" name="departmentNumber" required>
-    </mat-form-field>
+    <div>
+      <label for="departmentNumber">Número de Departamento</label>
+      <input type="number" id="departmentNumber" [(ngModel)]="order.departmentNumber" name="departmentNumber" required>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Nombre del Destinatario</mat-label>
-      <input matInput type="text" id="recipientFirstName" [(ngModel)]="order.recipientFirstName" name="recipientFirstName" required>
-    </mat-form-field>
+    <div>
+      <label for="recipientFirstName">Nombre del Destinatario</label>
+      <input type="text" id="recipientFirstName" [(ngModel)]="order.recipientFirstName" name="recipientFirstName" required>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Apellido del Destinatario</mat-label>
-      <input matInput type="text" id="recipientLastName" [(ngModel)]="order.recipientLastName" name="recipientLastName" required>
-    </mat-form-field>
+    <div>
+      <label for="recipientLastName">Apellido del Destinatario</label>
+      <input type="text" id="recipientLastName" [(ngModel)]="order.recipientLastName" name="recipientLastName" required>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Nombre del Repartidor</mat-label>
-      <input matInput type="text" id="deliveryPersonName" [(ngModel)]="order.deliveryPersonName" name="deliveryPersonName">
-    </mat-form-field>
+    <div>
+      <label for="deliveryPersonName">Nombre del Repartidor</label>
+      <input type="text" id="deliveryPersonName" [(ngModel)]="order.deliveryPersonName" name="deliveryPersonName">
+    </div>
 
-    <button mat-raised-button color="primary" type="submit">Registrar Pedido</button>
+    <button type="submit">Registrar Pedido</button>
   </form>
 </div>

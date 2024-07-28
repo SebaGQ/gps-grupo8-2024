@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../services/auth.service'; // Asegúrate de usar la ruta correcta
 
 @Component({
   selector: 'app-navbar',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
   isSidebarVisible = false;
+
+  constructor(public authService: AuthService) { }
 
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;

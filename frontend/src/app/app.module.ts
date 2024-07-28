@@ -24,6 +24,9 @@ import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list
 import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
 import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
 import { CommentsService } from './services/comment.service';
+import { CreateOrderComponent } from './components/create-order/create-order.component';
+import { JanitorOrderListComponent } from './components/janitor-order-list/janitor-order-list.component';
+import { WithdrawOrderComponent } from './components/withdraw-order/withdraw-order.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -39,10 +42,14 @@ export function tokenGetter() {
     LoginComponent,
     RegisterComponent,
     OrderListComponent,
+    JanitorOrderListComponent,
+    WithdrawOrderComponent,
+    BinnaclesComponent,
     VisitorFormDialogComponent,
     AvisosListComponent,
     AvisosDetailComponent,
     AvisosFormComponent,
+    CreateOrderComponent
   ],
   imports: [
     BrowserAnimationsModule,
