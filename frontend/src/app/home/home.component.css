@@ -1,53 +1,19 @@
-/* home.component.css */
-html,
-body {
-    height: 100%;
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
 .home-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: #f5f5f5;
-}
-
-.home-card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 400px;
-    width: 100%;
-}
+  }
 
-.home-card h1 {
-    font-size: 2em;
-    margin-top: 0;
-}
+    .home-container h1 {
+        font-size: 2em;
+        margin-top: 0;
+    }
 
-.home-card p {
-    font-size: 1.2em;
-    margin: 10px 0;
-}
+    .home-container p {
+        font-size: 1.2em;
+    }
 
-.btn-logout {
-    background-color: #194e30;
-    /* Using the same green color */
-    color: #dcdcdc;
-    /* Using the same text color as the sidebar */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 20px;
-}
+    .home-card {
+        margin-top: 20px;
+    }
 
-.btn-logout:hover {
-    background-color: #292929;
-    /* Darker color on hover */
-}
+
+  

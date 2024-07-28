@@ -22,7 +22,8 @@ import authRoutes from "./auth.routes.js";
 /** Enrutador de avisos */
 import avisosRoutes from "./avisos.routes.js";
 
-
+/** Enrutador de comentarios */
+import commentRoutes from "./comment.routes.js";
 
 /** Enrutador de bitácoras */
 import binnacleRoutes from "./binnacle.routes.js";
@@ -62,10 +63,10 @@ router.use("/orders", authenticationMiddleware, orderRoutes);
 router.use("/avisos", avisosRoutes); // Ruta de avisos
 
 // Define las rutas para los comentarios /api/comments
-router.use("/comments", avisosRoutes);
+router.use("/comments", commentRoutes);
 
 //Define las rutas para las bitacoras /api/binnacles
-router.use("/binnacles", authenticationMiddleware, binnacleRoutes);
+router.use("/binnacles", authenticationMiddleware,binnacleRoutes);
 
 //Define las rutas para los visitantes /api/visitors
 router.use("/visitor", authenticationMiddleware, visitorRoutes);

@@ -7,17 +7,14 @@ import { HomeComponent } from './home/home.component';
 import { BinnaclesComponent } from './components/binnacles/binnacles.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { OrderListComponent } from './components/order-list/order-list.component';
+import { OrderListComponent } from './components/order-list/order-list.component'; 
 import { SpacesComponent } from './spaces/spaces.component';
 import { SpaceFormComponent } from './space-form/space-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
 import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
 import { DepartmentComponent } from './components/department/department.component';
-import { UserComponent } from './components/user/user.component';
-import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
-import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
-import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
+import { UserComponent } from './components/user/user.component'; 
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -38,11 +35,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'user', component: UserComponent },
   { path: 'department', component: DepartmentComponent },
-  { path: 'avisos', component: AvisosListComponent },
-  { path: 'avisos/new', component: AvisosFormComponent },
-  { path: 'avisos/:id', component: AvisosDetailComponent },
-  { path: 'avisos/edit/:id', component: AvisosFormComponent },
-  { path: '**', redirectTo: '/home', pathMatch: 'full' },
+  { path: '**', redirectTo: '/home', pathMatch: 'full'},
 ];
 
 @NgModule({

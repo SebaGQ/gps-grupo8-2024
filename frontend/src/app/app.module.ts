@@ -1,13 +1,26 @@
+// src/app/app.module.ts
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { VisitorComponent } from './components/visitor/visitor.component';
+import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import { FormsModule,  ReactiveFormsModule  } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ngx-toastr';
-//import { ToastrModule } from 'ngx-toastr/toastr/toastr.module';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { HomeComponent } from './home/home.component';
 
-// Angular Material Modules
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { AuthService } from './services/auth.service';
+import { HttpService } from './services/http.service';
+import { OrderService } from './services/order.service';
+import { OrderListComponent } from './components/order-list/order-list.component';
+import { VisitorService } from './services/visitor.service';
+import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { VisitorFormDialogComponent } from './components/visitor-form-dialog/visitor-form-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,8 +30,17 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatGridListModule} from '@angular/material/grid-list';
+import { MY_FORMATS } from './My-format';
+import { DepartmentComponent } from './components/department/department.component';
+import { UserComponent } from './components/user/user.component';
+import { DepartmentFormDialogComponent } from './components/department-form-dialog/department-form-dialog.component';
+import { DepartmentService } from './services/department.service';
+import { UserFormDialogComponent } from './components/user-form-dialog/user-form-dialog.component';
+
+
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -26,46 +48,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 
-// Componentes
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { VisitorComponent } from './components/visitor/visitor.component';
-import { BinnaclesComponent } from './components/binnacles/binnacles.component';
-import { BinnacleFormDialog } from './components/binnacle-form-dialog/binnacle-form-dialog.component';
-import { ConfirmDialog } from './components/confirm-dialog/confirm-dialog.component';
-import { OrderListComponent } from './components/order-list/order-list.component';
-import { VisitorFormDialogComponent } from './components/visitor-form-dialog/visitor-form-dialog.component';
-import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
-import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
-import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
+
+
 import { SpacesComponent } from './spaces/spaces.component';
 import { SpaceFormComponent } from './space-form/space-form.component';
 import { BookingComponent } from './booking/booking.component';
 import { UserBookingsComponent } from './user-bookings/user-bookings.component';
+import { BinnaclesComponent } from './components/binnacles/binnacles.component';
+import { BinnacleFormDialog } from './components/binnacle-form-dialog/binnacle-form-dialog.component';
+import { ConfirmDialog } from './components/confirm-dialog/confirm-dialog.component';
+
+import { MomentDateAdapter, MAT_MOMENT_DATE_FORMATS, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
 import { DayTranslatePipe } from './day-translate.pipe';
-import { DepartmentComponent } from './components/department/department.component';
-import { UserComponent } from './components/user/user.component';
-import { DepartmentFormDialogComponent } from './components/department-form-dialog/department-form-dialog.component';
-import { UserFormDialogComponent } from './components/user-form-dialog/user-form-dialog.component';
 
-// Servicios
-import { AuthService } from './services/auth.service';
-import { HttpService } from './services/http.service';
-import { OrderService } from './services/order.service';
-import { VisitorService } from './services/visitor.service';
-import { DepartmentService } from './services/department.service';
-import { AvisosService } from './services/avisos.service';
-import { CommentsService } from './services/comment.service';
 
-// Interceptores
-import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 
-import { MY_FORMATS } from './My-format';
+
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -96,9 +95,6 @@ export const MY_DATE_FORMATS = {
     RegisterComponent,
     OrderListComponent,
     VisitorFormDialogComponent,
-    AvisosListComponent,
-    AvisosDetailComponent,
-    AvisosFormComponent,
     SpacesComponent,
     SpaceFormComponent,
     BookingComponent,
@@ -114,9 +110,8 @@ export const MY_DATE_FORMATS = {
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule,
     FormsModule,
-    BrowserAnimationsModule,
+    ReactiveFormsModule,
     MatDialogModule,
     MatToolbarModule,
     MatButtonModule,
@@ -134,6 +129,7 @@ export const MY_DATE_FORMATS = {
     MatProgressSpinnerModule,
     MatCheckboxModule,
     MatIconModule,
+    MatGridListModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,
@@ -141,23 +137,19 @@ export const MY_DATE_FORMATS = {
         disallowedRoutes: ['http://localhost:3000/auth/login'] // Cambia esto si es necesario
       }
     }),
-    ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right',
-      preventDuplicates: true,
-    }),
+    BrowserAnimationsModule
   ],
-  providers: [
-    AuthService,
-    OrderService,
-    VisitorService,
-    DepartmentService,
-    AvisosService,
-    CommentsService,
-    HttpService,
+  // providers: [AuthService, OrderService, HttpService, VisitorService, 
+  //   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  //   { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+  //   { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
+  //   { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
+//],
+  providers: [AuthService, OrderService,VisitorService, DepartmentService, HttpService, 
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
-  ],
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
+    
   bootstrap: [AppComponent]
 })
 export class AppModule { }

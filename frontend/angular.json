@@ -90,8 +90,7 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
-              "src/style.scss",
-              "node_modules/ngx-toastr/toastr.css"
+              "src/style.scss"
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"

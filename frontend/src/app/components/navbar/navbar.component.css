@@ -22,8 +22,6 @@ html {
   z-index: 1000;
   padding-top: 50px;
   /* Add padding to the top */
-  overflow-y: auto;
-  /* Add scroll if content overflows */
 }
 
 .sidebar.visible {
@@ -37,29 +35,18 @@ html {
 }
 
 .sidebar ul li {
-  padding: 10px;
-  /* Reduce padding to decrease space between items */
+  padding: 15px;
   text-align: left;
 }
 
-.sidebar ul li a,
-.sidebar ul li button {
+.sidebar ul li a {
   color: #dcdcdc;
   text-decoration: none;
   display: block;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  padding: 10px;
-  /* Reduce padding to match li padding */
-  cursor: pointer;
 }
 
-.sidebar ul li a:hover,
-.sidebar ul li button:hover {
+.sidebar ul li a:hover {
   background-color: #292929;
-  /* Use original hover color */
 }
 
 .sidebar ul li.logout {
@@ -88,5 +75,4 @@ html {
 
 .sidebar-toggle:hover {
   background-color: #292929;
-  /* Adjust hover color for toggle button */
 }
