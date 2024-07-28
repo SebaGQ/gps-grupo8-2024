@@ -33,7 +33,7 @@
 }
 
 header {
-  background-color: #1C5F37 !important;
+  background-color: #194e30 !important;
   color: white;
   text-align: center;
   padding: 10px 0;
@@ -69,18 +69,13 @@ header {
 .btn-buscar,
 .btn-abrir-form,
 .btn-excel {
-    background-color: #1C5F37 !important; /* Verde oscuro */
+    background-color: #194e30 !important; /* Verde oscuro */
     color: white !important; /* Texto blanco */
     margin: 5px;
 }
 
 .eliminar-btn:hover {
   background-color: #c9302c;
-}
-
-.btn-modificar {
-  background-color: #5bc0de;
-  color: white;
 }
 
 .btn-modificar:hover {
