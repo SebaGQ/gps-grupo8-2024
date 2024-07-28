@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -9,13 +10,27 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   credentials = { email: '', password: '' };
+  showPassword = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastr: ToastrService) { }
 
   login() {
     this.authService.login(this.credentials).subscribe(
-      () => this.router.navigate(['/home']),
-      error => console.error('Error logging in', error)
+      () => {
+        this.toastr.success('Login exitoso');
+        this.router.navigate(['/home']);
+      },
+      error => {
+        this.toastr.error('Error al iniciar sesión. Verifica tus credenciales.');
+        console.error('Error logging in', error);
+      }
     );
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }

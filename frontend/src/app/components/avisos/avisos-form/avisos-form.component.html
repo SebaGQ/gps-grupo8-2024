@@ -1,0 +1,38 @@
+<div class="aviso-container">
+    <div class="aviso-header">
+        <h1>Creación de Aviso</h1>
+        <p>En este foro de avisos, la administración del edificio habitacional publica informaciones importantes y
+            comunicados para los residentes.</p>
+        <h5>Por favor, sigue las siguientes reglas al publicar un aviso:</h5>
+        <ul>
+            <li>El contenido debe ser relevante y apropiado para la comunidad.</li>
+            <li>No se permiten publicaciones ofensivas.</li>
+            <li>No se permite spam o contenido irrelevante.</li>
+        </ul>
+    </div>
+
+    <form [formGroup]="avisoForm" (ngSubmit)="onSubmit()" class="aviso-form">
+        <div class="form-group">
+            <label for="title">Título:</label>
+            <input id="title" formControlName="title" class="form-control">
+            <div class="error-message"
+                *ngIf="avisoForm.controls['title'].invalid && avisoForm.controls['title'].touched">
+                Es necesario introducir un título
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descripción:</label>
+            <textarea id="description" formControlName="description" class="form-control"></textarea>
+            <div class="error-message"
+                *ngIf="avisoForm.controls['description'].invalid && avisoForm.controls['description'].touched">
+                Es necesario introducir una descripción
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" [disabled]="avisoForm.invalid" class="btn btn-primary">Guardar</button>
+            <button type="button" (click)="onCancel()" class="btn btn-secondary">Cancelar</button>
+        </div>
+    </form>
+</div>
