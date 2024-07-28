@@ -9,6 +9,7 @@
     </div>
     <div class="container-buttonBack">
         <button class="buttonBack" mat-stroked-button color="secondary" [routerLink]="['/spaces']">Volver a Espacios</button>
+    </div>
     <form [formGroup]="bookingForm" (ngSubmit)="createOrUpdateBooking()">
         <mat-form-field>
             <mat-label>Fecha de Inicio</mat-label>
