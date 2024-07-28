@@ -39,13 +39,21 @@ html {
   text-align: left;
 }
 
-.sidebar ul li a {
+.sidebar ul li a,
+.sidebar ul li button {
   color: #dcdcdc;
   text-decoration: none;
   display: block;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 15px;
+  cursor: pointer;
 }
 
-.sidebar ul li a:hover {
+.sidebar ul li a:hover,
+.sidebar ul li button:hover {
   background-color: #292929;
 }
 
