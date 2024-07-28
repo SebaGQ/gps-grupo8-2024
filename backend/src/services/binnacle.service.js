@@ -263,7 +263,9 @@ async function getBinnaclesBooking() {
             userDict[user._id] = `${user.firstName} ${user.lastName}`;
         });
         console.log("USER DICT", userDict);
-
+        const now = new Date();
+        if (new Date(startTime) < now) return [null, "No se puede reservar en una fecha anterior a la actual"];
+        if (new Date(endTime) <= new Date(startTime)) return [null, "La fecha de finalización debe ser posterior a la fecha de inicio"];
         // Paso 8: Combinar los resultados
         const formattedBinnacles = binnacles.map(entry => {
             return {

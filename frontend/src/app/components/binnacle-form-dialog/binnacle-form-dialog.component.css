@@ -16,6 +16,8 @@
   }
   
   button {
+    background-color: #1C5F37 !important; /* Verde oscuro */
+    color: white !important; /* Texto blanco */
     margin-top: 10px;
     width: 150px; /* Ajusta el ancho del botón según tus necesidades */
   }

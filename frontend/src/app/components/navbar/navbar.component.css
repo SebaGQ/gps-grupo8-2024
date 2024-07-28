@@ -1,15 +1,78 @@
-.navbar {
-  background-color: #007bff;
-  padding: 10px;
-  color: white;
-  display: flex;
-  justify-content: space-between;
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
 }
-.navbar a {
-  color: white;
+
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  /* Initially hidden */
+  width: 250px;
+  height: 100%;
+  background-color: #194e30;
+  color: #dcdcdc;
+  transition: left 0.3s ease;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  padding-top: 50px;
+  /* Add padding to the top */
+}
+
+.sidebar.visible {
+  left: 0;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 15px;
+  text-align: left;
+}
+
+.sidebar ul li a {
+  color: #dcdcdc;
   text-decoration: none;
-  margin: 0 10px;
+  display: block;
 }
-.navbar .logout {
-  margin-left: auto;
+
+.sidebar ul li a:hover {
+  background-color: #292929;
+}
+
+.sidebar ul li.logout {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+}
+
+/* Toggle button styles */
+.sidebar-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background-color: #194e30;
+  color: #dcdcdc;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.sidebar-toggle i {
+  font-size: 24px;
+}
+
+.sidebar-toggle:hover {
+  background-color: #292929;
 }
