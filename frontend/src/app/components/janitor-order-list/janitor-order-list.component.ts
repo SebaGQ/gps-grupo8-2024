@@ -5,8 +5,7 @@ import { WithdrawOrderComponent } from '../withdraw-order/withdraw-order.compone
 
 @Component({
   selector: 'app-janitor-order-list',
-  templateUrl: './janitor-order-list.component.html',
-  styleUrls: ['./janitor-order-list.component.css']
+  templateUrl: './janitor-order-list.component.html'
 })
 export class JanitorOrderListComponent implements OnInit {
   displayedColumns: string[] = ['select', 'firstName', 'lastName', 'departmentNumber', 'status', 'deliveryTime', 'action'];
