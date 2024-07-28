@@ -46,7 +46,6 @@ export class BinnacleFormDialog implements OnInit {
       this.loadBinnacleData(this.data.binnacle);
     }
 
-    // Suscripción al cambio de valor de activityType
     this.binnacleForm.get('activityType')?.valueChanges.subscribe(value => {
       this.updateFormValidations();
     });

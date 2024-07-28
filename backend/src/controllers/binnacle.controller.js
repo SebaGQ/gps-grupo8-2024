@@ -14,6 +14,8 @@ import { generateReport } from '../utils/reportGenerator.js';
 async function exportToExcel(req, res) {
     try {
         const filePath = await BinnacleService.exportToExcel();
+        res.setHeader('Content-Disposition', 'attachment; filename=bitacoras.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.download(filePath, 'bitacoras.xlsx', (err) => {
             if (err) {
                 console.error('Error al descargar el archivo:', err);
@@ -25,6 +27,7 @@ async function exportToExcel(req, res) {
         respondError(req, res, 500, 'No se pudo exportar las bitácoras a Excel');
     }
 }
+
 /**
  * Generar una entrada en la bitácora
  * @param {Object} req - Objeto de petición
