@@ -75,8 +75,10 @@ body {
 
 .btn-login {
   padding: 10px;
-  background: #1C5F37;
-  color: white;
+  background: #194e30;
+  /* Using the same green color */
+  color: #dcdcdc;
+  /* Using the same text color as the sidebar */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -84,7 +86,8 @@ body {
 }
 
 .btn-login:hover {
-  background: #388e3c;
+  background: #292929;
+  /* Darker color on hover */
 }
 
 .sign-up {

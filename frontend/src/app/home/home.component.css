@@ -35,9 +35,10 @@ body {
 }
 
 .btn-logout {
-    background-color: #4caf50;
-    /* Green color */
-    color: white;
+    background-color: #194e30;
+    /* Using the same green color */
+    color: #dcdcdc;
+    /* Using the same text color as the sidebar */
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -47,6 +48,6 @@ body {
 }
 
 .btn-logout:hover {
-    background-color: #388e3c;
-    /* Darker green on hover */
+    background-color: #292929;
+    /* Darker color on hover */
 }
