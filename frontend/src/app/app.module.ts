@@ -3,8 +3,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { VisitorComponent } from './components/visitor/visitor.component';
-import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
-import { FormsModule,  ReactiveFormsModule  } from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,43 +22,6 @@ import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VisitorFormDialogComponent } from './components/visitor-form-dialog/visitor-form-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MY_FORMATS } from './My-format';
-import { DepartmentComponent } from './components/department/department.component';
-import { UserComponent } from './components/user/user.component';
-import { DepartmentFormDialogComponent } from './components/department-form-dialog/department-form-dialog.component';
-import { DepartmentService } from './services/department.service';
-import { UserFormDialogComponent } from './components/user-form-dialog/user-form-dialog.component';
-
-
-import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
-
-
-
-import { SpacesComponent } from './spaces/spaces.component';
-import { SpaceFormComponent } from './space-form/space-form.component';
-import { BookingComponent } from './booking/booking.component';
-import { UserBookingsComponent } from './user-bookings/user-bookings.component';
-
-import { MomentDateAdapter, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
-import { AdminBookingsComponent } from './admin-bookings/admin-bookings.component';
-import { DayTranslatePipe } from './day-translate.pipe';
-
-
 
 
 
@@ -89,6 +52,9 @@ export const MY_DATE_FORMATS = {
     RegisterComponent,
     OrderListComponent,
     VisitorFormDialogComponent,
+    AvisosListComponent,
+    AvisosDetailComponent,
+    AvisosFormComponent,
     SpacesComponent,
     SpaceFormComponent,
     BookingComponent,
@@ -104,6 +70,7 @@ export const MY_DATE_FORMATS = {
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    ReactiveFormsModule,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -130,9 +97,13 @@ export const MY_DATE_FORMATS = {
         disallowedRoutes: ['http://localhost:80/auth/login'] // Cambia esto si es necesario
       }
     }),
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService,VisitorService, DepartmentService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
+  providers: [AuthService, OrderService, VisitorService, DepartmentService, AvisosService, CommentsService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }],
   bootstrap: [AppComponent]
 })

@@ -85,3 +85,32 @@ export class AuthService {
     return roles.includes('admin') || roles.includes('janitor');
   }
 }
+
+getUserId(): string | null {
+  const token = this.getToken();
+  if (token) {
+    const decoded: any = this.parseJwt(token);
+    return decoded?._id || null;
+  }
+  return null;
+}
+
+getUserRole(): string | null {
+  const token = this.getToken();
+  if (token) {
+    const decoded: any = this.parseJwt(token);
+    return decoded?.roles?.[0]?.name || null;
+  }
+  return null;
+}
+
+  private parseJwt(token: string): any {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    console.error('Invalid token', e);
+    return null;
+  }
+}
+}
+
