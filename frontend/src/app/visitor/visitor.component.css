@@ -1,0 +1,27 @@
+/* visitor.component.css */
+.card {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.card-text {
+  font-size: 0.875rem;
+}
+
+.btn {
+  margin-right: 0.5rem;
+}
+
+.container {
+  margin-top: 2rem;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}

@@ -6,7 +6,7 @@ import { Router } from "express";
 import visitorController from "../controllers/visitor.controller.js";
 
 /** Middlewares de autorización */
-import { isAdmin } from "../middlewares/authorization.middleware.js";
+import { isAdmin, isJanitorOrAdmin } from "../middlewares/authorization.middleware.js";
 
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
@@ -18,7 +18,7 @@ const router = Router();
 router.use(authenticationMiddleware);
 // Define las rutas para los usuarios
 router.get("/", isAdmin, visitorController.getVisitors);
-router.post("/", isAdmin, visitorController.createVisitor);
+router.post("/", isJanitorOrAdmin, visitorController.createVisitor);
 router.get("/:id", visitorController.getVisitorById);
 router.put("/:id", isAdmin, visitorController.updateVisitor);
 router.put("/:id/exit-date", isAdmin, visitorController.updateVisitorExitDate);

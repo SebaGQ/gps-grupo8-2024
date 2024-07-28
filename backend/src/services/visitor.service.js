@@ -26,16 +26,17 @@ async function getVisitors() {
  * @param {Object} visitor Objeto de visitante
  * @returns {Promise} Promesa con el objeto de visitante creado
  */
-async function createVisitor(visitor) {
+// visitor.service.js
+async function createVisitor(req) {
   try {
-    const { name, lastName, rut, roles, departmentNumber } = visitor;
+    let email = req.email;
+    let visitor = req.body;
 
-    // Verifica si el visitante ya existe con el mismo RUT
-    const existingVisitor = await Visitor.findOne({ rut });
+    const existingVisitor = await Visitor.findOne({ rut: visitor.rut });
     if (existingVisitor) return [null, "El visitante con este RUT ya está registrado."];
 
     // Verifica si el departamento existe
-    const department = await Department.findById(departmentNumber);
+    const department = await Department.findById(visitor.departmentNumber);
     if (!department) return [null, "El número de departamento no es válido."];
 
     let rolesFound = [];
@@ -43,24 +44,27 @@ async function createVisitor(visitor) {
     if (!defaultRole) return [null, "El rol predeterminado no existe"];
     rolesFound = [defaultRole];
     const myRole = rolesFound.map((role) => role._id);
-
+    
     const newVisitor = new Visitor({
-      name,
-      lastName,
-      rut,
-      roles: myRole,
-      departmentNumber,
+      name: visitor.name,
+      lastName: visitor.lastName,
+      rut: visitor.rut,
+      roles: myRole,  // Actualizamos esto para asegurarnos de que los roles se asignen correctamente
+      departmentNumber: visitor.departmentNumber,
       entryDate: new Date(), // Fecha de ingreso actual
       exitDate: new Date("9999-12-31"), // Fecha de salida indefinida
     });
-    await BinnacleService.createEntry(req.email, "visita", newVisitor)
+
+    //await BinnacleService.createEntryVisitor(req);
     await newVisitor.save();
 
     return [newVisitor, null];
   } catch (error) {
     handleError(error, "visitor.service -> createVisitor");
+    return [null, "Error interno del servidor"];
   }
 }
+
 
 /**
  * Obtiene un visitante por su id de la base de datos
@@ -93,17 +97,12 @@ async function updateVisitor(id, visitor) {
     const visitorFound = await Visitor.findById(id);
     if (!visitorFound) return [null, "El visitante no existe"];
 
-    const { name, lastName, rut, roles, departmentNumber, exitDate } = visitor;
+    const { name, lastName, rut, departmentNumber } = visitor;
 
     // Verifica si el departamento existe
     const department = await Department.findById(departmentNumber);
     if (!department) return [null, "El número de departamento no es válido."];
     
-    let rolesFound = [];
-    const defaultRole = await Role.findOne({ name: "visitor" });
-    if (!defaultRole) return [null, "El rol predeterminado no existe"];
-    rolesFound = [defaultRole];
-    const myRole = rolesFound.map((role) => role._id);
 
     const visitorUpdated = await Visitor.findByIdAndUpdate(
       id,
@@ -111,9 +110,7 @@ async function updateVisitor(id, visitor) {
         name,
         lastName,
         rut,
-        roles: myRole,
         departmentNumber,
-        exitDate, // Fecha de salida proporcionada
       },
       { new: true },
     );

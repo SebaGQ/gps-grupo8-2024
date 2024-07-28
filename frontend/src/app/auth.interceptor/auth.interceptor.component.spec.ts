@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BotonComponent } from './boton.component';
+import { AuthInterceptor } from './auth.interceptor.component';
 
-describe('BotonComponent', () => {
-  let component: BotonComponent;
-  let fixture: ComponentFixture<BotonComponent>;
+describe('AuthInterceptorComponent', () => {
+  let component: AuthInterceptor;
+  let fixture: ComponentFixture<AuthInterceptor>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [BotonComponent]
+      declarations: [AuthInterceptor]
     });
-    fixture = TestBed.createComponent(BotonComponent);
+    fixture = TestBed.createComponent(AuthInterceptor);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

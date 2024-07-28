@@ -1,0 +1,14 @@
+<div class="sidebar" [class.visible]="isSidebarVisible">
+  <ul>
+    <li><a href="#">Inicio</a></li>
+    <li><a href="#">Reserva de Espacios</a></li>
+    <li><a href="#">Estacionamiento</a></li>
+    <li><a href="#">Bitácoras</a></li>
+    <li><a href="/visitor">Visitantes</a></li>
+    <li><a href="/avisos">Foro avisos</a></li>
+    <li><a href="#" class="logout">Logout</a></li>
+  </ul>
+</div>
+<button class="sidebar-toggle" (click)="toggleSidebar()">
+  <i class="material-icons">{{ isSidebarVisible ? 'close' : 'menu' }}</i>
+</button>

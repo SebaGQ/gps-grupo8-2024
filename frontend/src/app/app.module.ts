@@ -1,39 +1,32 @@
+// src/app/app.module.ts
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { VisitorComponent } from './visitor/visitor.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
-
-
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatOptionModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
+import { BinnaclesComponent } from './binnacles/binnacles.component';
+import { NavbarComponent } from './navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { AuthService } from './services/auth.service'; // Importar el servicio Auth
-import { HttpService } from './services/http.service'; // Importar el servicio HTTP
-import { UserService } from './services/user.service';
-import { OrderService } from './services/order.service'; // Importar el servicio Order
-import { OrderListComponent } from './components/order-list/order-list.component'; // Asegúrate de importar tu componente de órdenes
-import { WithdrawOrderComponent } from './components/withdraw-order/withdraw-order.component';
-import { CreateOrderComponent } from './components/create-order/create-order.component';
-import { SelectWithdrawerComponent } from './components/select-withdrawer/select-withdrawer.component';
+import { AuthService } from './services/auth.service';
+import { HttpService } from './services/http.service';
+import { OrderService } from './services/order.service';
+import { OrderListComponent } from './components/order-list/order-list.component';
+import { VisitorService } from './services/visitor.service';
+import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { JanitorOrderListComponent } from './components/janitor-order-list/janitor-order-list.component';
+import { VisitorFormDialogComponent } from './visitor/visitor-form-dialog/visitor-form-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { AvisosService } from './services/avisos.service';
+import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
+import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
+import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
+import { CommentsService } from './services/comment.service';
 
 
 
@@ -44,30 +37,25 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent,
+    VisitorComponent,
     HomeComponent,
+    BinnaclesComponent,
+    NavbarComponent,
     LoginComponent,
     RegisterComponent,
     OrderListComponent,
-    CreateOrderComponent,
-    SelectWithdrawerComponent,
-    WithdrawOrderComponent,
-    JanitorOrderListComponent
+    VisitorFormDialogComponent,
+    AvisosListComponent,
+    AvisosDetailComponent,
+    AvisosFormComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
     MatDialogModule,
-    MatButtonModule,
-    MatTableModule,
-    MatInputModule,
-    MatSelectModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatCheckboxModule,
-    MatOptionModule,
     FormsModule,
     ReactiveFormsModule,
     MatDatepickerModule,
@@ -75,13 +63,13 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['localhost:81'], // Cambia esto a tu dominio permitido
-        disallowedRoutes: ['http://localhost:81/auth/login'] // Cambia esto si es necesario
+        allowedDomains: ['localhost:80'], // Cambia esto a tu dominio permitido
+        disallowedRoutes: ['http://localhost:80/auth/login'] // Cambia esto si es necesario
       }
     }),
     BrowserAnimationsModule
   ],
-  providers: [AuthService, OrderService, UserService, HttpService],
+  providers: [AuthService, OrderService, VisitorService, AvisosService, CommentsService, HttpService, { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

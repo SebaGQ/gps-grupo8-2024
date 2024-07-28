@@ -1,16 +1,16 @@
+<!-- home.component.html -->
 <div class="home-container">
-    <div class="home-card">
-      <h1>¡Bienvenido a la Página de Inicio!</h1>
-      <p *ngIf="isAuthenticated">Estás autenticado</p>
-      <p *ngIf="!isAuthenticated">No estás autenticado</p>
-      
-      <div *ngIf="isAuthenticated; else showLogin">
-        <button (click)="logout()">Cerrar Sesión</button>
-      </div>
-      
-      <ng-template #showLogin>
-        <app-login></app-login>
-      </ng-template>
+  <div class="home-card">
+    <h1>¡Bienvenido a la Página de Inicio!</h1>
+    <p *ngIf="isAuthenticated">Estás autenticado</p>
+    <p *ngIf="!isAuthenticated">No estás autenticado</p>
+
+    <div *ngIf="isAuthenticated; else showLogin">
+      <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
     </div>
+
+    <ng-template #showLogin>
+      <!-- Remove the login component here as it's now in app.component.html -->
+    </ng-template>
   </div>
-  
+</div>

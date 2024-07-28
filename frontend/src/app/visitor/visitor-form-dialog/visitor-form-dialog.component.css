@@ -1,0 +1,54 @@
+/* visitor-form-dialog.component.css */
+
+.dialog-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 400px;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+  
+  .dialog-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .dialog-container form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .dialog-container form div {
+    margin-bottom: 15px;
+  }
+  
+  .dialog-container label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .dialog-container input,
+  .dialog-container select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .dialog-container button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .dialog-container button:hover {
+    background-color: #0056b3;
+  }
+  

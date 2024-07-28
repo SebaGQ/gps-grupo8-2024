@@ -1,0 +1,9 @@
+<!-- Template aviso-detail.component.html -->
+<div *ngIf="aviso">
+    <h2>{{ aviso.title }}</h2>
+    <p>{{ aviso.description }}</p>
+    <a routerLink="/avisos">Volver a la lista</a>
+</div>
+<div *ngIf="!aviso">
+    <p>Cargando aviso...</p>
+</div>

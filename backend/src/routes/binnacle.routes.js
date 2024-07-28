@@ -13,10 +13,13 @@ const router = Router();
 router.use(authenticationMiddleware);
 
 
-router.post("/", isJanitorOrAdmin,BinnacleController.generateDailyBinnacle);
-router.get("/getAll", isJanitorOrAdmin,BinnacleController.getBinnacles);
-router.get("/binnacles/:id", isJanitorOrAdmin,BinnacleController.getBinnacleById);
-router.get("/excel", isJanitorOrAdmin,BinnacleController.exportToExcel);
 router.post("/Entry", isJanitorOrAdmin,BinnacleController.createEntry);
+router.get("/getAll", isJanitorOrAdmin, BinnacleController.getBinnacles);
+router.get("/id/:id", isJanitorOrAdmin,BinnacleController.getBinnacleByJanitorID);
+router.get("/activity/:activityType", isJanitorOrAdmin,BinnacleController.getBinnacleByActivityType);
+router.get("/date/:date", isJanitorOrAdmin,BinnacleController.getBinnacleByDate);
+router.get("/excel", isJanitorOrAdmin,BinnacleController.exportToExcel);
+
+
 
 export default router;

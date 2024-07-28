@@ -66,41 +66,41 @@ async function createEntry(janitorID, activityType, description) {
     }
 }
 
-async function generateDailyBinnacle() {
-    try {
-        const orders = await Order.find().populate("janitorId");
-        const visitors = await Visitor.find().populate("departmentNumber");
-        const bookings = await Booking.find().populate("userId").populate("spaceId");
+// async function generateDailyBinnacle() {
+//     try {
+//         const orders = await Order.find().populate("janitorId");
+//         const visitors = await Visitor.find().populate("departmentNumber");
+//         const bookings = await Booking.find().populate("userId").populate("spaceId");
 
-        for (const order of orders) {
-            const description = `Order for ${order.recipientFirstName} ${order.recipientLastName}, delivered by ${order.deliveryPersonName}. Status: ${order.status}.`;
-            const [result, error] = await createEntry(order.janitorId, "Delivery", description);
-            if (error) {
-                throw new Error(`Error creating binnacle entry for order: ${error}`);
-            }
-        }
+//         for (const order of orders) {
+//             const description = `Order for ${order.recipientFirstName} ${order.recipientLastName}, delivered by ${order.deliveryPersonName}. Status: ${order.status}.`;
+//             const [result, error] = await createEntry(order.janitorId, "Delivery", description);
+//             if (error) {
+//                 throw new Error(`Error creating binnacle entry for order: ${error}`);
+//             }
+//         }
 
-        for (const visitor of visitors) {
-            const description = `Visitor ${visitor.name} ${visitor.lastName} visited department ${visitor.departmentNumber}. Entry: ${visitor.entryDate}, Exit: ${visitor.exitDate}.`;
-            const [result, error] = await createEntry(visitor.departmentNumber, "Visita", description);
-            if (error) {
-                throw new Error(`Error creating binnacle entry for visitor: ${error}`);
-            }
-        }
+//         for (const visitor of visitors) {
+//             const description = `Visitor ${visitor.name} ${visitor.lastName} visited department ${visitor.departmentNumber}. Entry: ${visitor.entryDate}, Exit: ${visitor.exitDate}.`;
+//             const [result, error] = await createEntry(visitor.departmentNumber, "Visita", description);
+//             if (error) {
+//                 throw new Error(`Error creating binnacle entry for visitor: ${error}`);
+//             }
+//         }
 
-        for (const booking of bookings) {
-            const description = `Booking for space ${booking.spaceId} by user ${booking.userId}. Start: ${booking.startTime}, End: ${booking.endTime}.`;
-            const [result, error] = await createEntry(booking.userId, "Espacio Comunitario", description);
-            if (error) {
-                throw new Error(`Error creating binnacle entry for booking: ${error}`);
-            }
-        }
+//         for (const booking of bookings) {
+//             const description = `Booking for space ${booking.spaceId} by user ${booking.userId}. Start: ${booking.startTime}, End: ${booking.endTime}.`;
+//             const [result, error] = await createEntry(booking.userId, "Espacio Comunitario", description);
+//             if (error) {
+//                 throw new Error(`Error creating binnacle entry for booking: ${error}`);
+//             }
+//         }
 
-        return [null, null];
-    } catch (error) {
-        return [null, error.message];
-    }
-}
+//         return [null, null];
+//     } catch (error) {
+//         return [null, error.message];
+//     }
+// }
 
 /**
  * Obtener todas las entradas de la bitácora
@@ -143,8 +143,24 @@ async function getBinnacleByActivityType(activityType) {
  */
 async function getBinnacleByDate(date) {
     try {
-        const binnacle = await Binnacle.find({ createdAt: date });
-        return [binnacle, null];
+        // Convertir la fecha de string a Date
+        const start = new Date(date);
+        const end = new Date(date);
+        
+        // Ajustar las fechas para que abarque todo el día
+        end.setUTCHours(23, 59, 59, 999);
+
+        // Crear el rango de fechas
+        const binnacle = await Binnacle.find({
+            createdAt: {
+                $gte: start,
+                $lte: end
+            }
+        });
+        // desglosamos binnacle en JanatiroID, activityType y description
+        const respuesta = binnacle.map(({ janitorID, activityType, description }) => ({ janitorID, activityType, description }));
+
+        return [respuesta, null];
     } catch (error) {
         return [null, error.message];
     }
@@ -153,7 +169,7 @@ async function getBinnacleByDate(date) {
 export default {
     exportDataToExcel,
     createEntry,
-    generateDailyBinnacle,
+    // generateDailyBinnacle,
     getBinnacles,
     getBinnacleByJanitorID,
     getBinnacleByActivityType,

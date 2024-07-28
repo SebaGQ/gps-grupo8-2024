@@ -11,7 +11,7 @@ export class AuthService {
   private authUrl = 'auth';
   private authState = new BehaviorSubject<boolean>(this.isAuthenticated());
 
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   login(credentials: { email: string, password: string }): Observable<any> {
     return this.httpService.post<any>(`${this.authUrl}/login`, credentials)
@@ -46,4 +46,32 @@ export class AuthService {
   getAuthState(): Observable<boolean> {
     return this.authState.asObservable();
   }
+
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded: any = this.parseJwt(token);
+      return decoded?._id || null;
+    }
+    return null;
+  }
+
+  getUserRole(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded: any = this.parseJwt(token);
+      return decoded?.roles?.[0]?.name || null;
+    }
+    return null;
+  }
+
+  private parseJwt(token: string): any {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      console.error('Invalid token', e);
+      return null;
+    }
+  }
 }
+

@@ -1,23 +1,29 @@
+// src/app/app-routing.module.ts
+
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { VisitorComponent } from './visitor/visitor.component';
 import { HomeComponent } from './home/home.component';
+import { BinnaclesComponent } from './binnacles/binnacles.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { OrderListComponent } from './components/order-list/order-list.component';
-import { CreateOrderComponent } from './components/create-order/create-order.component';
-import { SelectWithdrawerComponent } from './components/select-withdrawer/select-withdrawer.component';
-import { JanitorOrderListComponent } from './components/janitor-order-list/janitor-order-list.component';
-
+import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
+import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
+import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
+  { path: 'binnacles', component: BinnaclesComponent },
+  { path: 'order-list', component: OrderListComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'order-list', component: OrderListComponent },
-  { path: 'create-order', component: CreateOrderComponent },
-  { path: 'select-withdrawer/:orderId', component: SelectWithdrawerComponent },
-  { path: 'janitor-order-list', component: JanitorOrderListComponent },
-  { path: '', redirectTo: '/home', pathMatch: 'full' }
+  { path: 'visitor', component: VisitorComponent },
+  { path: 'avisos', component: AvisosListComponent },
+  { path: 'avisos/new', component: AvisosFormComponent },
+  { path: 'avisos/:id', component: AvisosDetailComponent },
+  { path: 'avisos/edit/:id', component: AvisosFormComponent },
+  { path: '**', redirectTo: '/home', pathMatch: 'full' }
 ];
 
 @NgModule({
