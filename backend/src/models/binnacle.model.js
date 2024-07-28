@@ -140,6 +140,7 @@ binnacleSchema.pre('save', function(next) {
         this.spaceId = undefined;
         this.startTime = undefined;
         this.endTime = undefined;
+        this.userId = undefined;
     }
     next();
 });

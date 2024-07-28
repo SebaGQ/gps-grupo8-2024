@@ -81,9 +81,11 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        console.log('Datos del formulario:', result);
         let formattedData;
         // Aquí puedes añadir la lógica para guardar la bitácora usando tu servicio
-        switch (this.selectedActivity) {
+        console.log('Actividad seleccionada:', this.selectedActivity);
+        switch (result.activityType) {
           case 'Visita':
             formattedData = this.mapToVisitorDTO(result);
             console.log('Datos formateados:', formattedData);

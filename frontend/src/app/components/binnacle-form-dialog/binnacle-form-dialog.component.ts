@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DepartmentService } from 'src/app/services/department.service';
-import { DepartmentDTO } from 'src/app/dto/visitor.dto';
+import { DepartmentDTO } from 'src/app/dto/department.dto';
 import { UserService } from 'src/app/services/user.service';
 import { UserDTO } from 'src/app/dto/user.dto';
 import { SpaceService } from 'src/app/services/space.service';

@@ -85,8 +85,8 @@ export class AuthService {
     return roles.includes('admin') || roles.includes('janitor');
   }
 
-  isAdmin(): boolean {
-    const roles = this.getUserRoles();
-    return roles.includes('admin');
-  }
+  // isAdmin(): boolean {
+  //   const roles = this.getUserRoles();
+  //   return roles.includes('admin');
+  // }
 }
