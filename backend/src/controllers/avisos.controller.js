@@ -25,7 +25,12 @@ export const createAviso = async (req, res) => {
  */
 export const getAvisos = async (req, res) => {
     try {
-        const avisos = await Aviso.find().populate('author').populate('comments');
+        const avisos = await Aviso.find()
+            .populate('author')
+            .populate({
+                path: 'comments',
+                populate: { path: 'author' }
+            });
         respondSuccess(req, res, 200, avisos);
     } catch (error) {
         handleError(error, "getAvisos");
@@ -33,12 +38,18 @@ export const getAvisos = async (req, res) => {
     }
 };
 
+
 /**
  * Obtener un aviso por ID
  */
 export const getAvisoById = async (req, res) => {
     try {
-        const aviso = await Aviso.findById(req.params.id).populate('author').populate('comments');
+        const aviso = await Aviso.findById(req.params.id)
+            .populate('author')
+            .populate({
+                path: 'comments',
+                populate: { path: 'author' }
+            });
         if (!aviso) {
             return respondError(req, res, 404, 'Aviso no encontrado');
         }
@@ -48,6 +59,7 @@ export const getAvisoById = async (req, res) => {
         respondError(req, res, 500, error.message);
     }
 };
+
 
 /**
  * Actualizar un aviso por ID
@@ -139,7 +151,10 @@ export const reactToAviso = async (req, res) => {
         // Populate all necessary fields
         const populatedAviso = await Aviso.findById(avisoId)
             .populate('author')
-            .populate('comments')
+            .populate({
+                path: 'comments',
+                populate: { path: 'author' }
+            })
             .lean(); // Using lean() for better performance
 
         respondSuccess(req, res, 200, populatedAviso);

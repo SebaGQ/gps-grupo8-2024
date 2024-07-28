@@ -1,3 +1,4 @@
+// Importaciones necesarias
 import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AvisosService } from 'src/app/services/avisos.service';
 import { CommentsService } from 'src/app/services/comment.service';
@@ -65,10 +66,7 @@ export class AvisosListComponent implements OnInit {
       this.commentsService.createComment(avisoId, { content }, token).subscribe(comment => {
         const aviso = this.avisos.find(a => a._id === avisoId);
         if (aviso && aviso.comments) {
-          aviso.comments.push({
-            ...comment,
-            content: comment.content || content // Asegúrate de que el contenido esté presente
-          });
+          aviso.comments.push(comment); // Actualiza el comentario con todos los datos
           this.cdr.markForCheck(); // Marca para la detección de cambios
         }
         this.newComments[avisoId] = '';
@@ -98,8 +96,6 @@ export class AvisosListComponent implements OnInit {
   }
 
   toggleReaction(avisoId: string, reactionType: 'like' | 'dislike'): void {
-
-
     const token = this.authService.getToken();
     if (token && this.userId) {
       // Actualización optimista
@@ -192,22 +188,20 @@ export class AvisosListComponent implements OnInit {
   }
 
   canEdit(aviso: Aviso): boolean {
-    return this.currentUserId === aviso.author || this.userRole === 'admin';
+    return this.currentUserId === aviso.author._id || this.userRole === 'admin';
   }
 
   toggleComments(avisoId: string): void {
     this.showComments[avisoId] = !this.showComments[avisoId];
   }
 
-
   canEditComment(comment: Comment): boolean {
-    return this.currentUserId === comment.author || this.userRole === 'admin';
+    return this.currentUserId === comment.author._id || this.userRole === 'admin';
   }
 
   canDeleteComment(comment: Comment): boolean {
-    return this.currentUserId === comment.author || this.userRole === 'admin';
+    return this.currentUserId === comment.author._id || this.userRole === 'admin';
   }
-
 
   updateComment(avisoId: string, commentId: string, newContent: string): void {
     const token = this.authService.getToken();
