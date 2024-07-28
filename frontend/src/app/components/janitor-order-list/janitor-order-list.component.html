@@ -16,7 +16,7 @@
         </div>
         <div class="form-group">
           <label for="departmentNumber">Número de Departamento</label>
-          <input type="number" class="form-control" id="departmentNumber" placeholder="Número de Departamento" formControlName="departmentNumber">
+          <input type="text" class="form-control" id="departmentNumber" placeholder="Número de Departamento" formControlName="departmentNumber">
         </div>
         <div class="form-group">
           <label for="status">Estado</label>
@@ -38,7 +38,7 @@
     <div class="table-container">
       <div class="pagination-controls">
         <label for="itemsPerPage">Elementos por página:</label>
-        <select id="itemsPerPage" #itemsPerPageSelect (change)="changeItemsPerPage(+itemsPerPageSelect.value)" [value]="itemsPerPage">
+        <select id="itemsPerPage" #itemsPerPageSelect (change)="changeItemsPerPage(itemsPerPageSelect.value)" [value]="itemsPerPage">
           <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
         </select>
       </div>
@@ -59,7 +59,11 @@
             <td>{{ order.recipientFirstName }}</td>
             <td>{{ order.recipientLastName }}</td>
             <td>{{ order.departmentNumber }}</td>
-            <td>{{ order.status }}</td>
+            <td>
+              <span [ngClass]="getStatusChipClass(order.status)">
+                {{ getStatusLabel(order.status) }}
+              </span>
+            </td>
             <td>{{ order.deliveryTime | date: 'short' }}</td>
             <td>
               <button class="btn btn-primary" *ngIf="order.status === 'PENDING'" (click)="openWithdrawOrderDialog(order)">Seleccionar Retirante</button>

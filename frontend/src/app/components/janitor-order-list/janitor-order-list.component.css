@@ -145,3 +145,24 @@ h1 {
 .pagination-controls span {
   font-size: 1rem;
 }
+
+.chip {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  font-size: 0.875em;
+  font-weight: 600;
+  border-radius: 16px;
+  color: white;
+}
+
+.chip-pending {
+  background-color: #ffc107;
+}
+
+.chip-ready {
+  background-color: #28a745;
+}
+
+.chip-delivered {
+  background-color: #17a2b8;
+}

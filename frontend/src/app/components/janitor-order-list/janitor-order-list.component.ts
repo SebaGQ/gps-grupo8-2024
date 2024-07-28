@@ -93,8 +93,8 @@ export class JanitorOrderListComponent implements OnInit {
     this.paginatedOrders = this.filteredOrders.slice(startIndex, endIndex);
   }
 
-  changeItemsPerPage(count: number) {
-    this.itemsPerPage = +count;
+  changeItemsPerPage(count: string) {
+    this.itemsPerPage = Number(count);
     this.currentPage = 1;
     this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
     this.updatePage();
@@ -137,6 +137,32 @@ export class JanitorOrderListComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.updatePage();
+    }
+  }
+
+  getStatusChipClass(status: string | undefined): string {
+    switch (status) {
+      case 'PENDING':
+        return 'chip chip-pending';
+      case 'READY':
+        return 'chip chip-ready';
+      case 'DELIVERED':
+        return 'chip chip-delivered';
+      default:
+        return 'chip';
+    }
+  }
+
+  getStatusLabel(status: string | undefined): string {
+    switch (status) {
+      case 'PENDING':
+        return 'Pendiente';
+      case 'READY':
+        return 'Listo para Retirar';
+      case 'DELIVERED':
+        return 'Retirado';
+      default:
+        return status ?? '';
     }
   }
 }
