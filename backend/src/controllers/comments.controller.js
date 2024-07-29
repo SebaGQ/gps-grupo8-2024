@@ -1,12 +1,18 @@
 "use strict";
 import Comment from "../models/comment.model.js";
 import Aviso from "../models/avisos.model.js";
+import { commentSchemaJoi } from "../schema/comment.schema.js";
 import { respondSuccess, respondError } from "../utils/resHandler.js";
 import { handleError } from "../utils/errorHandler.js";
 
 // Crear un nuevo comentario
 export const createComment = async (req, res) => {
     try {
+        const { error } = commentSchemaJoi.validate(req.body);
+        if (error) {
+            return respondError(req, res, 400, error.details[0].message);
+        }
+
         const comment = new Comment({
             aviso: req.params.avisoId,
             author: req.user._id,
@@ -56,6 +62,11 @@ export const getAvisoCommentsById = async (req, res) => {
 // Actualizar un comentario por ID y la ID del aviso
 export const updateComment = async (req, res) => {
     try {
+        const { error } = commentSchemaJoi.validate(req.body);
+        if (error) {
+            return respondError(req, res, 400, error.details[0].message);
+        }
+
         const updatedComment = await Comment.findOneAndUpdate({ _id: req.params.commentId, aviso: req.params.avisoId }, req.body, {
             new: true
         }).populate('author', 'firstName lastName email roles');

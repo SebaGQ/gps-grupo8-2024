@@ -1,5 +1,6 @@
 "use strict";
 import Aviso from "../models/avisos.model.js";
+import { avisoSchemaJoi } from "../schema/avisos.schema.js";
 import { respondSuccess, respondError } from "../utils/resHandler.js";
 import { handleError } from "../utils/errorHandler.js";
 
@@ -8,6 +9,11 @@ import { handleError } from "../utils/errorHandler.js";
  */
 export const createAviso = async (req, res) => {
     try {
+        const { error } = avisoSchemaJoi.validate(req.body);
+        if (error) {
+            return respondError(req, res, 400, error.details[0].message);
+        }
+
         const newAviso = new Aviso({
             ...req.body,
             author: req.user._id
@@ -38,7 +44,6 @@ export const getAvisos = async (req, res) => {
     }
 };
 
-
 /**
  * Obtener un aviso por ID
  */
@@ -60,17 +65,20 @@ export const getAvisoById = async (req, res) => {
     }
 };
 
-
 /**
  * Actualizar un aviso por ID
  */
 export const updateAviso = async (req, res) => {
     try {
-
         const { id } = req.params;
+        const { error } = avisoSchemaJoi.validate(req.body);
+        if (error) {
+            return respondError(req, res, 400, error.details[0].message);
+        }
+
         const updateData = { ...req.body };
 
-        // Asegurarse de que no se actualice el acampo author de manera incorrecta
+        // Asegurarse de que no se actualice el campo author de manera incorrecta
         if (updateData.author) {
             delete updateData.author;
         }
