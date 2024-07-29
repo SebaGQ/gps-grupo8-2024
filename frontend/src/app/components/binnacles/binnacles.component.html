@@ -11,7 +11,9 @@
           <mat-option value="all">Buscar todo</mat-option>
           <mat-option value="date">Buscar por fecha</mat-option>
           <mat-option value="janitor">Buscar por conserje</mat-option>
-          <mat-option value="activity">Buscar por actividad</mat-option>
+          <mat-option value="Visita">Buscar por Visita</mat-option>
+          <mat-option value="Espacio">Buscar por Espacio Común</mat-option>
+          <mat-option value="Delivery">Buscar por Delivery</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -22,41 +24,21 @@
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
-      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'date'" (click)="buscarFecha()">Buscar</button>
-
       <mat-form-field *ngIf="searchType === 'janitor'" appearance="fill">
         <mat-label>Nombre del conserje</mat-label>
         <input matInput type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
       </mat-form-field>
-
+      
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'date'" (click)="buscarFecha()">Buscar</button>
       <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'janitor'" (click)="buscarConserje()">Buscar</button>
-
-      <!-- Nuevo bloque para seleccionar actividad -->
-      <mat-form-field *ngIf="searchType === 'activity'" appearance="fill">
-        <mat-label>Actividad</mat-label>
-        <mat-select [(ngModel)]="selectedActivity">
-          <mat-option value="Visita">Visita</mat-option>
-          <mat-option value="Delivery">Delivery</mat-option>
-          <mat-option value="Espacio">Espacios comunes</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Visita'" (click)="buscarVisita()">Buscar visitas</button>
-      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Espacio'" (click)="buscarEspacio()">Buscar reservas</button>
-      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'activity' && selectedActivity === 'Delivery'" (click)="buscarDelivery()">Buscar delivery</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'Visita'" (click)="buscarVisita()">Buscar visitas</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'Espacio'" (click)="buscarEspacio()">Buscar reservas</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'Delivery'" (click)="buscarDelivery()">Buscar delivery</button>
       <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'all'" (click)="buscarTodo()">Buscar todo</button>
 
     </div>
     <div class="createForm">
       <h2>Crear Bitácora</h2>
-      <!-- <mat-form-field appearance="fill">
-        <mat-label>Elige una actividad</mat-label>
-        <mat-select [(ngModel)]="selectedActivity">
-          <mat-option value="Visita">Visita</mat-option>
-          <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
-          <mat-option value="Delivery">Delivery</mat-option>
-        </mat-select>
-      </mat-form-field> -->
       <button mat-raised-button class="btn-abrir-form" color="primary" (click)="openForm()">Abrir formulario</button>
     </div>
     <div>
