@@ -1,2 +1,10 @@
-<app-navbar></app-navbar>
-<router-outlet></router-outlet>
+<!-- app.component.html -->
+<ng-container *ngIf="isAuthenticated; else showLogin">
+    <app-navbar></app-navbar>
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+</ng-container>
+<ng-template #showLogin>
+    <app-login></app-login>
+</ng-template>
