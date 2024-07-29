@@ -35,8 +35,4 @@ export class NavbarComponent {
     this.authService.logout();
     this.router.navigate(['/login']); // Redirigir a la página de inicio
   }
-
-  toggleSidebar() {
-    this.isSidebarVisible = !this.isSidebarVisible;
-  }
 }

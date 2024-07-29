@@ -89,10 +89,6 @@ export class AuthService {
   //   const roles = this.getUserRoles();
   //   return roles.includes('admin');
   // }
-}
-
-
-
   //Metodos creados por Cristobal para foro de avisos.
   getUserId(): string | null {
     const token = this.getToken();
@@ -120,6 +116,5 @@ export class AuthService {
       return null;
     }
   }
-
-}
+} 
 
