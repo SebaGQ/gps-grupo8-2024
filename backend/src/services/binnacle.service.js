@@ -629,7 +629,7 @@ async function updateBinnacle(id, updateData) {
             binnacle.exitDate = undefined;
         }
         if (binnacle.activityType !== 'Delivery') {
-            binnacle.departNumber = undefined;
+            binnacle.departmentNumber = undefined;
             binnacle.recipientFirstName = undefined;
             binnacle.recipientLastName = undefined;
             binnacle.deliveryTime = undefined;
