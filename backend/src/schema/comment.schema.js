@@ -5,7 +5,7 @@ import Joi from "joi";
  * Esquema de validación para el cuerpo de la solicitud de Comentario.
  */
 const commentSchemaJoi = Joi.object({
-    aviso: Joi.string().pattern(/^[a-f\d]{24}$/i).required().messages({
+    aviso: Joi.string().pattern(/^[a-f\d]{24}$/i).messages({
         "string.base": "El aviso debe ser de tipo string.",
         "string.pattern.base": "El aviso debe ser un ID válido de MongoDB.",
         "any.required": "El aviso es obligatorio.",
