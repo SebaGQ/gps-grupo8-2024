@@ -106,6 +106,7 @@ async function createEntryDelivery(req) {
         }
         let newBinnacleEntry = new Binnacle({ ...binnacleData});
         newBinnacleEntry.janitorID = user._id;
+        newBinnacleEntry.activityType = "Delivery";
         newBinnacleEntry.status = ORDER_STATUSES[0];
         console.log("BinnacleDelivery: \n", newBinnacleEntry);
         await newBinnacleEntry.save();
