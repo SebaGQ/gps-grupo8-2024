@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class NavbarComponent implements OnInit {
   isSidebarVisible = false;
   isAuthenticated: boolean = false;
-  isAdmin: boolean = false;
+  isAdminOrJanitor: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
     this.authService.getAuthState().subscribe(isAuthenticated => {
       this.isAuthenticated = isAuthenticated;
     });
-    this.isAdmin = this.authService.isAdmin();
+    this.isAdminOrJanitor = this.authService.isAdminOrJanitor();
   }
 
   toggleSidebar() {
@@ -27,7 +27,7 @@ export class NavbarComponent implements OnInit {
 
   navigateTo(destination: string) {
     if (this.isAuthenticated || destination === 'home') {
-      if (destination === 'admin-bookings' && !this.isAdmin) {
+      if (destination === 'admin-bookings' && !this.isAdminOrJanitor) {
         // Mostrar algún mensaje de error o alerta si es necesario
         return;
       }

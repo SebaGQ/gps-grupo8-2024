@@ -3,7 +3,7 @@
     <li><a (click)="navigateTo('home')">Inicio</a></li>
     <li><a (click)="navigateTo('spaces')">Reserva de Espacios</a></li>
     <li><a (click)="navigateTo('my-bookings')">Mis reservas</a></li>
-    <li *ngIf="isAdmin"><a (click)="navigateTo('admin-bookings')">Reservas</a></li>
+    <li *ngIf="isAdminOrJanitor"><a (click)="navigateTo('admin-bookings')">Reservas</a></li>
     <li><a (click)="navigateTo('visitor')">Visitante</a></li>
     <li><a (click)="navigateTo('user')">Usuarios</a></li>
     <li><a (click)="navigateTo('department')">Departamentos</a></li>
