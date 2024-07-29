@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormGroup} from '@angular/forms';
 import { BinnacleFormDialog } from '../binnacle-form-dialog/binnacle-form-dialog.component';
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
-import * as moment from 'moment';
+import moment from 'moment';
 
 @Component({
   selector: 'app-binnacles',

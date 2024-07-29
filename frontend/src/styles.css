@@ -1,7 +1,59 @@
 /* You can add global styles to this file, and also import other style files */
+html {
+    height: 100%;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Personalización del toastr */
+.toast-bottom-right {
+    bottom: 12px;
+    right: 12px;
+}
+
+.toast {
+    padding: 16px 24px;
+    /* Ajustar el tamaño del padding */
+    border-radius: 12px;
+    /* Bordes redondeados */
+    font-size: 16px;
+    /* Tamaño de fuente más grande */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra para darle profundidad */
+}
+
+/* Estilo para el toastr de éxito */
+.toast-success {
+    background-color: #21b646;
+    /* Color de fondo personalizado */
+    color: #ffffff;
+    /* Color del texto */
+}
+
+/* Estilo para el toastr de error */
+.toast-error {
+    background-color: #d9534f;
+    /* Color de fondo de error */
+    color: #ffffff;
+    /* Color del texto */
+}
+
+/* Estilo para el toastr de advertencia */
+.toast-warning {
+    background-color: #f0ad4e;
+    /* Color de fondo de advertencia */
+    color: #ffffff;
+    /* Color del texto */
+}
+
+/* Estilo para el toastr de información */
+.toast-info {
+    background-color: #5bc0de;
+    /* Color de fondo de información */
+    color: #ffffff;
+    /* Color del texto */
+}

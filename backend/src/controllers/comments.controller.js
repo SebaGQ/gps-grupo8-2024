@@ -8,15 +8,19 @@ import { handleError } from "../utils/errorHandler.js";
 export const createComment = async (req, res) => {
     try {
         const comment = new Comment({
-            aviso: req.params.avisoId,  // Usar req.params.avisoId en lugar de req.body.aviso
-            author: req.user._id,  // Asegurarse de que req.user._id está presente
+            aviso: req.params.avisoId,
+            author: req.user._id,
             content: req.body.content
         });
         await comment.save();
 
         // Agregar comentario al aviso
         await Aviso.findByIdAndUpdate(req.params.avisoId, { $push: { comments: comment._id } });
-        respondSuccess(req, res, 201, comment);
+
+        // Realizar populate del autor
+        const populatedComment = await comment.populate('author', 'firstName lastName email roles');
+
+        respondSuccess(req, res, 201, populatedComment);
     } catch (error) {
         handleError(error, "createComment");
         respondError(req, res, 500, error.message);
@@ -26,7 +30,8 @@ export const createComment = async (req, res) => {
 // Obtener todos los comentarios de un aviso
 export const getCommentsByAvisoId = async (req, res) => {
     try {
-        const comments = await Comment.find({ aviso: req.params.avisoId }).populate('author', 'name');
+        const comments = await Comment.find({ aviso: req.params.avisoId })
+            .populate('author', 'firstName lastName email roles');
         respondSuccess(req, res, 200, comments);
     } catch (error) {
         handleError(error, "getCommentsByAvisoId");
@@ -34,10 +39,10 @@ export const getCommentsByAvisoId = async (req, res) => {
     }
 };
 
-// Obtener comentario por la ID del comentario
+// Obtener comentario por la ID del comentario y la ID del aviso
 export const getAvisoCommentsById = async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.id).populate('author', 'name');
+        const comment = await Comment.findOne({ _id: req.params.commentId, aviso: req.params.avisoId }).populate('author', 'name');
         if (!comment) {
             return respondError(req, res, 404, 'Comentario no encontrado');
         }
@@ -48,12 +53,12 @@ export const getAvisoCommentsById = async (req, res) => {
     }
 };
 
-// Actualizar un comentario por ID
+// Actualizar un comentario por ID y la ID del aviso
 export const updateComment = async (req, res) => {
     try {
-        const updatedComment = await Comment.findByIdAndUpdate(req.params.id, req.body, {
+        const updatedComment = await Comment.findOneAndUpdate({ _id: req.params.commentId, aviso: req.params.avisoId }, req.body, {
             new: true
-        });
+        }).populate('author', 'firstName lastName email roles');
         if (!updatedComment) {
             return respondError(req, res, 404, 'Comentario no encontrado');
         }
@@ -64,18 +69,22 @@ export const updateComment = async (req, res) => {
     }
 };
 
-// Eliminar un comentario por ID
+// Eliminar un comentario por ID y la ID del aviso
 export const deleteComment = async (req, res) => {
     try {
-        const deleteComment = await Comment.findByIdAndDelete(req.params.id);
-        if (!deleteComment) {
+        const { avisoId, commentId } = req.params;
+
+        const comment = await Comment.findByIdAndDelete(commentId);
+
+        if (!comment) {
             return respondError(req, res, 404, 'Comentario no encontrado');
         }
-        const aviso = await Aviso.findById(deleteComment.aviso);
-        aviso.comments = aviso.comments.pull(deleteComment._id);
-        await aviso.save();
 
-        respondSuccess(req, res, 200, deleteComment);
+        await Aviso.findByIdAndUpdate(avisoId, {
+            $pull: { comments: commentId }
+        });
+
+        respondSuccess(req, res, 200, comment);
     } catch (error) {
         handleError(error, "deleteComment");
         respondError(req, res, 500, error.message);

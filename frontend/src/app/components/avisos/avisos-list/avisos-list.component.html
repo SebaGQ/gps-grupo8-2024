@@ -1,0 +1,62 @@
+<div class="forum-container">
+    <div class="forum-header">
+        <h1>Avisos Administración</h1>
+        <p>En este foro se darán a conocer todos los mensajes importantes que necesite dar la administración a sus
+            residentes.</p>
+    </div>
+    <div *ngIf="canCreate()">
+        <button (click)="navigateToCreateAviso()">Crear un nuevo aviso</button>
+    </div>
+    <div class="posts-list">
+        <div *ngFor="let aviso of avisos" class="post" [attr.data-post-id]="aviso._id">
+            <div class="post-header">
+                <h2>{{ aviso.title }}</h2>
+                <p>{{ aviso.createdAt | date: 'medium' }}</p>
+                <p>Autor: {{ aviso.author.firstName }} {{ aviso.author.lastName }}</p>
+            </div>
+            <div class="post-content">
+                <p>{{ aviso.description }}</p>
+            </div>
+            <div class="post-footer">
+                <div class="post-ratings">
+                    <div class="post-rating" [class.post-rating-selected]="aviso.reactions.likedBy.includes(userId)">
+                        <button class="post-rating-button" (click)="toggleReaction(aviso._id, 'like')"
+                            [disabled]="isProcessing[aviso._id]">
+                            <i class="fa fa-thumbs-up"></i>
+                        </button>
+                        <span class="post-rating-count">{{ aviso.reactions.likes }}</span>
+                    </div>
+                    <div class="post-rating" [class.post-rating-selected]="aviso.reactions.dislikedBy.includes(userId)">
+                        <button class="post-rating-button" (click)="toggleReaction(aviso._id, 'dislike')"
+                            [disabled]="isProcessing[aviso._id]">
+                            <i class="fa fa-thumbs-down"></i>
+                        </button>
+                        <span class="post-rating-count">{{ aviso.reactions.dislikes }}</span>
+                    </div>
+                </div>
+                <button (click)="toggleComments(aviso._id)">
+                    <i class="fa fa-comments"></i> {{ aviso.comments.length }}
+                </button>
+                <button *ngIf="canEdit(aviso)" (click)="editAviso(aviso)">
+                    <i class="fa fa-pencil"></i> Editar
+                </button>
+                <button *ngIf="canDelete()" (click)="deleteAviso(aviso._id)">
+                    <i class="fa fa-trash"></i> Eliminar
+                </button>
+            </div>
+            <div *ngIf="showComments[aviso._id]" class="comments-section">
+                <div *ngFor="let comment of aviso.comments" class="comment">
+                    <p>{{ comment.content }}</p>
+                    <p>Autor: {{ comment.author.firstName }} {{ comment.author.lastName }}</p>
+                    <div class="comment-actions">
+                        <button *ngIf="canDeleteComment(comment)" (click)="deleteComment(aviso._id, comment._id)">
+                            <i class="fa fa-trash"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+                <input [(ngModel)]="newComments[aviso._id]" placeholder="Añadir un comentario" />
+                <button (click)="addComment(aviso._id)">Añadir comentario</button>
+            </div>
+        </div>
+    </div>
+</div>
