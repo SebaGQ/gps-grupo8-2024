@@ -133,8 +133,8 @@ export const MY_DATE_FORMATS = {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['localhost:3000'], // Cambia esto a tu dominio permitido
-        disallowedRoutes: ['http://localhost:3000/auth/login'] // Cambia esto si es necesario
+        allowedDomains: ['localhost:80'], // Cambia esto a tu dominio permitido
+        disallowedRoutes: ['http://localhost:80/auth/login'] // Cambia esto si es necesario
       }
     }),
     BrowserAnimationsModule
