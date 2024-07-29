@@ -1,13 +1,11 @@
-
 .mat-toolbar {
   display: flex;
-  justify-content: center; /* Centra el título */
+  justify-content: center;
   align-items: center;
-  background-color: #1C5F37; /* Color verde oscuro */
+  background-color: #1C5F37; /* Verde oscuro */
   color: white;
   padding: 10px;
   margin-bottom: 20px;
-  
 }
 
 .mat-toolbar h1 {
