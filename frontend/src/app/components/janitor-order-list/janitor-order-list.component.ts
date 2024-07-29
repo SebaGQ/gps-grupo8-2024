@@ -1,3 +1,5 @@
+// JanitorOrderListComponent
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderService } from '../../services/order.service';
@@ -5,6 +7,7 @@ import { OrderDTO } from '../../dto/order.dto';
 import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-janitor-order-list',
@@ -31,7 +34,8 @@ export class JanitorOrderListComponent implements OnInit {
     private orderService: OrderService,
     private userService: UserService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar // Añadido
+    private snackBar: MatSnackBar,
+    private authService: AuthService // Añadido
   ) {
     this.filtersForm = this.fb.group({
       recipientFirstName: [''],
@@ -218,5 +222,14 @@ export class JanitorOrderListComponent implements OnInit {
       default:
         return status ?? '';
     }
+  }
+
+  // Nuevo método para verificar el rol y abrir el modal con el número de departamento
+  openWithdrawOrderDialogWithRoleCheck(order: OrderDTO) {
+    this.currentOrder = order;
+    if (this.authService.isAdminOrJanitor()) {
+      this.departmentNumber = order.departmentNumber ?? 0;
+    }
+    this.showModal = true;
   }
 }

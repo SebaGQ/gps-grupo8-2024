@@ -1,3 +1,5 @@
+// SelectWithdrawerComponent
+
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
@@ -11,6 +13,7 @@ import { UserDTO } from '../../dto/user.dto';
 })
 export class SelectWithdrawerComponent implements OnInit {
   @Input() orderId: string = ''; // Declarar orderId como input
+  @Input() departmentNumber: number = 0; // Declarar departmentNumber como input
   @Output() closeModal = new EventEmitter<void>();
   withdrawData: any = {};
   withdrawMethod: string = 'self'; // Default to 'self'
@@ -24,17 +27,26 @@ export class SelectWithdrawerComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.fetchResidents();
     this.userRole = this.authService.getUserRole();
+    this.fetchResidents();
   }
 
   fetchResidents() {
-    this.userService.getUsersByDepartment().subscribe(
-      (data: UserDTO[]) => {
-        this.residents = data;
-      },
-      error => console.error('Error fetching residents', error)
-    );
+    if (this.authService.isAdminOrJanitor() && this.departmentNumber > 0) {
+      this.userService.getUsersByDepartmentNumberInput(this.departmentNumber).subscribe(
+        (data: UserDTO[]) => {
+          this.residents = data;
+        },
+        error => console.error('Error fetching residents', error)
+      );
+    } else {
+      this.userService.getUsersByDepartment().subscribe(
+        (data: UserDTO[]) => {
+          this.residents = data;
+        },
+        error => console.error('Error fetching residents', error)
+      );
+    }
   }
 
   markAsReadyToWithdraw() {
