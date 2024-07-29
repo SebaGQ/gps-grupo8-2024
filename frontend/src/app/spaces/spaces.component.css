@@ -118,6 +118,12 @@
   font-weight: bold !important; /* Negrita */
 }
 
+.mat-card-actions button[disabled] {
+  background-color: #ccc !important; /* Fondo gris */
+  color: #666 !important; /* Texto gris */
+  cursor: not-allowed;
+}
+
 .no-spaces-message {
   text-align: center;
   color: #ff5722;
