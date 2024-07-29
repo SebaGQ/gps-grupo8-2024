@@ -27,7 +27,7 @@
         <mat-card-content>
           <p><strong>RUT:</strong> {{ visitor.rut }}</p>
           <p><strong>Departamento:</strong> {{ visitor.departmentNumber.departmentNumber }}</p>
-          <p><strong>Fecha de Entrada:</strong> {{ visitor.entryDate | date }}</p>
+          <p><strong>Fecha de Entrada:</strong> {{ visitor.entryDate | date: 'dd/MM/yyyy' }}</p>
           <p *ngIf="!isExitDate9999(visitor.exitDate)"><strong>Fecha de Salida:</strong> {{ visitor.exitDate | date }}</p>
         </mat-card-content>
         <mat-card-actions class="button-container">

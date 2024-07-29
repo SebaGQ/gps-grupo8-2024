@@ -11,6 +11,7 @@ export class NavbarComponent implements OnInit {
   isSidebarVisible = false;
   isAuthenticated: boolean = false;
   isAdminOrJanitor: boolean = false;
+  isAdmin: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -19,6 +20,7 @@ export class NavbarComponent implements OnInit {
       this.isAuthenticated = isAuthenticated;
     });
     this.isAdminOrJanitor = this.authService.isAdminOrJanitor();
+    this.isAdmin = this.authService.isAdmin();
   }
 
   toggleSidebar() {
@@ -35,6 +37,7 @@ export class NavbarComponent implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
+    this.isSidebarVisible = false;
   }
 
   logout() {

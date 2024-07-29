@@ -43,10 +43,9 @@
 }
 
 button {
-  display: block;
-  margin: 16px auto;
-  background-color: #194E30; /* Usar el color 900 de tu paleta personalizada */
-  color: white;
+  background-color: #194E30 !important; /* Usar el color 900 de tu paleta personalizada */
+  color: white !important;
+  margin-right: 12px;
 }
 
 .form-container {
@@ -60,7 +59,9 @@ button {
 }
 
 .dialog-actions {
+  display: flex;
   justify-content: flex-end;
+  gap: 10px;
 }
 
 .mat-dialog-title {

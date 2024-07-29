@@ -45,6 +45,12 @@
       </mat-error>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="visitorForm.invalid">Registrar</button>
+    <div class="dialog-actions">
+      
+      <button mat-button type="button" (click)="onNoClick()">Cancelar</button>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="visitorForm.invalid">Registrar</button>
+    </div>
+    
   </form>
 </div>
