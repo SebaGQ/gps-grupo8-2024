@@ -189,6 +189,7 @@ async function getBinnaclesVisitor() {
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 janitorID: janitorDict[entry.janitorID],
+                _id: entry._id,
                 activityType: entry.activityType,
                 name: entry.name,
                 lastName: entry.lastName,
@@ -270,6 +271,7 @@ async function getBinnaclesBooking() {
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 janitorID: janitorDict[entry.janitorID],
+                _id: entry._id,
                 activityType: entry.activityType,
                 spaceId: spaceDict[entry.spaceId],
                 startTime: entry.startTime,
@@ -327,6 +329,7 @@ async function getBinnaclesDelivery() {
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 janitorID: janitorDict[entry.janitorID],
+                _id: entry._id,
                 activityType: entry.activityType,
                 departNumber: departmentDict[entry.departmentNumber],
                 recipientFirstName: entry.recipientFirstName,
@@ -626,7 +629,7 @@ async function updateBinnacle(id, updateData) {
             binnacle.exitDate = undefined;
         }
         if (binnacle.activityType !== 'Delivery') {
-            binnacle.departNumber = undefined;
+            binnacle.departmentNumber = undefined;
             binnacle.recipientFirstName = undefined;
             binnacle.recipientLastName = undefined;
             binnacle.deliveryTime = undefined;

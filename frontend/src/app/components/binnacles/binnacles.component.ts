@@ -55,23 +55,6 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.cdr.detectChanges();
   }
 
-  // exportToExcel() {
-  //   this.binnaclesService.getBinnacleExcel().subscribe(
-  //     (data: Blob) => {
-  //       const downloadURL = window.URL.createObjectURL(data);
-  //       const link = document.createElement('a');
-  //       link.href = downloadURL;
-  //       link.download = 'bitacoras.xlsx';
-  //       link.click();
-  //       this.showNotification('Archivo Excel descargado con éxito', 'Cerrar');
-  //     },
-  //     (error) => {
-  //       this.showNotification('Error al descargar el archivo Excel', 'Cerrar');
-  //       console.error('Error al descargar el archivo Excel', error);
-  //     }
-  //   );
-  // }
-
   exportToExcel() {
     this.binnaclesService.getBinnacleExcel().subscribe(
       (data: Blob) => {
@@ -110,7 +93,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             this.binnaclesService.createEntryVisitor(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
-                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+                this.buscarVisita(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
                 this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
@@ -125,7 +108,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             this.binnaclesService.createEntryBooking(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
-                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+                this.buscarEspacio(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
                 this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
@@ -139,7 +122,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             this.binnaclesService.createEntryDelivery(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
-                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+                this.buscarDelivery(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
                 this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
@@ -199,7 +182,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
           this.resetPaginator();
         },
         (error) => {
-          console.error('Error fetching binnacles', error);
+          console.error(`Error ${error.error.message || error.message}`, error);
         }
       );
     }
@@ -220,7 +203,8 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
   buscarVisita() {
     console.log('Buscando visitas');
     this.binnaclesService.getBinnaclesByVisitor().subscribe(
-      (data: BinnacleVisitorDTO[]) => {
+      (data: BinnacleVisitorDTO[] | BinnacleDTO[]) => {
+        console.log('Datos de visitas:', data);
         this.dataSource.data = this.formatBinnacles(data);
         this.resetPaginator();
       },
@@ -357,7 +341,7 @@ mapToDeliveryDTO(data: any): BinnacleDeliveryDTO {
       if (binnacle.activityType === 'Visita') {
         const visitorBinnacle = binnacle as BinnacleVisitorDTO;
         return {
-          id: visitorBinnacle._id,
+          id: visitorBinnacle._id ?? visitorBinnacle._id,
           janitorID: visitorBinnacle.janitorID,
           activityType: visitorBinnacle.activityType,
           createdAt: visitorBinnacle.createdAt,
@@ -366,7 +350,7 @@ mapToDeliveryDTO(data: any): BinnacleDeliveryDTO {
       } else if (binnacle.activityType === 'Espacio Comunitario') {
         const spacesBinnacle = binnacle as BinnacleSpacesDTO;
         return {
-          id: spacesBinnacle._id,
+          id: spacesBinnacle._id ?? spacesBinnacle._id,
           janitorID: spacesBinnacle.janitorID,
           activityType: spacesBinnacle.activityType,
           createdAt: spacesBinnacle.createdAt,
@@ -375,7 +359,7 @@ mapToDeliveryDTO(data: any): BinnacleDeliveryDTO {
       } else if (binnacle.activityType === 'Delivery') {
         const deliveryBinnacle = binnacle as BinnacleDeliveryDTO;
         return {
-          id: deliveryBinnacle._id,
+          id: deliveryBinnacle._id ?? deliveryBinnacle._id,
           janitorID: deliveryBinnacle.janitorID,
           activityType: deliveryBinnacle.activityType,
           createdAt: deliveryBinnacle.createdAt,
