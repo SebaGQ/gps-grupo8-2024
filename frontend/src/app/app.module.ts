@@ -155,7 +155,7 @@ export const MY_DATE_FORMATS = {
     CommentsService,
     HttpService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }, // Locale for DD/MM/YYYY format
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }, // Locale for DD/MM/YYYY format
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
   ],
   bootstrap: [AppComponent]

@@ -93,7 +93,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             this.binnaclesService.createEntryVisitor(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
-                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+                this.buscarVisita(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
                 this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
@@ -108,7 +108,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             this.binnaclesService.createEntryBooking(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
-                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+                this.buscarEspacio(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
                 this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
@@ -122,7 +122,7 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
             this.binnaclesService.createEntryDelivery(formattedData).subscribe(
               response => {
                 this.showNotification('Bitácora creada con éxito', 'Cerrar');
-                this.buscarTodo(); // Actualiza la lista de bitácoras después de la creación
+                this.buscarDelivery(); // Actualiza la lista de bitácoras después de la creación
               },
               error => {
                 this.showNotification(`Error al crear la bitácora ${error.error.message || error.message}`, 'Cerrar');
