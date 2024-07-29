@@ -4,6 +4,7 @@ import { OrderService } from '../../services/order.service';
 import { OrderDTO } from '../../dto/order.dto';
 import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-janitor-order-list',
@@ -26,7 +27,12 @@ export class JanitorOrderListComponent implements OnInit {
   totalPages: number = 0;
   pageSizeOptions: number[] = [5, 10, 20, 50];
 
-  constructor(private orderService: OrderService, private userService: UserService, private fb: FormBuilder) {
+  constructor(
+    private orderService: OrderService,
+    private userService: UserService,
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar // Añadido
+  ) {
     this.filtersForm = this.fb.group({
       recipientFirstName: [''],
       recipientLastName: [''],
@@ -50,7 +56,10 @@ export class JanitorOrderListComponent implements OnInit {
         this.dataSource = data;
         this.applyFilters();
       },
-      error => console.error('Error fetching orders', error)
+      error => {
+        console.error('Error fetching orders', error);
+        this.snackBar.open('Error al cargar los pedidos', 'Cerrar', { duration: 3000 });
+      }
     );
   }
 
@@ -59,7 +68,10 @@ export class JanitorOrderListComponent implements OnInit {
       (data: UserDTO[]) => {
         this.residents = data;
       },
-      error => console.error('Error fetching residents', error)
+      error => {
+        console.error('Error fetching residents', error);
+        this.snackBar.open('Error al cargar los residentes', 'Cerrar', { duration: 3000 });
+      }
     );
   }
 
@@ -133,25 +145,40 @@ export class JanitorOrderListComponent implements OnInit {
   }
 
   markAsReadyToWithdraw() {
-    console.log('Marcar como listo para retirar:', this.currentOrder);
-    this.closeModal();
+    if (!this.currentOrder?._id) return;
+    this.orderService.markOrderAsReadyToWithdraw(this.currentOrder._id, {}).subscribe(
+      () => {
+        this.snackBar.open('Pedido marcado como listo para retirar', 'Cerrar', { duration: 3000 });
+        // Actualiza el estado del pedido directamente en el array dataSource
+        this.currentOrder!.status = 'READY';
+        this.applyFilters(); // Reaplica los filtros y actualiza la paginación
+        this.closeModal();
+      },
+      error => {
+        console.error('Error marking order as ready to withdraw', error);
+        this.snackBar.open('Error al marcar el pedido como listo para retirar', 'Cerrar', { duration: 3000 });
+      }
+    );
   }
 
   deleteOrder(orderId: string | undefined) {
-  if (!orderId) {
-    console.error('Order ID is undefined');
-    return;
+    if (!orderId) {
+      console.error('Order ID is undefined');
+      return;
+    }
+    if (confirm('¿Estás seguro de que deseas eliminar este pedido?')) {
+      this.orderService.deleteOrder(orderId).subscribe(
+        () => {
+          this.snackBar.open('Pedido eliminado correctamente', 'Cerrar', { duration: 3000 });
+          this.fetchOrders(); // Vuelve a cargar la lista de pedidos
+        },
+        error => {
+          console.error('Error deleting order', error);
+          this.snackBar.open('Error al eliminar el pedido', 'Cerrar', { duration: 3000 });
+        }
+      );
+    }
   }
-  if (confirm('¿Estás seguro de que deseas eliminar este pedido?')) {
-    this.orderService.deleteOrder(orderId).subscribe(
-      () => {
-        this.fetchOrders(); // Vuelve a cargar la lista de pedidos
-      },
-      error => console.error('Error deleting order', error)
-    );
-  }
-}
-
 
   nextPage() {
     if (this.currentPage < this.totalPages) {

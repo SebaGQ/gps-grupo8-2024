@@ -4,6 +4,7 @@ import { OrderService } from '../../services/order.service';
 import { OrderDTO } from '../../dto/order.dto';
 import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-order-list',
@@ -15,7 +16,7 @@ export class OrderListComponent implements OnInit {
   dataSource: OrderDTO[] = [];
   filteredOrders: OrderDTO[] = [];
   paginatedData: OrderDTO[] = [];
-  residents: UserDTO[] =[];
+  residents: UserDTO[] = [];
   showModal: boolean = false;
   currentOrder: OrderDTO | null = null;
   filtersForm: FormGroup;
@@ -24,7 +25,12 @@ export class OrderListComponent implements OnInit {
   totalPages: number = 0;
   pageSizeOptions: number[] = [5, 10, 20, 50];
 
-  constructor(private orderService: OrderService, private userService: UserService, private fb: FormBuilder) {
+  constructor(
+    private orderService: OrderService,
+    private userService: UserService,
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar // Añadido
+  ) {
     this.filtersForm = this.fb.group({
       recipientFirstName: [''],
       recipientLastName: [''],
@@ -42,16 +48,28 @@ export class OrderListComponent implements OnInit {
   }
 
   fetchOrders() {
-    this.orderService.getOwnedOrders().subscribe((data: OrderDTO[]) => {
-      this.dataSource = data;
-      this.applyFilters();
-    }, error => console.error('Error fetching orders', error));
+    this.orderService.getOwnedOrders().subscribe(
+      (data: OrderDTO[]) => {
+        this.dataSource = data;
+        this.applyFilters();
+      },
+      error => {
+        console.error('Error fetching orders', error);
+        this.snackBar.open('Error al cargar los pedidos', 'Cerrar', { duration: 3000 });
+      }
+    );
   }
 
   fetchResidents() {
-    this.userService.getUsersByDepartment().subscribe((data: UserDTO[]) => {
-      this.residents = data;
-    }, error => console.error('Error fetching residents', error));
+    this.userService.getUsersByDepartment().subscribe(
+      (data: UserDTO[]) => {
+        this.residents = data;
+      },
+      error => {
+        console.error('Error fetching residents', error);
+        this.snackBar.open('Error al cargar los residentes', 'Cerrar', { duration: 3000 });
+      }
+    );
   }
 
   applyFilters() {
@@ -64,20 +82,20 @@ export class OrderListComponent implements OnInit {
         (!filters.deliveryTime || this.compareDates(order.timestamp, filters.deliveryTime))
       );
     });
-  
+
     this.filteredOrders = filtered;
     this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
     this.updatePage();
   }
-  
+
   compareDates(orderTimestamp: Date | undefined, filterDate: string): boolean {
     if (!orderTimestamp) return false;
     const orderDate = new Date(orderTimestamp);
     const filterDateObj = new Date(filterDate);
-  
+
     // Ajustar la fecha del filtro para evitar problemas de zona horaria
     filterDateObj.setMinutes(filterDateObj.getMinutes() + filterDateObj.getTimezoneOffset());
-  
+
     // Compara solo la fecha, sin la hora
     const sameDate = (
       orderDate.getFullYear() === filterDateObj.getFullYear() &&
@@ -85,11 +103,8 @@ export class OrderListComponent implements OnInit {
       orderDate.getDate() === filterDateObj.getDate()
     );
 
-  
     return sameDate;
   }
-  
-  
 
   updatePage() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
@@ -112,6 +127,40 @@ export class OrderListComponent implements OnInit {
   closeModal() {
     this.showModal = false;
     this.currentOrder = null;
+  }
+
+  markAsReadyToWithdraw() {
+    if (!this.currentOrder?._id) return;
+    this.orderService.markOrderAsReadyToWithdraw(this.currentOrder._id, {}).subscribe(
+      () => {
+        this.snackBar.open('Pedido marcado como listo para retirar', 'Cerrar', { duration: 3000 });
+        this.fetchOrders(); // Actualiza la lista de pedidos
+        this.closeModal();
+      },
+      error => {
+        console.error('Error marking order as ready to withdraw', error);
+        this.snackBar.open('Error al marcar el pedido como listo para retirar', 'Cerrar', { duration: 3000 });
+      }
+    );
+  }
+
+  deleteOrder(orderId: string | undefined) {
+    if (!orderId) {
+      console.error('Order ID is undefined');
+      return;
+    }
+    if (confirm('¿Estás seguro de que deseas eliminar este pedido?')) {
+      this.orderService.deleteOrder(orderId).subscribe(
+        () => {
+          this.snackBar.open('Pedido eliminado correctamente', 'Cerrar', { duration: 3000 });
+          this.fetchOrders(); // Vuelve a cargar la lista de pedidos
+        },
+        error => {
+          console.error('Error deleting order', error);
+          this.snackBar.open('Error al eliminar el pedido', 'Cerrar', { duration: 3000 });
+        }
+      );
+    }
   }
 
   nextPage() {
