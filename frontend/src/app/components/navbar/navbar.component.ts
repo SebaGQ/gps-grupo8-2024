@@ -30,8 +30,10 @@ export class NavbarComponent implements OnInit {
   navigateTo(destination: string) {
     if (this.isAuthenticated || destination === 'home') {
       if (destination === 'admin-bookings' && !this.isAdminOrJanitor) {
-        // Mostrar algún mensaje de error o alerta si es necesario
         return;
+      }
+      if (destination === 'order-list') {
+        destination = this.isAdminOrJanitor ? 'janitor-order-list' : 'order-list';
       }
       this.router.navigate([`/${destination}`]);
     } else {
