@@ -96,10 +96,96 @@ async function deleteBooking(req, res) {
     }
 }
 
+/**
+ * Obtiene  reservación por usuario.
+ */
+async function getBookingByUser(req, res) {
+    try {
+        const { params } = req;
+        const [bookings, errorBookings] = await BookingService.getBookingsByUser(params.id);
+
+        if (errorBookings) return respondError(req, res, 404, errorBookings);
+        if (!bookings) {
+            return respondError(req, res, 404, "No se encontraron reservaciones");
+        }
+
+        respondSuccess(req, res, 200, bookings);
+    } catch (error) {
+        handleError(error, "booking.controller -> getBookingByUser");
+        respondError(req, res, 500, "No se pudo obtener la reservación");
+    }
+}
+
+/**
+ * Obtiene reservación por espacio común.
+ */
+async function getBookingBySpace(req, res) {
+    try {
+        const { params } = req;
+        const [bookings, errorBookings] = await BookingService.getBookingsBySpace(params.id);
+
+        if (errorBookings) return respondError(req, res, 404, errorBookings);
+        if (!bookings) {
+            return respondError(req, res, 404, "No se encontraron reservaciones");
+        }
+
+        respondSuccess(req, res, 200, bookings);
+    } catch (error) {
+        handleError(error, "booking.controller -> getBookingBySpace");
+        respondError(req, res, 500, "No se pudo obtener la reservación");
+    }
+}
+
+/**
+ * Obtiene reservación por fecha.
+ */
+async function getBookingByDate(req, res) {
+    try {
+        const { params } = req;
+        const [bookings, errorBookings] = await BookingService.getBookingsByDate(params.date);
+
+        if (errorBookings) return respondError(req, res, 404, errorBookings);
+        if (!bookings) {
+            return respondError(req, res, 404, "No se encontraron reservaciones");
+        }
+
+        respondSuccess(req, res, 200, bookings);
+    } catch (error) {
+        handleError(error, "booking.controller -> getBookingByDate");
+        respondError(req, res, 500, "No se pudo obtener la reservación");
+    }
+}
+
+/**
+ * Obtiene las reservaciones del usuario actual.
+ * @param {object} req - La solicitud HTTP.
+ * @param {object} res - La respuesta HTTP.
+ */
+async function getMyBookings(req, res) {
+    try {
+        const email = req.email;
+        const [bookings, errorBookings] = await BookingService.getBookingsByUser(email);
+
+        if (errorBookings) return respondError(req, res, 404, errorBookings);
+        if (!bookings) {
+            return respondError(req, res, 404, "No se encontraron reservaciones");
+        }
+
+        respondSuccess(req, res, 200, bookings);
+    } catch (error) {
+        handleError(error, "booking.controller -> getMyBookings");
+        respondError(req, res, 500, "No se pudo obtener la reservación");
+    }
+}
+
 export default {
     getAllBookings,
     getBookingById,
     createBooking,
     updateBooking,
     deleteBooking,
+    getBookingByUser,
+    getBookingBySpace,
+    getBookingByDate,
+    getMyBookings,
 };

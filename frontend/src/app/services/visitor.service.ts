@@ -52,4 +52,17 @@ export class VisitorService {
       map(response => response.data)
     );
   }
+
+  getFrequentVisitors(): Observable<VisitorDTO[]> {
+    return this.httpService.get<{ data: VisitorDTO[] }>(`${this.visitorUrl}/frequent`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  getActiveVisitors(): Observable<VisitorDTO[]> {
+    return this.httpService.get<{ data: VisitorDTO[] }>(`${this.visitorUrl}/active`).pipe(
+      map(response => response.data)
+    );
+  }
+
 }

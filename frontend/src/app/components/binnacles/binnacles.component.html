@@ -1,0 +1,69 @@
+<header>
+  <h1>Bitácoras de Conserjes</h1>
+</header>
+
+<div class="bitacoras-container">
+  <mat-card class="actions-card">
+    <div class="actions">
+      <mat-form-field appearance="fill">
+        <mat-label>Tipo de búsqueda</mat-label>
+        <mat-select [(ngModel)]="searchType">
+          <mat-option value="all">Buscar todo</mat-option>
+          <mat-option value="date">Buscar por fecha</mat-option>
+          <mat-option value="janitor">Buscar por conserje</mat-option>
+          <mat-option value="Visita">Buscar por Visita</mat-option>
+          <mat-option value="Espacio">Buscar por Espacio Común</mat-option>
+          <mat-option value="Delivery">Buscar por Delivery</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="searchType === 'date'" appearance="fill">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" placeholder="dd/mm/aaaa" [(ngModel)]="selectedDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="searchType === 'janitor'" appearance="fill">
+        <mat-label>Nombre del conserje</mat-label>
+        <input matInput type="text" placeholder="Nombre del conserje" [(ngModel)]="janitorName">
+      </mat-form-field>
+      
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'date'" (click)="buscarFecha()">Buscar</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'janitor'" (click)="buscarConserje()">Buscar</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'Visita'" (click)="buscarVisita()">Buscar visitas</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'Espacio'" (click)="buscarEspacio()">Buscar reservas</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'Delivery'" (click)="buscarDelivery()">Buscar delivery</button>
+      <button mat-raised-button class="btn-buscar" color="primary" *ngIf="searchType === 'all'" (click)="buscarTodo()">Buscar todo</button>
+
+    </div>
+    <div class="createForm">
+      <h2>Crear Bitácora</h2>
+      <button mat-raised-button class="btn-abrir-form" color="primary" (click)="openForm()">Abrir formulario</button>
+    </div>
+    <div>
+      <h2>Exportar excel (proximamente)</h2>
+      <button mat-raised-button class="btn-excel" color="primary" (click)="exportToExcel()">Exportar a Excel</button>
+    </div>
+  </mat-card>
+
+  <div class="details-container" *ngIf="dataSource && dataSource.data.length > 0">
+    <mat-card appearance="outlined" *ngFor="let binnacle of getPagedData()" class="log">
+      <div class="mat-card-content">
+        <div class="log-content">
+          <h3>Conserje: {{ binnacle.janitorID }}</h3>
+          <p>Actividad: {{ binnacle.activityType }}</p>
+          <p>Descripción: {{ binnacle.description }}</p>
+          <p>Fecha: {{ formatDate(binnacle.createdAt) }}</p>
+        </div>
+        <div class="log-actions" *ngIf="isAdmin">
+          <mat-card-actions>
+            <button mat-button color="primary" class="btn-modificar" (click)="modificarBinnacle(binnacle)">Modificar</button>
+            <button mat-button color="warn" class="eliminar-btn" (click)="eliminar(binnacle)">Eliminar</button>
+          </mat-card-actions>
+        </div>
+      </div>
+    </mat-card>
+    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

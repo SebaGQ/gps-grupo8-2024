@@ -7,15 +7,17 @@ import Joi from "joi";
  * @constant {Object}
  */
 const visitorBodySchema = Joi.object({
-  name: Joi.string().required().messages({
+  name: Joi.string().pattern(/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]*$/).required().messages({
     "string.empty": "El nombre no puede estar vacío.",
     "any.required": "El nombre es obligatorio.",
     "string.base": "El nombre debe ser de tipo string.",
+    "string.pattern.base": "El nombre solo puede contener letras y espacios.",
   }),
-  lastName: Joi.string().required().messages({
+  lastName: Joi.string().pattern(/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]*$/).required().messages({
     "string.empty": "El apellido no puede estar vacío.",
     "any.required": "El apellido es obligatorio.",
     "string.base": "El apellido debe ser de tipo string.",
+    "string.pattern.base": "El apellido solo puede contener letras y espacios.",
   }),
   rut: Joi.string()
     .required()
@@ -27,7 +29,7 @@ const visitorBodySchema = Joi.object({
       "any.required": "El RUT es obligatorio.",
       "string.base": "El RUT debe ser de tipo string.",
       "string.min": "El RUT debe tener al menos 9 caracteres.",
-      "string.max": "El RUT debe tener al menos 10 caracteres.",
+      "string.max": "El RUT debe tener maximo 10 caracteres, no incluir puntos.",
       "string.pattern.base":
         "El RUT tiene el formato XXXXXXXX-X, ejemplo: 12345678-9.",
     }),
@@ -82,4 +84,21 @@ const visitorExitDateSchema = Joi.object({
   }),
 });
 
-export { visitorBodySchema, visitorIdSchema, visitorExitDateSchema };
+
+/**
+ * Esquema de validación para el RUT del visitante.
+ * @constant {Object}
+ */
+const rutSchema = Joi.object({
+  rut: Joi.string()
+    .required()
+    .max(10)
+    .messages({
+      "string.empty": "El RUT no puede estar vacío.",
+      "any.required": "El RUT es obligatorio.",
+      "string.base": "El RUT debe ser de tipo string.",
+      "string.max": "El RUT debe tener al menos 10 caracteres.",
+    }),
+});
+
+export { visitorBodySchema, visitorIdSchema, visitorExitDateSchema, rutSchema };

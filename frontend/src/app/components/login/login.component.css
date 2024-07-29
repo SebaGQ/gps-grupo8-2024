@@ -75,9 +75,10 @@ body {
 
 .btn-login {
   padding: 10px;
-  background: linear-gradient(to right, #41a941, #41a941);
-  /* Green color from image */
-  color: white;
+  background: #194e30;
+  /* Using the same green color */
+  color: #dcdcdc;
+  /* Using the same text color as the sidebar */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -85,8 +86,8 @@ body {
 }
 
 .btn-login:hover {
-  background: linear-gradient(to right, #388e3c, #388e3c);
-  /* Darker green on hover */
+  background: #292929;
+  /* Darker color on hover */
 }
 
 .sign-up {

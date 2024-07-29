@@ -1,11 +1,11 @@
 "use strict";
 import mongoose from "mongoose";
+import CommonSpaceConstants from "../constants/commonSpaces.constants.js";
 
 const commonSpaceSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ["parking", "barbecue"],
     },
     capacity: {
         type: Number,
@@ -33,6 +33,11 @@ const commonSpaceSchema = new mongoose.Schema({
         required: function() { 
             return this.type === "barbecue";
         }, // Solo requerido para 'barbecue'
+    },
+    image: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ImageFile",
+        required: false,
     },
 }, {
     timestamps: true,

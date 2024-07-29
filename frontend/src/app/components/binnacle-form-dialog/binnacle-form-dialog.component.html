@@ -1,0 +1,112 @@
+<h1 mat-dialog-title>Crear Bitácora</h1>
+<div mat-dialog-content>
+  <form [formGroup]="binnacleForm">
+    <mat-form-field appearance="fill" class="mat-form-field">
+      <mat-label >Elige una actividad</mat-label>
+      <mat-select formControlName="activityType">
+        <mat-option value="Visita">Visita</mat-option>
+        <mat-option value="Espacio Comunitario">Reserva de espacios</mat-option>
+        <mat-option value="Delivery">Delivery</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Formulario para Visita -->
+    <div *ngIf="binnacleForm.get('activityType')?.value === 'Visita'">
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" required>
+        <mat-error *ngIf="binnacleForm.get('name')?.hasError('required')">El nombre es requerido</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="lastName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>RUT</mat-label>
+        <input matInput formControlName="rut" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Hora de llegada</mat-label>
+        <input matInput formControlName="entryDate" required type="datetime-local">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Hora de ida</mat-label>
+        <input matInput formControlName="exitDate" required type="datetime-local">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Numero Departamento</mat-label>
+        <mat-select formControlName="departNumber" required>
+          <mat-option *ngFor="let department of departments" [value]="department._id">{{department.departmentNumber}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="roles" required>
+          <mat-option value="6688839bf7e5944d1aea6278">Visitante</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Formulario para Reserva de Espacios -->
+    <div *ngIf="binnacleForm.get('activityType')?.value === 'Espacio Comunitario'">
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Espacio</mat-label>
+        <mat-select matInput formControlName="spaceId" required>
+          <mat-option *ngFor="let space of spaces" [value]="space._id">{{space.location}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Hora de inicio</mat-label>
+        <input matInput formControlName="startTime" required type="datetime-local">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Hora de fin</mat-label>
+        <input matInput formControlName="endTime" required type="datetime-local">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Usuario</mat-label>
+        <mat-select formControlName="userId" required>
+          <mat-option *ngFor="let user of users" [value]="user._id">{{user.firstName}} {{user.lastName}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Formulario para Delivery -->
+    <div *ngIf="binnacleForm.get('activityType')?.value === 'Delivery'">
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Departamento</mat-label>
+        <mat-select formControlName="departNumber" required>
+          <mat-option *ngFor="let department of departments" [value]="department._id">{{department.departmentNumber}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Nombre del destinatario</mat-label>
+        <input matInput formControlName="recipientFirstName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Apellido del destinatario</mat-label>
+        <input matInput formControlName="recipientLastName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Nombre del repartidor</mat-label>
+        <input matInput formControlName="deliveryPersonName" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Hora de entrega</mat-label>
+        <input matInput formControlName="deliveryTime" required type="datetime-local">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="mat-form-field">
+        <mat-label>Estado</mat-label>
+        <mat-select matInput formControlName="status" required>
+          <mat-option value="PENDING">Pendiente</mat-option>
+          <mat-option value="DELIVERY">Delivery</mat-option>
+          <mat-option value="READY">Listo</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()">Guardar bitácora</button>
+</div>

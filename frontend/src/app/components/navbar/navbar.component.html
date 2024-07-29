@@ -1,0 +1,18 @@
+<div class="sidebar" [class.visible]="isSidebarVisible">
+  <ul>
+    <li><a (click)="navigateTo('home')">Inicio</a></li>
+    <li><a (click)="navigateTo('spaces')">Reserva de Espacios</a></li>
+    <li><a (click)="navigateTo('my-bookings')">Mis reservas</a></li>
+    <li *ngIf="isAdminOrJanitor"><a (click)="navigateTo('admin-bookings')">Reservas</a></li>
+    <li *ngIf="isAdminOrJanitor"><a (click)="navigateTo('visitor')">Visitante</a></li>
+    <li *ngIf="isAdmin"><a (click)="navigateTo('user')">Usuarios</a></li>
+    <li *ngIf="isAdmin"><a (click)="navigateTo('department')">Departamentos</a></li>
+    <li><a (click)="navigateTo('order-list')">Ordenes</a></li>
+    <li><a (click)="navigateTo('binnacles')">Bitácoras</a></li>
+    <li><a (click)="navigateTo('avisos')">Foro avisos</a></li>
+    <li><button (click)="logout()">Logout</button></li>
+  </ul>
+</div>
+<button class="sidebar-toggle" (click)="toggleSidebar()">
+  <i class="material-icons">{{ isSidebarVisible ? 'close' : 'menu' }}</i>
+</button>

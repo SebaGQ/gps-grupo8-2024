@@ -1,12 +1,75 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.aviso-container {
+    background-color: #dcdcdc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+.aviso-header {
+    background-color: #1C5F37;
+    color: #dcdcdc;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.aviso-header h1 {
+    margin: 0;
+}
+
+.aviso-header h5 {
+    padding-top: 10px;
+    padding-left: 10px;
+    text-align: left;
+}
+
+.aviso-header p {
+    margin-top: 10px;
+}
+
+.aviso-header ul {
+    list-style: disc;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.aviso-header ul li {
+    margin: 5px 0;
+}
+
+.aviso-form {
+    margin-top: 20px;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
 
-.form-control {
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input.form-control,
+.form-group textarea.form-control {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
     border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .error-message {
@@ -16,26 +79,52 @@
 }
 
 .button-group {
-    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
 }
 
-.btn {
-    padding: 10px 20px;
+.button-group .btn {
+    background-color: #1C5F37;
+    color: #dcdcdc;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
 }
 
-.btn-primary {
-    background-color: #4CAF50;
-    color: #fff;
+.button-group .btn[disabled] {
+    background-color: #9e9e9e;
+    /* Color para botones deshabilitados */
+    cursor: not-allowed;
 }
 
-.btn-secondary {
-    background-color: #ccc;
-    color: #333;
+.button-group .btn:hover:not([disabled]) {
+    background-color: #292929;
 }
 
-.btn:hover {
-    opacity: 0.8;
+.toast-success {
+    background-color: #1C5F37 !important;
+    border-radius: 10px !important;
+}
+
+.toast-error {
+    background-color: #d9534f !important;
+    border-radius: 10px !important;
+}
+
+.toast-info {
+    background-color: #5bc0de !important;
+    border-radius: 10px !important;
+}
+
+.toast-warning {
+    background-color: #f0ad4e !important;
+    border-radius: 10px !important;
+}
+
+.toast-bottom-right {
+    bottom: 12px;
+    right: 12px;
+    border-radius: 10px !important;
 }
