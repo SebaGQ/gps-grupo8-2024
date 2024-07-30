@@ -2,12 +2,15 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'; // Importar MatSnackBar y MatSnackBarConfig
+import { MatDialog } from '@angular/material/dialog'; // Importar MatDialog
 import { BookingService } from '../services/booking.service';
 import { AuthService } from '../services/auth.service';
 import { BookingDto } from '../dto/booking.dto';
 import { CommonSpaceDto } from '../dto/space.dto';
 import { Router } from '@angular/router';
+import { ConfirmDialog } from '../components/confirm-dialog/confirm-dialog.component';
+; // Asumiendo que tienes un componente de confirmación
 
 @Component({
   selector: 'app-user-bookings',
@@ -28,6 +31,7 @@ export class UserBookingsComponent implements OnInit, AfterViewInit {
     private bookingService: BookingService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private router: Router
   ) {}
 
@@ -73,19 +77,35 @@ export class UserBookingsComponent implements OnInit, AfterViewInit {
   }
 
   deleteBooking(bookingId: string) {
-    this.bookingService.deleteBooking(bookingId).subscribe(() => {
-      this.loadBookingsAndSpaces();
-      this.snackBar.open('Reserva eliminada correctamente', 'Cerrar', {
-        duration: 3000
-      });
-    }, error => {
-      this.snackBar.open('Error al eliminar la reserva', 'Cerrar', {
-        duration: 3000
-      });
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '500px',
+      data: {
+        message: '¿Estás seguro de que deseas eliminar esta reserva?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.bookingService.deleteBooking(bookingId).subscribe(() => {
+          this.loadBookingsAndSpaces();
+          this.showNotification('Reserva eliminada correctamente', 'Cerrar');
+        }, error => {
+          this.showNotification('Error al eliminar la reserva', 'Cerrar');
+          console.error(`Error eliminando la reserva: ${error.message}`, error);
+        });
+      }
     });
   }
 
   editBooking(booking: BookingDto) {
     this.router.navigate(['/booking', booking.spaceId, { bookingId: booking._id }]);
+  }
+
+  showNotification(message: string, action: string): void {
+    const config = new MatSnackBarConfig();
+    config.duration = 3000; // Duración en milisegundos
+    config.verticalPosition = 'bottom';
+    config.horizontalPosition = 'center';
+    this.snackBar.open(message, action, config);
   }
 }
