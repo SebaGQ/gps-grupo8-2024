@@ -21,6 +21,7 @@ async function exportBinnacleToExcel() {
             .select('janitorID activityType departmentNumber recipientFirstName recipientLastName deliveryTime withdrawnTime deliveryPersonName status createdAt')
             .lean();
         
+        console.log("Binnacles", binnacles);
         // Paso 2: Extraer los janitorID
         const janitorIds = binnacles.map(binnacle => binnacle.janitorID);
         
@@ -116,9 +117,6 @@ async function exportBinnacleToExcel() {
         
         // Paso 8: Combinar los resultados
         const formattedBinnaclesb = binnaclesB.map(entry => {
-            const now = new Date();
-            if (new Date(binnaclesB.startTime) < now) return [null, "No se puede reservar en una fecha anterior a la actual"];
-            if (new Date(binnaclesB.endTime) <= new Date(binnaclesB.startTime)) return [null, "La fecha de finalización debe ser posterior a la fecha de inicio"];
             return {
                 janitorID: janitorDictb[entry.janitorID],
                 // formatear entry._id a string
@@ -212,20 +210,28 @@ async function exportBinnacleToExcel() {
 
        // Definir una ruta fija para guardar el archivo
        const outputDirectory = path.join(__dirname, 'output');
-       const fullPath = path.join(outputDirectory, 'bitacoras.xlsx');
        
        // Asegúrate de que el directorio de salida existe
        if (!fs.existsSync(outputDirectory)) {
            fs.mkdirSync(outputDirectory);
        }
+       const filePath = path.join(outputDirectory, 'Bitacoras.xlsx');
        
        // Escribir el archivo en la ruta especificada
-       xlsx.writeFile(workbook, fullPath);
+       xlsx.writeFile(workbook, filePath);
+
+        // Verificar si el archivo se ha creado correctamente
+        if (fs.existsSync(filePath)) {
+            return filePath;
+        } else {
+            throw new Error('No se pudo crear el archivo Excel');
+        }
     } catch (error) {
         handleError(error, "binnacle.service -> exportBinnacleToExcel");
         return [null, "Error en el servidor"];
     }
 }
+
 
 // Función para crear una entrada de visita en la bitácora
 /**

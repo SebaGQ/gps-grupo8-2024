@@ -6,6 +6,7 @@ import { handleError } from "../utils/errorHandler.js";
 import { validateVisitaBody, validateDeliveryBody, validateEspacioComunitarioBody, binnacleIdSchema } from '../schema/binnacle.schema.js';
 import { generateReport } from '../utils/reportGenerator.js';
 import path from 'path';
+import fs from 'fs';
 
 
 /**
@@ -13,19 +14,24 @@ import path from 'path';
  */
 async function exportBinnacleToExcel(req, res) {
     try {
-        const [filePath, error] = await BinnacleService.exportBinnacleToExcel();
-        if (error) return respondError(req, res, 500, error);
-
-        res.setHeader('Content-Disposition', `attachment; filename=${path.basename(filePath)}`);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.download(filePath, path.basename(filePath), (err) => {
-            if (err) {
-                console.error('Error al descargar el archivo:', err);
-                respondError(req, res, 500, 'No se pudo descargar el archivo');
-            }
-        });
+        const filePath = await BinnacleService.exportBinnacleToExcel();
+        
+        // Verificar si el archivo existe antes de intentar descargarlo
+        if (fs.existsSync(filePath)) {
+            res.setHeader('Content-Disposition', 'attachment; filename=bitacoras.xlsx');
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.download(filePath, 'bitacoras.xlsx', (err) => {
+                if (err) {
+                    console.error('Error al descargar el archivo:', err);
+                    respondError(req, res, 500, 'No se pudo descargar el archivo');
+                }
+            });
+        } else {
+            console.error('El archivo no existe:', filePath);
+            respondError(req, res, 500, 'No se pudo encontrar el archivo para descargar');
+        }
     } catch (error) {
-        handleError(error, "binnacle.controller -> exportBinnacleToExcel");
+        handleError(error, "binnacle.controller -> exportToExcel");
         respondError(req, res, 500, 'No se pudo exportar las bitácoras a Excel');
     }
 }
