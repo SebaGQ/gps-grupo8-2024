@@ -16,7 +16,11 @@
           <mat-card-content>
             <p><strong>Email:</strong> {{ user.email }}</p>
             <p><strong>RUT:</strong> {{ user.rut }}</p>
-            <p><strong>Roles:</strong> {{ user.roleNames }}</p>
+            <p><strong>Roles:</strong> 
+              <span *ngFor="let role of user.roles">
+                {{ role.name }}
+              </span>
+            </p>
           </mat-card-content>
           <mat-card-actions class="button-container">
             <button mat-raised-button color="primary" (click)="openDialog(user)">Modificar</button>
