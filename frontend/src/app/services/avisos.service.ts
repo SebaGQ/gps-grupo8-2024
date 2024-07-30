@@ -9,7 +9,7 @@ import { Aviso } from '../models/avisos.models';
   providedIn: 'root'
 })
 export class AvisosService {
-  private apiUrl = 'http://localhost:80/api/avisos';
+  private apiUrl = 'http://181.162.53.94:8080/api/avisos';
 
   constructor(private http: HttpClient) { }
 
