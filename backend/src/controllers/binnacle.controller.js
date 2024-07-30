@@ -5,25 +5,27 @@ import BinnacleService from "../services/binnacle.service.js";
 import { handleError } from "../utils/errorHandler.js";
 import { validateVisitaBody, validateDeliveryBody, validateEspacioComunitarioBody, binnacleIdSchema } from '../schema/binnacle.schema.js';
 import { generateReport } from '../utils/reportGenerator.js';
-
+import path from 'path';
 
 
 /**
  * Exporta datos a un archivo Excel
  */
-async function exportToExcel(req, res) {
+async function exportBinnacleToExcel(req, res) {
     try {
-        const filePath = await BinnacleService.exportToExcel();
-        res.setHeader('Content-Disposition', 'attachment; filename=bitacoras.xlsx');
+        const [filePath, error] = await BinnacleService.exportBinnacleToExcel();
+        if (error) return respondError(req, res, 500, error);
+
+        res.setHeader('Content-Disposition', `attachment; filename=${path.basename(filePath)}`);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.download(filePath, 'bitacoras.xlsx', (err) => {
+        res.download(filePath, path.basename(filePath), (err) => {
             if (err) {
                 console.error('Error al descargar el archivo:', err);
                 respondError(req, res, 500, 'No se pudo descargar el archivo');
             }
         });
     } catch (error) {
-        console.error('Error en exportToExcel:', error);
+        handleError(error, "binnacle.controller -> exportBinnacleToExcel");
         respondError(req, res, 500, 'No se pudo exportar las bitácoras a Excel');
     }
 }
@@ -262,7 +264,7 @@ async function generateDailyReport(req, res) {
   }
 
 export default {
-    exportToExcel,
+    exportBinnacleToExcel,
     createEntryVisitor,
     createEntryBooking,
     createEntryDelivery,
