@@ -145,8 +145,8 @@ export const MY_DATE_FORMATS = {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['localhost:80'],
-        disallowedRoutes: ['http://localhost:80/auth/login']
+        allowedDomains: ['http://181.162.53.94:8080'],
+        disallowedRoutes: ['http://181.162.53.94:8080/auth/login']
       }
     }),
     ToastrModule.forRoot({

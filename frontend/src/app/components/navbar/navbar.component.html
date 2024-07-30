@@ -2,7 +2,7 @@
   <ul>
     <li><a (click)="navigateTo('home')">Inicio</a></li>
     <li><a (click)="navigateTo('spaces')">Reserva de Espacios</a></li>
-    <li><a (click)="navigateTo('binnacles')">Bitácoras</a></li>
+    <li *ngIf="isAdminOrJanitor"><a (click)="navigateTo('binnacles')">Bitácoras</a></li>
     <li><a (click)="navigateTo('visitor')">Visitantes</a></li>
     <li><a (click)="navigateTo('avisos')">Foro avisos</a></li>
     <li *ngIf="isAdminOrJanitor"><a (click)="navigateTo('create-order')">Registrar entrega</a></li>
