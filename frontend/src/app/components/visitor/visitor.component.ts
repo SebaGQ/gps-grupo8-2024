@@ -113,6 +113,7 @@ export class VisitorComponent implements OnInit {
       }
     });
   }
+  
   isExitDate9999(exitDate: string | Date): boolean {
     return new Date(exitDate).getFullYear() === 9999;
   }
