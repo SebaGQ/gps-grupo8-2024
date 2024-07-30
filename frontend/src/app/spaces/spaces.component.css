@@ -1,13 +1,11 @@
-
 .mat-toolbar {
   display: flex;
-  justify-content: center; /* Centra el título */
+  justify-content: center;
   align-items: center;
-  background-color: #1C5F37; /* Color verde oscuro */
+  background-color: #1C5F37; /* Verde oscuro */
   color: white;
   padding: 10px;
   margin-bottom: 20px;
-  
 }
 
 .mat-toolbar h1 {
@@ -118,6 +116,12 @@
   margin-right: 5px;
   margin-left: 10px;
   font-weight: bold !important; /* Negrita */
+}
+
+.mat-card-actions button[disabled] {
+  background-color: #ccc !important; /* Fondo gris */
+  color: #666 !important; /* Texto gris */
+  cursor: not-allowed;
 }
 
 .no-spaces-message {

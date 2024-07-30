@@ -24,6 +24,39 @@ async function getUsers(req, res) {
   }
 }
 
+async function getUsersByDepartmentNumber(req, res) {
+  try {
+    const departmentNumber = req.departmentNumber; // Obtenido del token
+    const [users, error] = await UserService.getUsersByDepartmentNumber(departmentNumber);
+
+    if (error) return respondError(req, res, 404, error);
+
+    respondSuccess(req, res, 200, users);
+  } catch (error) {
+    handleError(error, "user.controller -> getUsersByDepartmentNumber");
+    respondError(req, res, 500, "No se pudo obtener los usuarios del departamento");
+  }
+}
+
+/**
+ * Obtiene todos los usuarios de un departamento específico dado como input
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ */
+async function getUsersByDepartmentNumberInput(req, res) {
+  try {
+    const { departmentNumber } = req.params;
+    const [users, error] = await UserService.getUsersByDepartmentNumberInput(departmentNumber);
+
+    if (error) return respondError(req, res, 404, error);
+
+    respondSuccess(req, res, 200, users);
+  } catch (error) {
+    handleError(error, "user.controller -> getUsersByDepartmentNumberInput");
+    respondError(req, res, 500, "No se pudo obtener los usuarios del departamento");
+  }
+}
+
 /**
  * Crea un nuevo usuario
  * @param {Object} req - Objeto de petición
@@ -125,6 +158,8 @@ async function deleteUser(req, res) {
 
 export default {
   getUsers,
+  getUsersByDepartmentNumber,
+  getUsersByDepartmentNumberInput,
   createUser,
   getUserById,
   updateUser,

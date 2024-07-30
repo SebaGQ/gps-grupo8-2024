@@ -6,7 +6,7 @@ import { Router } from "express";
 import usuarioController from "../controllers/user.controller.js";
 
 /** Middlewares de autorización */
-import { isAdmin } from "../middlewares/authorization.middleware.js";
+import { isAdmin, isJanitorOrAdmin } from "../middlewares/authorization.middleware.js";
 
 /** Middleware de autenticación */
 import authenticationMiddleware from "../middlewares/authentication.middleware.js";
@@ -17,6 +17,8 @@ const router = Router();
 // Define el middleware de autenticación para todas las rutas
 router.use(authenticationMiddleware);
 // Define las rutas para los usuarios
+router.get("/department", usuarioController.getUsersByDepartmentNumber);
+router.get("/department/:departmentNumber", isJanitorOrAdmin, usuarioController.getUsersByDepartmentNumberInput);
 router.get("/", isAdmin, usuarioController.getUsers);
 router.post("/", isAdmin, usuarioController.createUser);
 router.get("/:id", usuarioController.getUserById);

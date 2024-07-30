@@ -4,7 +4,7 @@
     display: flex;
     justify-content: center; /* Centra el título */
     align-items: center;
-    background-color: #1C5F37; /* Color verde oscuro */
+    background-color: #194E30; /* Color verde oscuro */
     color: white;
     padding: 10px;
     margin-bottom: 20px;
@@ -13,7 +13,7 @@
   .mat-toolbar button, 
   .button-container button, 
   .mat-card-actions button {
-    background-color: #1C5F37 !important; /* Verde oscuro */
+    background-color: #194E30 !important; /* Verde oscuro */
     color: white !important; /* Texto blanco */
     border-radius: 5px;
     margin-right: 5px;
@@ -53,7 +53,7 @@
   }
   
   .mat-toolbar h1 {
-    font-size: 32px; /* Ajusta el tamaño del título */
+    font-size: 36px; /* Ajusta el tamaño del título */
     margin: 0;
   }
   

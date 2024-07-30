@@ -52,3 +52,9 @@
     font-weight: bold;
     text-align: center;
   }
+
+  button {
+    background-color: #194E30 !important; /* Usar el color 900 de tu paleta personalizada */
+    color: white !important;
+    margin-right: 12px;
+  }

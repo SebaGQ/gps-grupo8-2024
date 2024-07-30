@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -7,9 +7,11 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isSidebarVisible = false;
   isAuthenticated: boolean = false;
+  isAdminOrJanitor: boolean = false;
+  isAdmin: boolean = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -17,6 +19,8 @@ export class NavbarComponent {
     this.authService.getAuthState().subscribe(isAuthenticated => {
       this.isAuthenticated = isAuthenticated;
     });
+    this.isAdminOrJanitor = this.authService.isAdminOrJanitor();
+    this.isAdmin = this.authService.isAdmin();
   }
 
   toggleSidebar() {
@@ -25,10 +29,17 @@ export class NavbarComponent {
 
   navigateTo(destination: string) {
     if (this.isAuthenticated || destination === 'home') {
+      if (destination === 'admin-bookings' && !this.isAdminOrJanitor) {
+        return;
+      }
+      if (destination === 'order-list') {
+        destination = this.isAdminOrJanitor ? 'janitor-order-list' : 'order-list';
+      }
       this.router.navigate([`/${destination}`]);
     } else {
       this.router.navigate(['/login']);
     }
+    this.isSidebarVisible = false;
   }
 
   logout() {

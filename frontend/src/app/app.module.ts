@@ -58,14 +58,14 @@ import { AuthService } from './services/auth.service';
 import { HttpService } from './services/http.service';
 import { OrderService } from './services/order.service';
 import { VisitorService } from './services/visitor.service';
-import { DepartmentService } from './services/department.service';
+import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
 import { AvisosService } from './services/avisos.service';
 import { CommentsService } from './services/comment.service';
-
-// Interceptores
-import { AuthInterceptor } from './auth.interceptor/auth.interceptor.component';
-
-import { MY_FORMATS } from './My-format';
+import { DepartmentService } from './services/department.service';
+import { CreateOrderComponent } from './components/create-order/create-order.component';
+import { JanitorOrderListComponent } from './components/janitor-order-list/janitor-order-list.component';
+import { WithdrawOrderComponent } from './components/withdraw-order/withdraw-order.component';
+import { SelectWithdrawerComponent } from './components/select-withdrawer/select-withdrawer.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -91,10 +91,17 @@ export const MY_DATE_FORMATS = {
     BinnaclesComponent,
     BinnacleFormDialog,
     ConfirmDialog,
+    CreateOrderComponent,
+    WithdrawOrderComponent,
+    SelectWithdrawerComponent,
     NavbarComponent,
     LoginComponent,
     RegisterComponent,
     OrderListComponent,
+    JanitorOrderListComponent,
+    SelectWithdrawerComponent,
+    WithdrawOrderComponent,
+    BinnaclesComponent,
     VisitorFormDialogComponent,
     AvisosListComponent,
     AvisosDetailComponent,
@@ -111,6 +118,7 @@ export const MY_DATE_FORMATS = {
     UserFormDialogComponent,
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
@@ -147,12 +155,19 @@ export const MY_DATE_FORMATS = {
     }),
   ],
   providers: [
+    
     AuthService,
+   
     OrderService,
+   
     VisitorService,
     DepartmentService,
+   
     AvisosService,
+   
     CommentsService,
+    CreateOrderComponent,
+   
     HttpService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }, // Locale for DD/MM/YYYY format

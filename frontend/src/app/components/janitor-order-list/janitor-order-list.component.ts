@@ -1,3 +1,5 @@
+// JanitorOrderListComponent
+
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OrderService } from '../../services/order.service';
@@ -5,23 +7,26 @@ import { OrderDTO } from '../../dto/order.dto';
 import { UserService } from '../../services/user.service';
 import { UserDTO } from '../../dto/user.dto';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-order-list',
-  templateUrl: './order-list.component.html',
-  styleUrls: ['./order-list.component.css']
+  selector: 'app-janitor-order-list',
+  templateUrl: './janitor-order-list.component.html',
+  styleUrls: ['./janitor-order-list.component.css']
 })
-export class OrderListComponent implements OnInit {
-  displayedColumns: string[] = ['recipientFirstName', 'recipientLastName', 'status', 'timestamp', 'action'];
+export class JanitorOrderListComponent implements OnInit {
+  displayedColumns: string[] = ['recipientFirstName', 'recipientLastName', 'departmentNumber', 'status', 'deliveryTime', 'action'];
   dataSource: OrderDTO[] = [];
   filteredOrders: OrderDTO[] = [];
-  paginatedData: OrderDTO[] = [];
-  residents: UserDTO[] = [];
+  paginatedOrders: OrderDTO[] = [];
   showModal: boolean = false;
+  showWithdrawModal: boolean = false;
   currentOrder: OrderDTO | null = null;
+  departmentNumber: number = 0;
+  residents: UserDTO[] = [];
   filtersForm: FormGroup;
   currentPage: number = 1;
-  itemsPerPage: number = 5; // Paginación por defecto de 5 elementos
+  itemsPerPage: number = 5; // Valor predeterminado
   totalPages: number = 0;
   pageSizeOptions: number[] = [5, 10, 20, 50];
 
@@ -29,11 +34,13 @@ export class OrderListComponent implements OnInit {
     private orderService: OrderService,
     private userService: UserService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar // Añadido
+    private snackBar: MatSnackBar,
+    private authService: AuthService // Añadido
   ) {
     this.filtersForm = this.fb.group({
       recipientFirstName: [''],
       recipientLastName: [''],
+      departmentNumber: [''], // Cambiado a string para comparación de contiene
       status: [''],
       deliveryTime: ['']
     });
@@ -48,7 +55,7 @@ export class OrderListComponent implements OnInit {
   }
 
   fetchOrders() {
-    this.orderService.getOwnedOrders().subscribe(
+    this.orderService.getOrders().subscribe(
       (data: OrderDTO[]) => {
         this.dataSource = data;
         this.applyFilters();
@@ -78,6 +85,7 @@ export class OrderListComponent implements OnInit {
       return (
         (!filters.recipientFirstName || order.recipientFirstName?.toLowerCase().includes(filters.recipientFirstName.toLowerCase())) &&
         (!filters.recipientLastName || order.recipientLastName?.toLowerCase().includes(filters.recipientLastName.toLowerCase())) &&
+        (!filters.departmentNumber || order.departmentNumber?.toString().includes(filters.departmentNumber)) &&
         (!filters.status || order.status === filters.status) &&
         (!filters.deliveryTime || this.compareDates(order.timestamp, filters.deliveryTime))
       );
@@ -109,7 +117,7 @@ export class OrderListComponent implements OnInit {
   updatePage() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedData = this.filteredOrders.slice(startIndex, endIndex);
+    this.paginatedOrders = this.filteredOrders.slice(startIndex, endIndex);
   }
 
   changeItemsPerPage(count: string) {
@@ -117,6 +125,17 @@ export class OrderListComponent implements OnInit {
     this.currentPage = 1;
     this.totalPages = Math.ceil(this.filteredOrders.length / this.itemsPerPage);
     this.updatePage();
+  }
+
+  openWithdrawOrderModal(order: OrderDTO) {
+    this.currentOrder = order;
+    this.departmentNumber = order.departmentNumber ?? 0;
+    this.showWithdrawModal = true;
+  }
+
+  closeWithdrawModal() {
+    this.showWithdrawModal = false;
+    this.currentOrder = null;
   }
 
   openWithdrawOrderDialog(order: OrderDTO) {
@@ -134,7 +153,9 @@ export class OrderListComponent implements OnInit {
     this.orderService.markOrderAsReadyToWithdraw(this.currentOrder._id, {}).subscribe(
       () => {
         this.snackBar.open('Pedido marcado como listo para retirar', 'Cerrar', { duration: 3000 });
-        this.fetchOrders(); // Actualiza la lista de pedidos
+        // Actualiza el estado del pedido directamente en el array dataSource
+        this.currentOrder!.status = 'READY';
+        this.applyFilters(); // Reaplica los filtros y actualiza la paginación
         this.closeModal();
       },
       error => {
@@ -201,5 +222,14 @@ export class OrderListComponent implements OnInit {
       default:
         return status ?? '';
     }
+  }
+
+  // Nuevo método para verificar el rol y abrir el modal con el número de departamento
+  openWithdrawOrderDialogWithRoleCheck(order: OrderDTO) {
+    this.currentOrder = order;
+    if (this.authService.isAdminOrJanitor()) {
+      this.departmentNumber = order.departmentNumber ?? 0;
+    }
+    this.showModal = true;
   }
 }

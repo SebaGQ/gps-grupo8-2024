@@ -287,6 +287,7 @@ async function createEntryDelivery(req) {
         }
         let newBinnacleEntry = new Binnacle({ ...binnacleData});
         newBinnacleEntry.janitorID = user._id;
+        newBinnacleEntry.activityType = "Delivery";
         newBinnacleEntry.status = ORDER_STATUSES[0];
         console.log("BinnacleDelivery: \n", newBinnacleEntry);
         await newBinnacleEntry.save();
@@ -504,6 +505,7 @@ async function getBinnaclesDelivery() {
         const formattedBinnacles = binnacles.map(entry => {
             return {
                 janitorID: janitorDict[entry.janitorID],
+                _id: entry._id,
                 activityType: entry.activityType,
                 departNumber: departmentDict[entry.departmentNumber],
                 recipientFirstName: entry.recipientFirstName,
@@ -803,7 +805,7 @@ async function updateBinnacle(id, updateData) {
             binnacle.exitDate = undefined;
         }
         if (binnacle.activityType !== 'Delivery') {
-            binnacle.departNumber = undefined;
+            binnacle.departmentNumber = undefined;
             binnacle.recipientFirstName = undefined;
             binnacle.recipientLastName = undefined;
             binnacle.deliveryTime = undefined;

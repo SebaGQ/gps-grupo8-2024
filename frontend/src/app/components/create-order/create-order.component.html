@@ -1,0 +1,26 @@
+<div class="create-order-container">
+  <h2>Registrar Nuevo Pedido</h2>
+  <form (ngSubmit)="createOrder()">
+    <div class="form-group">
+      <label for="departmentNumber">Número de Departamento</label>
+      <input type="number" id="departmentNumber" [(ngModel)]="order.departmentNumber" name="departmentNumber" required>
+    </div>
+
+    <div class="form-group">
+      <label for="recipientFirstName">Nombre del Destinatario</label>
+      <input type="text" id="recipientFirstName" [(ngModel)]="order.recipientFirstName" name="recipientFirstName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="recipientLastName">Apellido del Destinatario</label>
+      <input type="text" id="recipientLastName" [(ngModel)]="order.recipientLastName" name="recipientLastName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="deliveryPersonName">Nombre del Repartidor</label>
+      <input type="text" id="deliveryPersonName" [(ngModel)]="order.deliveryPersonName" name="deliveryPersonName">
+    </div>
+
+    <button type="submit">Registrar Pedido</button>
+  </form>
+</div>

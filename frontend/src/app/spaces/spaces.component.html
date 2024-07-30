@@ -1,5 +1,5 @@
 <div class="spaces-container">
-  <mat-toolbar>
+  <mat-toolbar class="mat-toolbar">
     <h1>Espacios Disponibles</h1>
   </mat-toolbar>
   <!-- Botón para crear espacio común visible solo para Administrador o Janitor -->
@@ -9,8 +9,8 @@
   <div *ngIf="spaces$ | async as spaces; else loading">
     <div *ngIf="spaces.length > 0; else noSpaces" class="spaces-list">
       <div class="space-card" *ngFor="let space of spaces">
-        <mat-card class="mat-elevation-z4">
-          <mat-card-header>
+        <mat-card class="mat-card mat-elevation-z4">
+          <mat-card-header class="mat-card-header">
             <h3 class="space-title">{{ space.location }}</h3>
           </mat-card-header>
           <mat-card-content class="mat-card-content">
@@ -30,7 +30,7 @@
             <h4>Días disponibles:</h4>
             <p><span *ngFor="let day of space.allowedDays">{{ day | dayTranslate }} </span></p>
           </mat-card-content>
-          <mat-card-actions>
+          <mat-card-actions class="mat-card-actions">
             <button mat-button extended class="buttonCard" color="accent" (click)="bookSpace(space._id)" [disabled]="!space.availability">Reservar</button>
             <button *ngIf="isAdminOrJanitor" class="buttonCard" mat-button color="primary" (click)="updateSpace(space._id)">Actualizar</button>
             <button *ngIf="isAdmin" class="buttonCard" mat-button color="warn" (click)="deleteSpace(space._id)">Eliminar</button> <!-- Solo visible para administradores -->

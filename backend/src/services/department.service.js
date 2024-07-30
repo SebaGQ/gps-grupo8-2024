@@ -9,7 +9,8 @@ import { handleError } from "../utils/errorHandler.js";
  */
 async function getDepartments() {
   try {
-    const departments = await Department.find().populate("residentId").exec();
+    const departments = await Department.find().populate("residentId").sort({ departmentNumber: 1 }).exec();
+    
     if (!departments) return [null, "No hay departamentos"];
 
     return [departments, null];

@@ -98,7 +98,7 @@ async function createDepartments() {
 
     await new Department({
       departmentNumber: 101,
-      residentId: []  // Sin residentes inicialmente
+      residentId: ""  // Sin residentes inicialmente
     }).save();
     console.log("* => Departamento creado exitosamente");
   } catch (error) {

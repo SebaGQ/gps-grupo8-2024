@@ -8,7 +8,7 @@
 
 .mat-toolbar button {
   margin-right: 10px;
-  background-color: #1C5F37 !important; /* Verde oscuro */
+  background-color: #194E30 !important; /* Verde oscuro */
   color: white !important; /* Texto blanco */
   border-radius: 5px;
   margin-right: 5px;
@@ -50,7 +50,7 @@
 }
 
 .button-container button {
-  background-color: #1C5F37 !important; /* Verde oscuro */
+  background-color: #194E30 !important; /* Verde oscuro */
   color: white !important; /* Texto blanco */
   border-radius: 5px;
   margin-right: 5px;
@@ -59,13 +59,14 @@
 
 .mat-toolbar h1 {
   margin-left: 20px;
+  font-size: 36px;
 }
 
 .mat-toolbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #1C5F37;
+  background-color: #194E30;
   color: white;
   padding: 10px;
 }

@@ -132,6 +132,10 @@ export class VisitorFormDialogComponent implements OnInit {
     this.snackBar.open(errorMessage, 'Cerrar', { duration: 3000 });
   }
 
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 }
 
 

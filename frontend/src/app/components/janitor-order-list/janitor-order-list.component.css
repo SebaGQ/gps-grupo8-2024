@@ -1,9 +1,9 @@
-.order-list-container {
+.janitor-order-list-container {
   padding: 20px;
   background-color: #f9f9f9;
 }
 
-.order-list-container h1 {
+h1 {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
@@ -96,6 +96,7 @@
 }
 
 .table .btn {
+  margin-right: 3px;
   padding: 10px 15px;
   border: none;
   border-radius: 4px;
@@ -110,6 +111,24 @@
 
 .table .btn-primary:hover {
   background-color: #133824;
+}
+
+.table .btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.table .btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.table .btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.table .btn-danger:hover {
+  background-color: #c82333;
 }
 
 .pagination-controls {
@@ -145,6 +164,7 @@
   border-radius: 16px;
   color: white;
 }
+
 
 .chip-pending {
   background-color: #ffc107;

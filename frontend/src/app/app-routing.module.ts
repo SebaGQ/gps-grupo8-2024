@@ -18,11 +18,16 @@ import { UserComponent } from './components/user/user.component';
 import { AvisosListComponent } from './components/avisos/avisos-list/avisos-list.component';
 import { AvisosFormComponent } from './components/avisos/avisos-form/avisos-form.component';
 import { AvisosDetailComponent } from './components/avisos/avisos-detail/avisos-detail.component';
+import { CreateOrderComponent } from './components/create-order/create-order.component';
+import { JanitorOrderListComponent } from './components/janitor-order-list/janitor-order-list.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'binnacles', component: BinnaclesComponent, },
   { path: 'order-list', component: OrderListComponent },
+  { path: 'create-order', component: CreateOrderComponent },
+  { path: 'janitor-order-list', component: JanitorOrderListComponent },
+  { path: 'janitor-order-list/:id', component: JanitorOrderListComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'visitor', component: VisitorComponent },
@@ -46,10 +51,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports:
-    [RouterModule.forRoot(routes)],
-  exports:
-    [RouterModule],
-
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

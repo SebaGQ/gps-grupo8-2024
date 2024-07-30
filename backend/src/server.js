@@ -27,7 +27,7 @@ async function setupServer() {
     const server = express();
     server.disable("x-powered-by");
     // Agregamos los cors
-    server.use(cors({ credentials: true, origin: true }));
+    server.use(cors());
     // Agrega el middleware para el manejo de datos en formato URL
     server.use(urlencoded({ extended: true, limit: "50mb" }));
     // Agrega el middleware para el manejo de datos en formato JSON
@@ -40,7 +40,7 @@ async function setupServer() {
     server.use("/api", indexRoutes);
 
     // Inicia el servidor en el puerto especificado
-    server.listen(PORT, () => {
+    server.listen(PORT, "0.0.0.0",() => {
       console.log(`=> Servidor corriendo en ${HOST}:${PORT}/api`);
     });
   } catch (err) {

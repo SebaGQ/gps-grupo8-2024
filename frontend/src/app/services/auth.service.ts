@@ -42,7 +42,7 @@ export class AuthService {
     this.authState.next(false); // Emitir nuevo estado de autenticación
   }
 
-  getToken(): string | null {
+  getToken(): string | null { 
     return localStorage.getItem('token');
   }
 

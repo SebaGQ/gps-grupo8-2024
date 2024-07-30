@@ -19,7 +19,7 @@ async function isAdmin(req, res, next) {
       return respondError(
         req,
         res,
-        401,
+        403,
         "Se requiere un rol de administrador para realizar esta acción"
       );
     }
@@ -33,7 +33,7 @@ async function isAdmin(req, res, next) {
     return respondError(
       req,
       res,
-      401,
+      403,
       "Se requiere un rol de administrador para realizar esta acción"
     );
   } catch (error) {
@@ -54,7 +54,7 @@ async function isJanitor(req, res, next) {
       return respondError(
         req,
         res,
-        401,
+        403,
         "Se requiere un rol de conserje para realizar esta acción"
       );
     }
@@ -68,7 +68,7 @@ async function isJanitor(req, res, next) {
     return respondError(
       req,
       res,
-      401,
+      403,
       "Se requiere un rol de conserje para realizar esta acción"
     );
   } catch (error) {
@@ -89,7 +89,7 @@ async function isUser(req, res, next) {
       return respondError(
         req,
         res,
-        401,
+        403,
         "Se requiere un rol de usuario para realizar esta acción"
       );
     }
@@ -103,7 +103,7 @@ async function isUser(req, res, next) {
     return respondError(
       req,
       res,
-      401,
+      403,
       "Se requiere un rol de usuario para realizar esta acción"
     );
   } catch (error) {
@@ -124,7 +124,7 @@ async function isJanitorOrAdmin(req, res, next) {
       return respondError(
         req,
         res,
-        401,
+        403,
         "Se requiere un rol de administrador o conserje para realizar esta acción"
       );
     }
@@ -143,8 +143,8 @@ async function isJanitorOrAdmin(req, res, next) {
     return respondError(
       req,
       res,
-      401,
-      "Se requiere un rol de administrador o conserje para realizar esta acción, sale"
+      403,
+      "Se requiere un rol de administrador o conserje para realizar esta acción"
     );
   } catch (error) {
     handleError(error, "authorization.middleware -> isJanitorOrAdmin");
