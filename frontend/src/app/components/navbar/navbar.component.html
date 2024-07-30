@@ -12,6 +12,7 @@
       </a>
     </li>
     <li *ngIf="isAdminOrJanitor"><a (click)="navigateTo('admin-bookings')">Reservas</a></li>
+    <li><a (click)="navigateTo('my-bookings')">Mis Reservas</a></li>
     <li *ngIf="isAdmin"><a (click)="navigateTo('user')">Usuarios</a></li>
     <li *ngIf="isAdmin"><a (click)="navigateTo('department')">Departamentos</a></li>
     <li><button (click)="logout()">Logout</button></li>
