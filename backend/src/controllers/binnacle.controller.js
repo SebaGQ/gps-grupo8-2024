@@ -15,20 +15,22 @@ import fs from 'fs';
 async function exportBinnacleToExcel(req, res) {
     try {
         const filePath = await BinnacleService.exportBinnacleToExcel();
+        console.log("filePath", filePath);
         
         // Verificar si el archivo existe antes de intentar descargarlo
         if (fs.existsSync(filePath)) {
-            res.setHeader('Content-Disposition', 'attachment; filename=bitacoras.xlsx');
+            res.setHeader('Content-Disposition', 'attachment; filename=Bitacoras.xlsx');
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.download(filePath, 'bitacoras.xlsx', (err) => {
+            res.sendFile(filePath, (err) => {
+                console.log('Archivo enviado:', filePath);
                 if (err) {
-                    console.error('Error al descargar el archivo:', err);
-                    respondError(req, res, 500, 'No se pudo descargar el archivo');
+                    console.error('Error al enviar el archivo:', err);
+                    respondError(req, res, 500, 'No se pudo enviar el archivo');
                 }
             });
         } else {
-            console.error('El archivo no existe:', filePath);
-            respondError(req, res, 500, 'No se pudo encontrar el archivo para descargar');
+            console.error('El archivo no existe Filepath: ', filePath);
+            respondError(req, res, 500, 'No se pudo encontrar el archivo para enviar');
         }
     } catch (error) {
         handleError(error, "binnacle.controller -> exportToExcel");

@@ -6,6 +6,7 @@ import { BinnacleVisitorDTO } from '../dto/binnacleVisitor.dto';
 import { BinnacleSpacesDTO } from '../dto/binnacleSpaces.dto';
 import { BinnacleDeliveryDTO } from '../dto/binnacleDelivery.dto';
 import { map } from 'rxjs/operators';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,8 @@ export class BinnaclesService {
   }
 
   getBinnacleExcel(): Observable<Blob> {
-    return this.HttpService.get<Blob>(`${this.binnacleUrl}/excel`);
+    const headers = new HttpHeaders().set('Accept', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return this.HttpService.get(`${this.binnacleUrl}/excel`, { headers, responseType: 'blob' as 'json'});
   }
 
   deleteBinnacle(id: string): Observable<any> {

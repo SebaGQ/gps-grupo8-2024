@@ -20,8 +20,6 @@ async function exportBinnacleToExcel() {
         const binnacles = await Binnacle.find({ activityType: "Delivery" })
             .select('janitorID activityType departmentNumber recipientFirstName recipientLastName deliveryTime withdrawnTime deliveryPersonName status createdAt')
             .lean();
-        
-        console.log("Binnacles", binnacles);
         // Paso 2: Extraer los janitorID
         const janitorIds = binnacles.map(binnacle => binnacle.janitorID);
         
@@ -187,7 +185,47 @@ async function exportBinnacleToExcel() {
                 $gte: start,
                 $lte: end
             }
-      }).lean();
+        }).lean();
+
+        console.log("BinnacleDIARY: \n", binnaclesd);
+
+        // Paso 2: Extraer los janitorID
+        const janitorIdsd = binnaclesd.map(binnacle => binnacle.janitorID);
+
+        // Paso 3: Obtener los nombres de los conserjes
+        const janitorsd = await Users.find({ _id: { $in: janitorIdsd } })
+            .select('firstName lastName')
+            .lean();
+
+        // Crear un diccionario de conserjes para acceso rápido
+        const janitorDictd = {};
+        janitorsd.forEach(janitor => {
+            janitorDictd[janitor._id] = `${janitor.firstName} ${janitor.lastName}`;
+        });
+
+        // Obtener los IDs únicos de spaceId y departmentNumber
+        const spaceIdsd = [...new Set(binnaclesd.map(binnacle => binnacle.spaceId).filter(id => id))];
+        const departmentIdsd = [...new Set(binnaclesd.map(binnacle => binnacle.departmentNumber).filter(id => id))];
+        // Obtener los detalles de los espacios comunitarios y departamentos
+        const spacesd = await CommonSpace.find({ _id: { $in: spaceIdsd } }).select('_id type').lean();
+        const departmentsd = await Department.find({ _id: { $in: departmentIdsd } }).select('_id departmentNumber').lean();
+        // Crear diccionarios para acceso rápido
+        const spaceDictd = spacesd.reduce((acc, space) => {
+            acc[space._id] = space.type;
+            return acc;
+        }, {});
+        const departmentDictd = departmentsd.reduce((acc, department) => {
+            acc[department._id] = department.departmentNumber;
+            return acc;
+        }, {});
+        // Añadir el nombre del conserje y reemplazar spaceId y departmentNumber en cada bitácora
+        const formattedBinnaclesd = binnaclesd.map(binnacle => ({
+            ...binnacle,
+            janitorID: janitorDictd[binnacle.janitorID] || 'Nombre no encontrado',
+            spaceId: binnacle.spaceId ? spaceDictd[binnacle.spaceId] || 'Tipo noencontrado' : null,
+            departmentNumber: binnacle.departmentNumber ? departmentDictd[binnacle.departmentNumber] || 'Número no encontrado' : null,
+        }));
+        console.log("BinnacleDIARY: \n", formattedBinnaclesd);
 
       //formatear star DD/MM/YYYY
         const formattedDate = `${start.getDate()}-${start.getMonth() + 1}-${start.getFullYear()}`;
@@ -205,7 +243,7 @@ async function exportBinnacleToExcel() {
         addSheet(formattedBinnaclesDelivery, 'Deliveries');
         addSheet(formattedBinnaclesv, 'Visitas');
         addSheet(formattedBinnaclesb, 'Espacios Comunitarios');
-        addSheet(binnaclesd, `${formattedDate}`);
+        addSheet(formattedBinnaclesd, `${formattedDate}`);
 
 
        // Definir una ruta fija para guardar el archivo

@@ -42,10 +42,16 @@
       <button mat-raised-button class="btn-abrir-form" color="primary" (click)="openForm()">Abrir formulario</button>
     </div>
     <div>
-      <h2>Exportar excel (proximamente)</h2>
-      <button mat-raised-button class="btn-excel" color="primary" (click)="exportToExcel()">Exportar a Excel</button>
+      <h2>Exportar excel Disponible!</h2>
+      <button mat-raised-button class="btn-excel" color="primary" (click)="downloadExcel()">Exportar a Excel</button>
     </div>
   </mat-card>
+
+   <!-- Mensaje que se mostrará si no hay bitácoras -->
+   <div *ngIf="!dataSource || dataSource.data.length === 0" class="empty-message">
+    <h1>En el panel izquierdo de la pantalla, encontrarás varias funcionalidades</h1>
+    <h1>útiles para la gestión de bitácoras de conserjes</h1>
+  </div>
 
   <div class="details-container" *ngIf="dataSource && dataSource.data.length > 0">
     <div *ngFor="let binnacle of getPagedData()">

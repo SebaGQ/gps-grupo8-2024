@@ -13,6 +13,8 @@ import { FormGroup} from '@angular/forms';
 import { BinnacleFormDialog } from '../binnacle-form-dialog/binnacle-form-dialog.component';
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
 import moment from 'moment';
+import { saveAs } from 'file-saver';
+import { tick } from '@angular/core/testing';
 
 @Component({
   selector: 'app-binnacles',
@@ -55,22 +57,28 @@ export class BinnaclesComponent implements OnInit, AfterViewInit, AfterViewCheck
     this.cdr.detectChanges();
   }
 
-  exportToExcel() {
+  downloadExcel() {
+    console.log('Descargando archivo Excel');
     this.binnaclesService.getBinnacleExcel().subscribe(
-      (data: Blob) => {
-        const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const downloadURL = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = downloadURL;
-        link.download = 'bitacoras.xlsx';
-        link.click();
+      (response: Blob) => { 
+        this.manageExcelFile(response, 'bitacoras.xlsx'); 
         this.showNotification('Archivo Excel descargado con éxito', 'Cerrar');
       },
       (error) => {
-        this.showNotification('Error al descargar el archivo Excel', 'Cerrar');
-        console.error('Error al descargar el archivo Excel', error);
+        console.error('Error descargando el archivo Excel:', error); 
       }
-    );
+    );  
+}    
+
+  manageExcelFile(response: Blob, fileName: string){
+    const blob = new Blob([response], { type: response.type });
+    const filePath = window.URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   }
 
   openForm() {
